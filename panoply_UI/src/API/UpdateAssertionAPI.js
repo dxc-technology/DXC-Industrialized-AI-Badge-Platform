@@ -1,9 +1,13 @@
-const updateAssertionResponse = async (assertionID,badgeStatus, workLink, comments,publicLink) => {
+const updateAssertionResponse = async (assertionID,badgeStatus, workLink, comments,publicLink, userid) => {
     //GET request
-    var url = 'http://127.0.0.1:5000/updateassertionsanduserbadgedetails?assertionID=' + assertionID + '&badgeStatus=' + badgeStatus + '&workLink=' + workLink
-        + '&comments=' + comments + '&publicLink=' + publicLink;
+    var url = 'http://127.0.0.1:5000/updateassertionsanduserbadgedetails';
     return await fetch(url, {
-        method: 'GET',
+        method: 'POST',
+        body: JSON.stringify({assertionID:assertionID,badgeStatus:badgeStatus, workLink:workLink,comments:comments,publicLink:publicLink,LoggedInAdminUserID:userid}),
+        headers: {
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+        }
         //Request Type
     })
         .then((response) => {return response.status})

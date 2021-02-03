@@ -42,7 +42,7 @@ describe('<ViewusersForm />', () => {
 
             var rawDate = 1604966373521;
             var formattedDate = formatDate(rawDate);
-            expect(formattedDate).toEqual('2020-11-09');
+            expect(formattedDate).toEqual('2020-11-10');
         });
         
         it('On clicking editUserButton should take to user-detail screen', async() => {

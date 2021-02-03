@@ -1,9 +1,13 @@
 const updateBadgeResponseAPI = async(badgeName, badgeDescription, badgeLink, userRequestable, badgeType, owner, reviewer, badgeIcon,evidence) => {
     //GET request
-    var url = 'http://127.0.0.1:5000/modifybadge?name='+badgeName+'&description='+badgeDescription+'&link='+badgeLink+'&requestable='+userRequestable+'&badgetype='+badgeType+'&owner='+owner+'&reviewer='+reviewer+
-    '&icon='+badgeIcon+'&evidence='+evidence;
+    var url = 'http://127.0.0.1:5000/modifybadge';
     return await fetch(url, {
-            method: 'GET',
+            method: 'POST',
+            body: JSON.stringify({name: badgeName,description: badgeDescription, link: badgeLink, requestable: userRequestable, badgetype: badgeType, owner: owner, reviewer: reviewer, icon: badgeIcon, evidence: evidence}),
+            headers: {
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            }
             //Request Type
         })
         .then((response) => {

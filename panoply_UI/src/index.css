@@ -11,9 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-.emptyfield input
-{
-    border: 2px solid #eb516d;
-}
-

@@ -72,11 +72,12 @@ const LoginForm = (props) => {
         );
     }
     
-    if(result == '5f760d3425c1036d4d46655f' || result == '5f760d4325c1036d4d466560')
+    if(result == '5f760d3425c1036d4d46655f' || result == '5f760d4325c1036d4d466560' || result == '5fc5567fcd831cc0c83774b8')
     {
         return (
             <div>
-                <LandingForm userType={result}/>
+                <LandingForm userType={result} email={email}/>
+
             </div>
         );
     }

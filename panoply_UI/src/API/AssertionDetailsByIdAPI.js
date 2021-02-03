@@ -1,8 +1,14 @@
 const getAssertionDetailByIdResponse = async(assertionId) => {
     //GET request
-    var url = 'http://127.0.0.1:5000/viewalluserbadgedetailsbyassertionid?assertionID=' + assertionId;
+    var url = 'http://127.0.0.1:5000/viewalluserbadgedetailsbyassertionid';
     return await fetch(url, {
-            method: 'GET',
+            method: 'POST',         
+            
+            body: JSON.stringify({assertionID:assertionId}),
+            headers: {
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+        }
             //Request Type
         })
         .then((response) => response.json())

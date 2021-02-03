@@ -2,7 +2,11 @@ const ViewUsersResponse = async() => {
     //GET request
     var url = 'http://127.0.0.1:5000/view_all_users';
     return await fetch(url, {
-            method: 'GET',
+            method: 'POST',
+            headers: {
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            }
             //Request Type
         })
         .then((response) => response.json())

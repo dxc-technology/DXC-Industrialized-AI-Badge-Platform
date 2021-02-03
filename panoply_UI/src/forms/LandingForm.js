@@ -1,4 +1,4 @@
-import React, { useDebugValue, useState } from 'react';
+import React, { useDebugValue, useState, useEffect} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -23,7 +23,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+//import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import FaceIcon from '@material-ui/icons/Face';
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import LocalMallIcon from '@material-ui/icons/LocalMall'
 import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import LayersIcon from '@material-ui/icons/Layers';
@@ -34,6 +37,8 @@ import ViewBadgeForm from './ViewBadgeForm';
 import ViewAssertionsForm from './ViewAssertionsForm';
 import ViewUsersForm from './ViewUsersForm';
 import Tooltip from '@material-ui/core/Tooltip';
+import MyBackpackForm from './MyBackpackForm';
+import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 
 const LandingForm = (props)=>
 {
@@ -41,6 +46,8 @@ const LandingForm = (props)=>
     const windowWidth = window.screen.width;
     const drawerWidth = 220;
     const [userType,setUserType] = useState(props.userType);
+    const [email,setEmail] = useState(props.email);
+    const [userID,setuserID] = useState('');
 
     const handleCreateBadgeButtonClick =()=>{
         setClickedItem('CreateBadgeForm');
@@ -48,6 +55,11 @@ const LandingForm = (props)=>
 
     const handleDashboardButtonClick =()=>{
         setClickedItem('');
+    }
+
+    const handleMyBackpackButtonClick =() =>
+    {
+      setClickedItem('MyBackpackForm');
     }
 
     const handleViewbadgeButtonClick =()=>{
@@ -85,9 +97,9 @@ const LandingForm = (props)=>
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItem>
-          <ListItem button>
+          <ListItem button data-testid="LandingForm_viewMyBackpackButton" onClick={handleMyBackpackButtonClick}>
             <ListItemIcon>
-            <BootstrapTooltip title ="My Backpack"><ShoppingCartIcon /></BootstrapTooltip>
+            <BootstrapTooltip title ="My Backpack"><LocalMallIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="My Backpack" />
           </ListItem>
@@ -118,7 +130,7 @@ const LandingForm = (props)=>
           
           <ListItem button data-testid="LandingForm_createBadgeButton" onClick={handleCreateBadgeButtonClick}>
             <ListItemIcon>
-            <BootstrapTooltip title ="Create Badge"><AssignmentIcon /></BootstrapTooltip>
+            <BootstrapTooltip title ="Create Badge"><AddToPhotosIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Create Badge" />
           </ListItem>
@@ -130,12 +142,26 @@ const LandingForm = (props)=>
           </ListItem>
           <ListItem button data-testid="LandingForm_viewUsersButton" onClick={handleViewUsersButtonClick}>
             <ListItemIcon>
-            <BootstrapTooltip title ="User Management"><AssignmentIcon /></BootstrapTooltip>
+            <BootstrapTooltip title ="User Management"><FaceIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="User Management" />
           </ListItem>
         </div>
       );
+
+      const reviewerListItems = (
+        <div data-testid="reviewerSection">
+          <ListSubheader inset>Reviewer Tasks</ListSubheader>
+          <ListItem button data-testid="LandingForm_reviewerAssertionsButton" onClick={handleViewAssertionsButtonClick}>
+            <ListItemIcon>
+            <BootstrapTooltip title ="Assertions"><AssignmentIcon /></BootstrapTooltip>
+            </ListItemIcon>
+            <ListItemText primary="Assertions" />
+          </ListItem>
+      
+        </div>
+      );
+
 
    
 const useStyles = makeStyles((theme) => ({
@@ -233,6 +259,26 @@ const classes = useStyles();
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  
+  const handleviewUserByEmail = async () => {
+        
+    var response1 = new Promise((resolve, reject) => {
+        resolve(UserDetailByEmailResponse(email));
+    }).then(value => {
+        if (value != undefined) {
+            setuserID(value[0]._id.$oid);
+
+        }
+
+    });
+
+}
+
+  useEffect(() => {
+    handleviewUserByEmail();
+}, []);
+
+
 
 
     return (
@@ -277,7 +323,7 @@ const classes = useStyles();
         <Divider />
         <List>{mainListItems}</List>
         <Divider />
-        {userType=='5f760d4325c1036d4d466560'?<List>{secondaryListItems}</List>:<List></List>}        
+        {userType=='5f760d4325c1036d4d466560'?<List>{secondaryListItems}</List>:userType=='5fc5567fcd831cc0c83774b8'?<List>{reviewerListItems}</List>:<List></List>}        
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
@@ -287,10 +333,11 @@ const classes = useStyles();
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={fixedHeightPaper}>
                {clickedItem=='ViewUsersForm'?(<ViewUsersForm/>):
-               (clickedItem=='ViewAssertionsForm'?(<ViewAssertionsForm/>):
+               (clickedItem=='ViewAssertionsForm'?(<ViewAssertionsForm email={email}/>):
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):
-               (<div><img data-testid='DashboardForm_Logo' className={classes.images}/></div>))))}
+               (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
+               (<div><img data-testid='DashboardForm_Logo' className={classes.images}/></div>)))))}
               </Paper>
             </Grid>
           
@@ -301,7 +348,7 @@ const classes = useStyles();
     </div>
             <input
             data-testid = "landingID"
-            value =""
+            value = {email}
             hidden>
             </input>
         </div>

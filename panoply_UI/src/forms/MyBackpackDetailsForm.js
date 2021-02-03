@@ -1,31 +1,18 @@
 import React, {useState, Text, useEffect} from 'react';
-import getRegistrationResponse from '../API/RegistrationAPI';
-import LoginForm from './LoginForm';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import getAssertionDetailByIdResponse from '../API/AssertionDetailsByIdAPI'
 import formatDate from '../scripts/functions';
 import CardMembershipOutlinedIcon from '@material-ui/icons/CardMembershipOutlined';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import updateAssertionResponse from '../API/UpdateAssertionAPI';
+import MyBackpackForm from './MyBackpackForm';
 
-import { InputLabel } from '@material-ui/core';
-import ViewAssertionsForm from './ViewAssertionsForm';
-import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
-
-const AssertionDetailsForm = (props) => {
+const MyBackpackDetailsForm = (props) => {
 
     const [assertionId, setAssertionId] = useState(props.assertionId);
     const [badgeName, setBadgeName] = useState('');
@@ -37,10 +24,10 @@ const AssertionDetailsForm = (props) => {
     const [badgeComments, setBadgeComments] = useState('');
     const [badgeIssuedOn, setBadgeIssuedOn] = useState('');
     const [publicLink, setPublicLink] = useState('');
-    const [saveFlag, setSaveFlag] = useState('False');
-    const [result, setResult] = useState('');
+    // const [saveFlag, setSaveFlag] = useState('False');
+    // const [result, setResult] = useState('');
     const [backButtonClicked,setBackButtonClicked] = useState('False');
-    const [email,setEmail] = useState(props.email);
+    //const [email,setEmail] = useState('');
     const [userID,setuserID] = useState('');
 
 
@@ -70,6 +57,7 @@ const AssertionDetailsForm = (props) => {
     const handleviewAssertionById = async () => {
 
         var response1 = new Promise((resolve, reject) => {
+            //alert(assertionId);
             resolve(getAssertionDetailByIdResponse(assertionId));
         }).then(value => {
             if (value != undefined) {
@@ -80,52 +68,16 @@ const AssertionDetailsForm = (props) => {
                 setBadgeComments(value[0].comments);
                 setBadgeReviewer(value[0].reviewer_details[0].email);
                 setEvidencelink(value[0].workLink);
-                setBadgeStatus(value[0].badge_status[0]._id.$oid);
+                setBadgeStatus(value[0].badge_status[0].badgeStatus);
                 setModifiedDate(formatDate(value[0].modified.$date));
                 setPublicLink(value[0].publicLink);
+                setuserID(value[0].user_details[0]._id.$oid);
             }
 
 
         });
 
     }
-
-    const handleSaveAssertion = () => {
-        // var response3 = new Promise((resolve,reject)=> {
-        //     resolve(UserDetailByEmailResponse("reviewer2@test.com"));
-        // }).then(value=>{
-        //     var userid = value[0]._id.$oid
-            
-            
-        var response2 = new Promise((resolve, reject) => {
-            // alert(userID);
-            resolve(updateAssertionResponse(assertionId, badgeStatus, evidencelink, badgeComments, publicLink, userID));
-        }).then(value => {
-            if (value==200){
-                setResult("Saved Successfully");
-                setSaveFlag('False')
-                
-            }           
-
-        });
-        // });
-        
-    }
-
-    const handleviewUserByEmail = async () => {
-        
-        var response1 = new Promise((resolve, reject) => {
-            resolve(UserDetailByEmailResponse(email));
-        }).then(value => {
-            if (value != undefined) {
-                setuserID(value[0]._id.$oid);
-   
-            }
-
-        });
-
-    }
-
 
     const handleBackButtonClick = () =>{
         setBackButtonClicked('True');
@@ -133,33 +85,12 @@ const AssertionDetailsForm = (props) => {
 
     useEffect(() => {
         handleviewAssertionById();
-        handleviewUserByEmail();
     }, []);
-
-    
-
-    const handleBadgeStatusChange = event => {
-        setBadgeStatus(event.target.value);
-        setSaveFlag('True');
-    }
-    const handleBadgeWorkLinkChange = event => {
-        setEvidencelink(event.target.value);
-        setSaveFlag('True');
-    }
-    const handleBadgeCommentsChange = event => {
-        setBadgeComments(event.target.value);
-        setSaveFlag('True');
-    }
-
-    const handlePublicLinkChange = event => {
-        setPublicLink(event.target.value);
-        setSaveFlag('True');
-    }
 
     if (backButtonClicked=='True'){
 return(
 <div>
-    <ViewAssertionsForm  email={email} />
+    <MyBackpackForm userID={userID} />
 </div>
 );
     }
@@ -167,12 +98,12 @@ return(
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
-            <div className={classes.paper} data-testid="assertionDetails_ID">
+            <div className={classes.paper} data-testid="backpackDetails_ID">
                 <Avatar className={classes.avatar}>
                     <CardMembershipOutlinedIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Edit Assertion
+                    Assertion
                 </Typography>
                 <br></br>
 
@@ -183,10 +114,10 @@ return(
                             variant="outlined"
                             fullWidth
 
-                            id="badgeName"
+                            id="backpackDetails_badgeName"
                             label="Badge Name"
                             inputProps={{
-                                "data-testid": "assertionDetails_badgeName",
+                                "data-testid": "backpackDetails_badgeName",
                             }}
                             value={badgeName}
 
@@ -197,11 +128,11 @@ return(
                             variant="outlined"
                             fullWidth
                             multiline
-                            id="assertiondetails_recipient"
+                            id="backpackDetails_badgeRecipient"
                             label="Badge Recipient"
                             name="badgeRecipient"
                             inputProps={{
-                                "data-testid": "assertionDetails_badgeRecipient",
+                                "data-testid": "backpackDetails_badgeRecipient",
                             }}
                             value={badgeRecipient}
 
@@ -211,79 +142,57 @@ return(
                         <TextField
                             variant="outlined"
                             fullWidth
-                            id="assertiondetails_modifiedDate"
+                            id="backpackDetails_modifiedDate"
                             label="Last Modified"
                             name="modifiedDate"
                             inputProps={{
-                                "data-testid": "assertiondetails_modifiedDate",
+                                "data-testid": "backpackDetails_modifiedDate",
                             }}
                             value={modifiedDate}
                         />
                     </Grid>
 
                     <Grid item xs={12}>
-                    <InputLabel shrink id="assertionDetails_badgeStatus">
-                        Badge Status
-                    </InputLabel>
-                        <Select
-                        variant ="outlined"
-                            labelId="assertionDetails_badgeStatus"
-                            id="assertionDetails_badgeStatus"
-                            name="Badge Status"
-                            fullWidth
-                            label="Badge Status"
-                            inputProps={{
-                                "data-testid": "assertionDetails_badgeStatus",
-                            }}
-                            value={badgeStatus}
-                            onChange={handleBadgeStatusChange}
-                            >
-                            <MenuItem value={'5f776f556289f17659874f2e'}>Applied</MenuItem>
-                            <MenuItem value={'5f776ee06289f17659874f2a'}>Working</MenuItem>
-                            <MenuItem value={'5f776f336289f17659874f2b'}>Rework</MenuItem>
-                            <MenuItem value={'5f776f416289f17659874f2c'}>Approved</MenuItem>
-                            <MenuItem value={'5f776f4c6289f17659874f2d'}>Rejected</MenuItem>
-                        </Select>
-
-
-                        {/* <TextField
+                        <TextField
                             variant="outlined"
                             fullWidth
-                            id="assertionDetails_badgeStatus"
+                            id="backpackDetails_badgeStatus"
                             label="Badge status"
                             name="badge status"
                             inputProps={{
-                                "data-testid": "assertionDetails_badgeStatus",
+                                "data-testid": "backpackDetails_badgeStatus",
                             }}
                             value={badgeStatus}
-                            onChange={handleBadgeStatusChange}
-                        /> */}
+                            
+                        /> 
                     </Grid>
+
                     <Grid item xs={12}>
                         <TextField
                             variant="outlined"
                             fullWidth
-                            id="assertionDetails_badgeIssuedOn"
+                            id="backpackDetails_badgeIssuedOn"
                             label="Issued On"
                             name="issuedOn"
                             inputProps={{
-                                "data-testid": "assertiondetails_badgeIssuedOn",
+                                "data-testid": "backpackDetails_badgeIssuedOn",
                             }}
                             value={badgeIssuedOn}
                         />
                     </Grid>
+
                     <Grid item xs={12}>
                         <TextField
                             variant="outlined"
                             fullWidth
                             name="evidencelink"
                             label="Evidence Link"
-                            id="assertionDetails_evidencelink"
+                            id="backpackDetails_evidencelink"
                             inputProps={{
-                                "data-testid": "assertionDetails_evidencelink",
+                                "data-testid": "backpackDetails_evidencelink",
                             }}
                             value={evidencelink}
-                            onChange={handleBadgeWorkLinkChange}
+
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -293,12 +202,11 @@ return(
                             multiline
                             name="badgeComments"
                             label="Badge Comments"
-                            id="assertionDetails_badgeComments"
+                            id="backpackDetails_badgeComments"
                             inputProps={{
-                                "data-testid": "assertionDetails_badgeComments",
+                                "data-testid": "backpackDetails_badgeComments",
                             }}
                             value={badgeComments}
-                            onChange={handleBadgeCommentsChange}
                         />
                     </Grid>
 
@@ -308,59 +216,31 @@ return(
                             fullWidth
                             name="badgeReviewer"
                             label="Badge Reviewer"
-                            id="assertionDetails_badgeReviewer"
+                            id="backpackDetails_badgeReviewer"
                             inputProps={{
-                                "data-testid": "assertionDetails_badgeReviewer",
+                                "data-testid": "backpackDetails_badgeReviewer",
                             }}
                             value={badgeReviewer}
                         />
                     </Grid>
+
                     <Grid item xs={12}>
                         <TextField
                             variant="outlined"
                             fullWidth
                             name="publicLink"
                             label="Public Link"
-                            id="assertionDetails_publiclink"
+                            id="backpackDetails_publiclink"
                             inputProps={{
-                                "data-testid": "assertionDetails_publiclink",
+                                "data-testid": "backpackDetails_publiclink",
                             }}
                             value={publicLink}
-                            onChange={handlePublicLinkChange}
                         />
                     </Grid>
-                    {/*
-                    <Grid item xs={12}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            name="owners"
-                            label="Owners of Badge"
-                            id="owners"
-                            inputProps={{
-                                "data-testid": "badgeDetails_owners",
-                            }}
-                            value={owners}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            name="reviewers"
-                            label="Reviewers of Badge"
-                            id="reviewers"
-                            inputProps={{
-                                "data-testid": "badgeDetails_reviewers",
-                            }}
-                            value={reviewers}
-                        />
-                    </Grid>
-*/}
 
                 </Grid>
                 <Grid container spacing={1}>
-                    <Grid item xs={12} sm={6}>
+                    {/* <Grid item xs={12} sm={6}>
                         <Button
                             type="submit"
                             fullWidth
@@ -372,7 +252,7 @@ return(
                             onClick={handleSaveAssertion}>
                             Save
                         </Button>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} sm={6}>
                         <Button
                             type="submit"
@@ -380,8 +260,7 @@ return(
                             variant="contained"
                             color="primary"
                             className={classes.submit}
-
-                            data-testid="assertionDetails_backButton" 
+                            data-testid="backpackDetails_backButton" 
                             onClick={handleBackButtonClick}>
 
                             Back
@@ -389,15 +268,10 @@ return(
                     </Grid>
                 </Grid>
 
-                <label>{result}</label>
-                <input type="text" hidden data-testid='assertionDetails_Result' value={result} />
-                <input type="text" hidden data-testid='assertionDetails_userID' value={userID} />
             </div>
         </Container>
     );
 }
-    //   }
-    // }
 };
 
-export default AssertionDetailsForm;
+export default MyBackpackDetailsForm;

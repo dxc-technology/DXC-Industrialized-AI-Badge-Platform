@@ -1,9 +1,14 @@
 const UserDetailByEmailResponse = async(email) => {
     //GET request
-    var url = 'http://127.0.0.1:5000/viewuserdetailsbyemail?email=' + email;
+    var url = 'http://127.0.0.1:5000/viewuserdetailsbyemail';
     return await fetch(url, {
-            method: 'GET',
+            method: 'POST',
             //Request Type
+            body: JSON.stringify({email: email}),
+            headers: {
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            }
         })
         .then((response) => response.json())
         //If response is in json then in success

@@ -12,12 +12,13 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton'
 import AssertionDetailsForm from './AssertionDetailsForm';
 
-const ViewAssertionsForm = () => {
+const ViewAssertionsForm = (props) => {
 
 
   const [response, setresponse] = useState('0');
   const [assertionDetailClick, setAssertionDetailClick] = useState('false');
   const [clickedAssertion, setClickedAssertion] = useState('0');
+  const [email , setEmail] = useState(props.email);
 
   function createData(id, mongoId, user, badgeName, issuedOn, status) {
     return { id, mongoId, user, badgeName, issuedOn, status };
@@ -68,7 +69,7 @@ const ViewAssertionsForm = () => {
     handleviewAssertions()
   }, []);
 
-  if (assertionDetailClick == 'true') { return (<div><AssertionDetailsForm assertionId={clickedAssertion} /></div>); }
+  if (assertionDetailClick == 'true') { return (<div><AssertionDetailsForm assertionId={clickedAssertion} email ={email} /></div>); }
   else {
 
     return (

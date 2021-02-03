@@ -41,7 +41,7 @@ describe('<ViewAssertionsForm />', () => {
 
             var rawDate = 1569978678965;
             var formattedDate = formatDate(rawDate);
-            expect(formattedDate).toEqual('2019-10-01');
+            expect(formattedDate).toEqual('2019-10-02');
 
         });
         it('On clicking editAssertionButton should take to assertion-detail screen', async() => {

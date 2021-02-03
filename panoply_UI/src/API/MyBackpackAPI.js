@@ -1,15 +1,9 @@
-const getViewBadgeByNameResponse = async(badgeName) => {
+const getMyBackpackResponse = async(userID) => {
     //GET request
-    var url = 'http://127.0.0.1:5000/viewbadgewithname';
+    var url = 'http://127.0.0.1:5000/viewallassertionsbyuserid?user=' +userID;
     return await fetch(url, {
             method: 'POST',
-            //body: {"name":badgeName}
-            body: JSON.stringify({name: badgeName}),
-
-            headers: {
-                'Accept':'application/json',
-                'Content-Type':'application/json'
-            }
+           
             //Request Type
         })
         .then((response) => response.json())
@@ -33,4 +27,4 @@ const getViewBadgeByNameResponse = async(badgeName) => {
 
 
 
-export default getViewBadgeByNameResponse;
+export default getMyBackpackResponse;

@@ -129,17 +129,10 @@ describe('<LoginForm />', () => {
         });
 
 
-        {/* it('clears the password field and sets results', () => {
-
-            expect(getByTestId('password').value).toEqual('');
-            expect(getByTestId('result').value).toEqual('success');
-
-        }); */}
-
         it('redirects to landing page',()=>{
                 const userName = screen.queryByText('loginId')
                 expect(userName).toBeNull();
-                expect(getByTestId('landingID')).toHaveValue('');
+                expect(getByTestId('landingID')).toHaveValue('akshay@email.com');
                 const adminSection = screen.queryByText('adminSection');
                 expect(adminSection).toBeNull();
         });
@@ -187,13 +180,54 @@ describe('<LoginForm />', () => {
         it('redirects to landing page',()=>{
                 const userName = screen.queryByText('loginId')
                 expect(userName).toBeNull();
-                expect(getByTestId('landingID')).toHaveValue('');
+                expect(getByTestId('landingID')).toHaveValue('akshay@email.com');
                 const adminSection = screen.queryByText('adminSection');
                 expect(getByTestId('adminSection')).not.toBeNull();
         });
 
 
     });
+
+    describe('clicking the Login button with reviewer username and password', () => {
+        beforeEach(async() => {
+            ({ getByTestId } = render( < LoginForm / > ));
+
+            await userEvent.type(
+                getByTestId('loginId'),
+                'reviewer2@test.com',
+            );
+            await userEvent.type(
+                getByTestId('password'),
+                'test@123',
+            );
+
+
+            expect(getByTestId('loginId')).toHaveValue('reviewer2@test.com');
+            expect(getByTestId('password')).toHaveValue('test@123');
+            userEvent.click(getByTestId('loginButton'));
+
+
+        });
+
+        it('calls the api for login validation', () => {
+
+            getLoginResponse.mockResolvedValue('5fc5567fcd831cc0c83774b8');
+            expect(getLoginResponse).toHaveBeenCalledWith('reviewer2@test.com', 'test@123');
+
+
+        });
+
+        it('redirects to landing page',()=>{
+                const userName = screen.queryByText('loginId')
+                expect(userName).toBeNull();
+                expect(getByTestId('landingID')).toHaveValue('reviewer2@test.com');
+                const reviewerSection = screen.queryByText('reviewerSection');
+                expect(getByTestId('reviewerSection')).not.toBeNull();
+        });
+
+
+    });
+
 
     describe('clicking the register button', () => {
         beforeEach(async() => {
