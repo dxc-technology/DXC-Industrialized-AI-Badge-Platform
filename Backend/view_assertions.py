@@ -19,3 +19,8 @@ def view_all_assertions_by_badge_id(badge_id):
 def view_all_assertions_by_badge_status(badge_status):
     user_doc = database.get_assertions_with_badge_status(badge_status)
     return user_doc
+
+def view_all_assertions_by_reviewer_id(reviewer_id):
+    user_doc = database.view_all_assertions_by_reviewer_id(reviewer_id)
+    print(user_doc)
+    return user_doc

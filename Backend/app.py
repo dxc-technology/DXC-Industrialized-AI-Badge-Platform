@@ -18,7 +18,7 @@ cors = CORS(app)
 
 @app.route("/")
 def home():
-    return "Welcome to Industrialized AI Starter Platform!"
+    return "Hello, Flask!"
 
 
 @app.route("/login", methods=['GET'])
@@ -150,21 +150,29 @@ def view_user_with_email():
     return view_users.view_user_details_by_name(req_body['email'])
 
 
-@app.route("/addbadge", methods=['GET'])
+@app.route("/addbadge", methods=['POST'])
 def add_new_badge():
-    badge_name = str(request.args.get('name'))
-    badge_description = str(request.args.get('description'))
-    createdtime = str(request.args.get('created'))
-    modifiedtime = str(request.args.get('modified'))
-    link = str(request.args.get('link'))
-    user_requestable = str(request.args.get('requestable'))
-    badge_type = str(request.args.get('badgetype'))
-    owner = str(request.args.get('owner'))
-    reviewer = str(request.args.get('reviewer'))
-    icon = str(request.args.get('icon'))
-    evidence = str(request.args.get('evidence'))
-    return create_badge.add_badge(badge_name, badge_description, createdtime, modifiedtime, link, user_requestable,
+    req_body = request.get_json()
+    badge_name = req_body['name']
+    badge_description = req_body['description']
+    link = req_body['link']
+    user_requestable = req_body['requestable']
+    badge_type = req_body['badgetype']
+    owner = req_body['owner']
+    reviewer = req_body['reviewer']
+    icon = req_body['icon']
+    evidence = req_body['evidence']
+    return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
                                   badge_type, owner, reviewer, icon, evidence)
+
+
+@app.route("/passwordreset", methods=['POST'])
+def password_reset():
+    req_body = request.get_json()
+    email_address = req_body['email']
+    password = req_body['password']
+    confirm_password = req_body['confirm_password']
+    return registration.password_reset(email_address, password, confirm_password)
 
 
 @app.route("/viewallassertions", methods=['POST'])
@@ -177,6 +185,10 @@ def view_all_assertions_by_user_id():
     user_id = str(request.args.get('user'))
     return view_assertions.view_all_assertions_by_user_id(user_id)
 
+@app.route("/viewallassertionsbyreviewerid", methods=['POST'])
+def view_all_assertions_by_reviewer_id():
+    req_body = request.get_json()
+    return view_assertions.view_all_assertions_by_reviewer_id(req_body['reviewer'])
 
 @app.route("/viewallassertionsbybadgeid", methods=['POST'])
 def view_all_assertions_by_badge_id():
@@ -256,7 +268,6 @@ def delete_multiple_assertions_user_badge_details_by_user():
         deleted_by_id = req_body['deletedBy']
 
     return user_badge_deactivation.deactivate_user_badge_list_self([assertion_id_list], deleted_by_id)
-
 
 
 @app.route("/updateuserbadgestatus", methods=['POST'])
@@ -339,5 +350,10 @@ def modify_existing_badge():
     return create_badge.modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
                                      icon, evidence)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+@app.route("/sendpasswordresetemail", methods=['GET'])
+def send_password_reset_email():
+    req_body = request.get_json()
+    email_address = req_body['email_address']
+
+    return registration.password_reset_email(email_address)

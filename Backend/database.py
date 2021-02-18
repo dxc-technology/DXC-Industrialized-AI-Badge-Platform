@@ -42,6 +42,7 @@ def get_user_type(user_type):
         user_type_doc = x
     return user_type_doc
 
+
 def get_user_type_details_using_id(user_type_id):
     user_type_doc = {}
     user_type_collection = myDB["User_Type"]
@@ -80,6 +81,20 @@ def update_user_details(email, user_type, first_name, middle_name, second_name, 
     )
 
 
+def update_user_password(email, hashed_password):
+    user_collection = myDB["Users"]
+    user_collection.find_one_and_update(
+        {
+            "email": email
+        },
+        {
+            "$set": {
+                "password": hashed_password, "modified": datetime.now(timezone.utc)
+            }
+        }, upsert=True
+    )
+
+
 def add_new_user(email, password, user_type, created_time_utc, modified_time_utc, first_name, second_name, middle_name,
                  organization_name):
     user_collection = myDB["Users"]
@@ -92,7 +107,9 @@ def add_new_user(email, password, user_type, created_time_utc, modified_time_utc
     new_user_doc = user_collection.insert_one(new_user)
     return str(new_user_doc.inserted_id)
 
+
 USERID = "5f8372f4f05bd4915d4dc86b"
+
 
 def modify_existing_user(first_name, second_name, middle_name, organization_name):
     modified_time_utc = datetime.now(timezone.utc)
@@ -100,12 +117,13 @@ def modify_existing_user(first_name, second_name, middle_name, organization_name
     user_collection.update(
         {"_id": ObjectId(USERID)},
         {
-            "$set": { 
+            "$set": {
                 "modified": modified_time_utc, "firstName": first_name, "secondName": second_name,
                 "middleName": middle_name, "organizationName": organization_name}
-            }, upsert=True
+        }, upsert=True
     )
     return "updated"
+
 
 def get_badge_with_badge_name(badge_name):
     badge_collection = myDB["Badges"]
@@ -189,17 +207,17 @@ def get_all_badges():
     return json, {'content-type': 'application/json'}
 
 
-def get_reviewer_for_badge(badge_name):
-    reviewer_name = {}
-    badge = myDB["Badges"]
-    review = badge.find_one({'name': badge_name}, {
-        'reviewers': 1, "_id": False})
-    reviewer_id = (review['reviewers'])
-    user = myDB["Users"]
-    rewr_id = ObjectId(reviewer_id)
-    user_details = user.find_one({'_id': rewr_id}, {'email': 1, "_id": False})
-    reviewer_name = (user_details['email'])
-    return reviewer_name
+# def get_reviewer_for_badge(badge_name):
+#     reviewer_name = {}
+#     badge = myDB["Badges"]
+#     review = badge.find_one({'name': badge_name}, {
+#         'reviewers': 1, "_id": False})
+#     reviewer_id = (review['reviewers'])
+#     user = myDB["Users"]
+#     rewr_id = ObjectId(reviewer_id)
+#     user_details = user.find_one({'_id': rewr_id}, {'email': 1, "_id": False})
+#     reviewer_name = (user_details['email'])
+#     return reviewer_name
 
 
 def get_owners_for_badge(badge_name):
@@ -339,18 +357,24 @@ def get_badge_status_id(badge_status_id):
     return json, {'content-type': 'application/json'}
 
 
-def insert_new_badge(badge_name, badge_description, utc_created_time, utc_modified_time, link, user_requestable,
-                     badge_type, owner, reviewer, icon, evidence):
+def insert_new_badge(badge_name, badge_description, link, user_requestable,
+                     badge_type, owner_list, reviewer_list, icon, evidence):
     badge_collection = myDB["Badges"]
-    owner_doc = get_user_details(owner)
-    reviewer_doc = get_user_details(reviewer)
+    owner_values = []
+    reviewer_values = []
+    for owner in owner_list:
+        owner_doc = get_user_details(owner)
+        owner_values.append(owner_doc["_id"])
+    for reviewer in reviewer_list:
+        reviewer_doc = get_user_details(reviewer)
+        reviewer_values.append(reviewer_doc["_id"])
     badge_doc = get_badge_type(badge_type)
-    new_badge = {"name": badge_name, "description": badge_description, "created": utc_created_time,
-                 "modified": utc_modified_time, "link": link,
+    new_badge = {"name": badge_name, "description": badge_description, "created": datetime.now(timezone.utc),
+                 "modified": datetime.now(timezone.utc), "link": link,
                  "badgeType": badge_doc["_id"], "userRequestable": user_requestable,
-                 "owners": owner_doc["_id"], "reviewers": reviewer_doc["_id"], "icon": icon, "evidence": evidence}
+                 "owners": owner_values, "reviewers": reviewer_values, "icon": icon, "evidence": evidence}
     if create_badge.validate_badge_input(badge_name, badge_description) == "Valid":
-        badge_collection.insert(new_badge)
+        badge_collection.insert_one(new_badge)
         return "successfully added new badge"
     return "Badge is not added."
 
@@ -447,12 +471,15 @@ def get_assertions_with_user_id(user_id):
         },
         {
             '$match': {
-                'user': ObjectId(user_id)
+                "$and": [
+                    {'user': ObjectId(user_id)},
+                    {"badge_status.badgeStatus": "approved"}
+                ]                
             }
         },
         {
             '$project': {"user_email_address._id": 1, "user_email_address.email": 1, "badge_name.name": 1,
-                         "badge_name.link": 1, "badge_status.badgeStatus": 1, "issuedOn": 1, "_id": 1}
+                         "badge_name.link": 1, "badge_name.icon":1, "badge_status.badgeStatus": 1, "issuedOn": 1, "_id": 1}
         }
     ])
 
@@ -460,6 +487,70 @@ def get_assertions_with_user_id(user_id):
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
+def view_all_assertions_by_reviewer_id(reviewer_id):
+    assertions_collection = myDB["User_Badge_Details"]
+    # query = {"user": user_id}
+    # data = assertions_collection.find(query)
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'user',
+                'foreignField': '_id',
+                'as': 'user_email_address'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'issuer',
+                'foreignField': '_id',
+                'as': 'issuer_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'reviewer',
+                'foreignField': '_id',
+                'as': 'reviewer_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badgeID',
+                'foreignField': '_id',
+                'as': 'badge_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status'
+            }
+        },
+        {
+            '$match': {
+                "$or": [
+                    {'reviewer': ObjectId(reviewer_id)},
+                    { "$and": [ {"reviewer": None}, {"badge_details.reviewers": ObjectId(reviewer_id)}] }
+                ]                
+            }
+        },
+        {
+            '$project': {"user_email_address._id": 1, "user_email_address.email": 1, "badge_name.name": 1,
+                         "badge_name.link": 1, "badge_name.icon":1, "badge_status.badgeStatus": 1, "issuedOn": 1,
+                          "_id": 1, "reviewer": 1}
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
 
 def get_assertions_with_badge_id(badge_id):
     assertions_collection = myDB["Assertions"]
@@ -670,7 +761,8 @@ def get_all_user_badge_details_by_assertion_id(assertion_id):
                          "deleted_by_details.email": 1, "assertionID": 1, "created": 1, "modified": 1, "issuedOn": 1,
                          "workLink": 1, "publicLink": 1, "deletedOn": 1, "comments": 1,
                          "issuer_details._id": 1, "badge_details._id": 1, "badge_details.name": 1,
-                         "badge_status._id": 1, "badge_status.badgeStatus": 1}
+                         "badge_details.description": 1, "badge_details.icon":1, "badge_status._id": 1,
+                         "badge_status.badgeStatus": 1}
         }
     ])
 
@@ -783,7 +875,7 @@ def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, p
             }, upsert=True
         )
         # if assertions_collection.matched_count and user_badge__details_collection.matched_count > 0:
-        return get_all_user_badge_details_by_assertion_id(assertion_id)
+        # return get_all_user_badge_details_by_assertion_id(assertion_id)
     else:
         user_badge__details_collection.find_one_and_update(
             {
@@ -882,19 +974,26 @@ def add_user_badge_mapping(user_id, badge_id, badge_status_id, work_link, assert
     return True
 
 
-def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_requestable,
-                       owner, reviewer, icon, evidence):
-    modified_time_utc = datetime.now(timezone.utc)
-    owner_doc = get_user_details(owner)
-    reviewer_doc = get_user_details(reviewer)
+def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_requestable, owner_list, reviewer_list,
+                       icon, evidence):
+    owner_values = []
+    reviewer_values = []
+    for owner in owner_list:
+        owner_doc = get_user_details(owner)
+        owner_values.append(owner_doc["_id"])
+
+    for reviewer in reviewer_list:
+        reviewer_doc = get_user_details(reviewer)
+        reviewer_values.append(reviewer_doc["_id"])
+
     badge_doc = get_badge_type(badge_type)
     badge_collection = myDB["Badges"]
-    badge_collection.update(
+    badge_collection.find_one_and_update(
         {"name": badge_name},
         {
-            "$set": {"name": badge_name, "description": badge_description, "modified": modified_time_utc, "link": link,
-                     "badgeType": badge_doc["_id"], "userRequestable": user_requestable,
-                     "owners": owner_doc["_id"], "reviewers": reviewer_doc["_id"], "icon": icon, "evidence": evidence}
+            "$set": {"name": badge_name, "description": badge_description, "modified": datetime.now(timezone.utc),
+                     "link": link, "badgeType": badge_doc["_id"], "userRequestable": user_requestable,
+                     "owners": owner_values, "reviewers": reviewer_values, "icon": icon, "evidence": evidence}
         }, upsert=True
     )
     return "updated"
