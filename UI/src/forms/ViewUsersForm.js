@@ -18,13 +18,14 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
-const ViewUsersForm = () => {
+const ViewUsersForm = (props) => {
 
 
   const [response, setresponse] = useState('0');
   const [userDetailClick, setUserDetailClick] = useState('false');
   const [clickedUser, setClickedUser] = useState('');
   const [addUserButtonClick, setAddUserButtonClick] = useState('false');
+  const [userID, setUserID]=useState(props.userID)
 
   function createData(id, mongoId, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName) {
     return { id, mongoId, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName};
@@ -78,7 +79,7 @@ const ViewUsersForm = () => {
 
 if (addUserButtonClick =='true') { return (<div><AddUserForm/></div>);}
 else{
-  if (userDetailClick == 'true') { return (<div><UserDetailsForm email={clickedUser} /></div>); }
+  if (userDetailClick == 'true') { return (<div><UserDetailsForm email={clickedUser} userID={userID}/></div>); }
   else {
 
     return (

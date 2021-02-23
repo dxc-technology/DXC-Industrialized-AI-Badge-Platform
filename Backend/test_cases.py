@@ -18,7 +18,9 @@ VALID_EMAIL = "akshay@gmail.com"
 VALID_EMAIL_1 = "srikanth123@gmail.com"
 VALID_USER_TYPE = "5f760d3425c1036d4d46655f"
 VALID_USER_TYPE_1 = "5f760d4325c1036d4d466560"
-VALID_ADMIN_USER = "5fc4660343f61677634e1128"
+# VALID_ADMIN_USER = "5fc4660343f61677634e1128"
+VALID_ADMIN_USER = "5fa9d9eff897b5482159b6a7"
+# 5fa9d9eff897b5482159b6a7
 utc_created_time = datetime.now(timezone.utc)
 utc_modified_time = datetime.now(timezone.utc)
 BADGE_NAME = "Create%20a%20Data%20Story"
@@ -26,6 +28,8 @@ BADGE_NAME_AI_DATA = "Build%20AI%20Data%20Pipelines"
 VALID = "valid"
 INVALID = "invalid"
 INVALID_USER_TYPE_MESSAGE = "invalid user type"
+INVALID_USER_STATUS_MESSAGE = r"invalid user status"
+
 ADMIN = "admin"
 REGULAR = "regular"
 VALID_USER_ID = "5f96641d67f54726880f8cc0"
@@ -193,8 +197,8 @@ class DatabaseTest(unittest.TestCase):
     def test_badge_collection_has_data(self):
         assert database.count_badges() > 0
 
-    def test_badge_collection_with_reviewer_has_data(self):
-        assert len(database.get_reviewer_for_badge("Create a Data Story")) > 0
+    # def test_badge_collection_with_reviewer_has_data(self):
+    #     assert len(database.get_reviewer_for_badge("Create a Data Story")) > 0
 
     def test_badge_collection_with_owner_has_data(self):
         assert len(database.get_owners_for_badge(
@@ -398,6 +402,18 @@ class EndpointTest(unittest.TestCase):
         data = response.get_data()
         self.assertIsNot("5f83c8aa8f7fa4485c16fafc", str(data))
 
+    def test_view_all_assertions_by_reviewer_id(self):
+        info = {'reviewer': "5f75fd8325c1036d4d466558"}
+        resp = self.app.post("http://127.0.0.1:5000/viewallassertionsbyreviewerid", json=info)
+        data = resp.get_data()
+        self.assertIn("5f75fd8325c1036d4d466558", str(data))
+
+    def test_view_all_assertions_by_not_a_valid_reviewer_id(self):
+        info = {'reviewer': "5f75fd8325c1036d4d466518"}
+        resp = self.app.post("http://127.0.0.1:5000/viewallassertionsbyreviewerid", json=info)
+        data = resp.get_data()
+        self.assertIsNot("5f75fd8325c1036d4d466518", str(data))
+
     def test_view_all_user_badge_details(self):
         response = self.app.post(
             'http://127.0.0.1:5000/viewalluserbadgedetails')
@@ -512,6 +528,7 @@ class EndpointTest(unittest.TestCase):
         self.assertIn('Requesting user is not an admin', str(data))
 
         ##
+
     def test_delete_assertions_user_badge_collection_endpoint_for_invalid_assertion_id_by_user(self):
         info = {'assertionID': [INVALID_ASSERTION_ID], 'deletedBy': VALID_USER_ID}
         resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesListByUser", json=info)
@@ -614,14 +631,14 @@ class EndpointTest(unittest.TestCase):
 
     def test_check_for_empty_first_name_in_update_user_details(self):
         info = {'email': VALID_EMAIL, 'firstName': "", 'secondName': 'Potter', 'middleName': 'James',
-                'organizationName': 'DXC', 'adminId': VALID_ADMIN_USER, 'userType': ADMIN}
+                'organizationName': 'DXC', 'adminId': VALID_ADMIN_USER, 'userType': ADMIN, 'userStatus': "active"}
         resp = self.app.post("http://127.0.0.1:5000/updateuser", json=info)
         data = resp.get_data()
         self.assertIn(INVALID, str(data))
 
     def test_check_for_email_not_exist_in_update_user_details(self):
         info = {'email': 'harrypotter@dxc.com', 'firstName': "Harry", 'secondName': 'Potter', 'middleName': 'James',
-                'organizationName': 'DXC', 'adminId': VALID_ADMIN_USER, 'userType': ADMIN}
+                'organizationName': 'DXC', 'adminId': VALID_ADMIN_USER, 'userType': ADMIN, 'userStatus': "active"}
         resp = self.app.post("http://127.0.0.1:5000/updateuser", json=info)
         data = resp.get_data()
         self.assertIn("email does not exist", str(data))
@@ -648,27 +665,33 @@ class EndpointTest(unittest.TestCase):
         self.assertIn(INVALID, str(data))
 
 
-class AssignMajorBadgeToUsers(unittest.TestCase):
-    def test_check_for_valid_assertion_id(self):
-        assert user_badge_mapping.update_user_badge_status(
-            INVALID_ASSERTION_ID, VALID_ADMIN_USER, VALID_BADGE_STATUS, "comments") == "Assertion ID is not valid"
+# class AssignMajorBadgeIndustrializedAiDataEngineer(unittest.TestCase):
+#     def test_check_for_necessary_approved_badges(self):
+#         assert user_badge_mapping.validate_and_update_major_badge_industrialized_ai_data_engineer(
+#             "6009e2241637bdd807a6aefc") == 1
 
-    def test_check_for_valid_assertion_id_is_valid_not_present_in_db(self):
-        assert user_badge_mapping.update_user_badge_status(
-            INVALID_ASSERTION_ID_1, VALID_ADMIN_USER,
-            VALID_BADGE_STATUS, "comments") == "Assertion ID not Present in User collection DB"
 
-    def test_check_valid_badge_status_id(self):
-        assert user_badge_mapping.update_user_badge_status(
-            VALID_ASSERTION_ID,
-            VALID_ADMIN_USER,
-            INVALID_ASSERTION_ID, "comments") == "Badge Status ID is not valid"
-
-    def test_check_valid_badge_status_id_in_db(self):
-        assert user_badge_mapping.update_user_badge_status(
-            VALID_ASSERTION_ID,
-            VALID_ADMIN_USER,
-            INVALID_ASSERTION_ID_1, "comments") == "Badge Status ID not Present in Badge status collection"
+# class AssignMajorBadgeToUsers(unittest.TestCase):
+#     def test_check_for_valid_assertion_id(self):
+#         assert user_badge_mapping.update_user_badge_status(
+#             INVALID_ASSERTION_ID, VALID_ADMIN_USER, VALID_BADGE_STATUS, "comments") == "Assertion ID is not valid"
+#
+#     def test_check_for_valid_assertion_id_is_valid_not_present_in_db(self):
+#         assert user_badge_mapping.update_user_badge_status(
+#             INVALID_ASSERTION_ID_1, VALID_ADMIN_USER,
+#             VALID_BADGE_STATUS, "comments") == "Assertion ID not Present in User collection DB"
+#
+#     def test_check_valid_badge_status_id(self):
+#         assert user_badge_mapping.update_user_badge_status(
+#             VALID_ASSERTION_ID,
+#             VALID_ADMIN_USER,
+#             INVALID_ASSERTION_ID, "comments") == "Badge Status ID is not valid"
+#
+#     def test_check_valid_badge_status_id_in_db(self):
+#         assert user_badge_mapping.update_user_badge_status(
+#             VALID_ASSERTION_ID,
+#             VALID_ADMIN_USER,
+#             INVALID_ASSERTION_ID_1, "comments") == "Badge Status ID not Present in Badge status collection"
 
 
 class UpdateUserBadgeMapping(unittest.TestCase):
@@ -782,6 +805,7 @@ class DeleteUserBadgeListByAdmin(unittest.TestCase):
     def test_check_for_assertion_id_deleted_status(self):
         assert user_badge_deactivation.deactivate_user_badge_list_admin(
             [VALID_ASSERTION_ID], VALID_ADMIN_USER) == "Record is already deleted"
+
 
 class DeleteUserBadgeListByUser(unittest.TestCase):
 
@@ -966,29 +990,38 @@ class UpdateUserTest(unittest.TestCase):
 
     def test_user_registration_empty_first_name(self):
         assert create_users.update_user_by_admin(
-            VALID_EMAIL, "", "Potter", "James", "DXC", VALID_USER_ID, ADMIN) == INVALID
+            VALID_EMAIL, "", "Potter", "James", "DXC", VALID_USER_ID, ADMIN, "active") == INVALID
 
     def test_user_registration_empty_second_name(self):
         assert create_users.update_user_by_admin(
-            VALID_EMAIL, "Harry", "", "James", "DXC", VALID_USER_ID, ADMIN) == INVALID
+            VALID_EMAIL, "Harry", "", "James", "DXC", VALID_USER_ID, ADMIN, "active") == INVALID
 
     def test_user_registration_empty_email_address(self):
         assert create_users.update_user_by_admin(
-            "", "Harry", "Potter", "James", "DXC", VALID_USER_ID, ADMIN) == INVALID
+            "", "Harry", "Potter", "James", "DXC", VALID_USER_ID, ADMIN, "active") == INVALID
+
+    def test_user_registration_empty_user_status(self):
+        assert create_users.update_user_by_admin(
+            "VALID_EMAIL", "Harry", "Potter", "James", "DXC", VALID_USER_ID, ADMIN, "") == INVALID
 
     def test_user_registration_invlalid_user_type(self):
         assert create_users.update_user_by_admin(
             VALID_EMAIL, "Harry", "Potter", "James", "DXC", VALID_USER_ID,
-            "ADMIN1") == INVALID_USER_TYPE_MESSAGE
+            "ADMIN1", "active") == INVALID_USER_TYPE_MESSAGE
+
+    def test_user_registration_invlalid_user_status(self):
+        assert create_users.update_user_by_admin(
+            VALID_EMAIL, "Harry", "Potter", "James", "DXC", VALID_USER_ID,
+            "admin", "active1") == INVALID_USER_STATUS_MESSAGE
 
     def test_user_registration_validate_login_id_for_admin(self):
         assert create_users.update_user_by_admin(
             VALID_EMAIL, "Harry", "Potter", "James", "DXC", VALID_USER_ID,
-            ADMIN) == "Requesting user is not an admin to update the user"
+            ADMIN, "active") == "Requesting user is not an admin to update the user"
 
     def test_email_address_not_exist_already_in_database(self):
         assert create_users.update_user_by_admin("harrypotter@dxc.com", "Harry", "Potter", "James", "DXC",
-                                                 VALID_USER_ID, ADMIN) == "email does not exist"
+                                                 VALID_USER_ID, ADMIN, "active") == "email does not exist"
 
 
 class NewUserTest(unittest.TestCase):
@@ -1107,6 +1140,10 @@ class ViewAssertionsTest(unittest.TestCase):
     def test_assertions_by_badge_status_not_available(self):
         self.assertIsNot("5f776f416289f17659874f1c", str(
             view_assertions.view_all_assertions_by_badge_status("5f776f416289f17659874f1c")))
+
+    def test_assertions_by_reviewerid(self):
+        self.assertIn("5f75fd8325c1036d4d466558", str(
+            view_assertions.view_all_assertions_by_reviewer_id("5f75fd8325c1036d4d466558")))
 
 
 class ViewUserBadgeDetailsTest(unittest.TestCase):

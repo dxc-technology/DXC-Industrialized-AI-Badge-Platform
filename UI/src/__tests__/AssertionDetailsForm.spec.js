@@ -7,11 +7,11 @@ import getAssertionDetailByIdResponse from '../API/AssertionDetailsByIdAPI';
 import AssertionDetailsForm from '../forms/AssertionDetailsForm';
 import formatDate from '../scripts/functions';
 import updateAssertionResponse from '../API/UpdateAssertionAPI';
-import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
+// import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 import updateUserBadgeStatusResponse from '../API/UpdateUserBadgeStatusAPI';
 
 jest.mock('../API/UpdateAssertionAPI');
-jest.mock('../API/UserDetailsByEmailAPI');
+// jest.mock('../API/UserDetailsByEmailAPI');
 
 jest.mock('../API/AssertionDetailsByIdAPI');
 jest.mock('../API/UpdateUserBadgeStatusAPI');
@@ -45,9 +45,9 @@ describe('<AssertionDetailsForm />', () => {
             
             expect(getByTestId('assertionDetails_badgeName').value).toEqual('Create a Data Story');
             expect(getByTestId('assertionDetails_badgeRecipient').value).toEqual('srikanth123@gmail.com');
-            expect(getByTestId('assertiondetails_modifiedDate').value).toEqual('2020-11-17');
+            expect(getByTestId('assertiondetails_modifiedDate').value).toEqual('11-16-2020');
             expect(getByTestId('assertionDetails_badgeStatus').value).toEqual('5f776f416289f17659874f2c');
-            expect(getByTestId('assertiondetails_badgeIssuedOn').value).toEqual('2020-11-17');
+            expect(getByTestId('assertiondetails_badgeIssuedOn').value).toEqual('11-16-2020');
             expect(getByTestId('assertionDetails_evidencelink').value).toEqual('work link');
             expect(getByTestId('assertionDetails_badgeComments').value).toEqual('comments123');
             expect(getByTestId('assertionDetails_badgeReviewer').value).toEqual('srikanth123@gmail.com');
@@ -107,9 +107,9 @@ describe('<AssertionDetailsForm />', () => {
             
             expect(getByTestId('assertionDetails_badgeName').value).toEqual('Create a Data Story');
             expect(getByTestId('assertionDetails_badgeRecipient').value).toEqual('srikanth123@gmail.com');
-            expect(getByTestId('assertiondetails_modifiedDate').value).toEqual('2020-11-17');
+            expect(getByTestId('assertiondetails_modifiedDate').value).toEqual('11-16-2020');
             expect(getByTestId('assertionDetails_badgeStatus').value).toEqual('5f776f416289f17659874f2c');
-            expect(getByTestId('assertiondetails_badgeIssuedOn').value).toEqual('2020-11-17');
+            expect(getByTestId('assertiondetails_badgeIssuedOn').value).toEqual('11-16-2020');
             expect(getByTestId('assertionDetails_evidencelink').value).toEqual('work link');
             expect(getByTestId('assertionDetails_badgeComments').value).toEqual('comments123');
             expect(getByTestId('assertionDetails_badgeReviewer').value).toEqual('srikanth123@gmail.com');

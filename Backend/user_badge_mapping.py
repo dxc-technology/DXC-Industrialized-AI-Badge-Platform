@@ -4,6 +4,8 @@ import database
 
 ADMIN_USER_TYPE_OID = "5f760d4325c1036d4d466560"
 REVIEWER_USER_TYPE_OID = "5fc5567fcd831cc0c83774b8"
+BADGE_STATUS_APPLIED = "5f776f556289f17659874f2e"
+VALID_ADMIN_USER = "5fa9d9eff897b5482159b6a7"
 
 # BADGES OID
 CREATE_DATA_STORY = "5f83c8aa8f7fa4485c16faec"
@@ -95,6 +97,7 @@ def validate_user_id_for_admin(admin_id):
         return "Requesting user is not an admin"
     return True
 
+
 def validate_user_id_for_self(user_id):
     if not ObjectId.is_valid(user_id):
         return "User ID is not valid"
@@ -140,25 +143,111 @@ def validate_issuer_id_for_admin_reviewer(issuer_id):
     return True
 
 
-# def validate_and_update_major_badges(user_id):
-# assertion_details_create_data_story = database.get_assertions_with_user_id_and_badge_id(user_id, CREATE_DATA_STORY)
-# assertion_details_ai_data_pipelines = database.get_assertions_with_user_id_and_badge_id(user_id,
-#                                                                                         BUILD_AI_DATA_PIPELINES)
-# assertion_details_agile_transformation = database.get_assertions_with_user_id_and_badge_id(user_id,
-#                                                                                            RUN_AGILE_TRANSFORMATION)
-# assertion_details_ai_leader = database.get_assertions_with_user_id_and_badge_id(user_id, INDUSTRIALIZED_AI_LEADER)
-# assertion_details_ai_experiment = database.get_assertions_with_user_id_and_badge_id(user_id, RUN_AI_EXPERIMENT)
-# assertion_details_ai_forensics = database.get_assertions_with_user_id_and_badge_id(user_id, PERFORM_AI_FORENSICS)
-# assertion_details_ai_data_scientist = database.get_assertions_with_user_id_and_badge_id(
-#     user_id, INDUSTRIALIZED_AI_DATA_SCIENTIST)
-# assertion_details_utility_services = database.get_assertions_with_user_id_and_badge_id(user_id,
-#                                                                                        BUILD_AI_UTILITY_SERVICES)
-# assertion_details_ai_data_engineer = database.get_assertions_with_user_id_and_badge_id(
-#     user_id, INDUSTRIALIZED_AI_DATA_ENGINEER)
-# assertion_detailsai_data_master = database.get_assertions_with_user_id_and_badge_id(user_id,
-#                                                                                     INDUSTRIALIZED_AI_DATA_MASTER)
+def validate_and_update_major_badge_industrialized_ai_data_engineer(user_id):
+    if validate_user_id_for_self(user_id):
+        assertion_details_ai_data_pipelines = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, BUILD_AI_DATA_PIPELINES)
+        assertion_details_utility_services = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, BUILD_AI_UTILITY_SERVICES)
+        if assertion_details_ai_data_pipelines is not None and assertion_details_utility_services is not None:
+            if len(assertion_details_ai_data_pipelines[0]) > 2 and len(assertion_details_utility_services[0]) > 2:
+                add_badge_to_user(user_id, INDUSTRIALIZED_AI_DATA_ENGINEER, BADGE_STATUS_APPLIED, "work link",
+                                  VALID_ADMIN_USER, "comments")
+                return "Badge added to the user"
+        return "user is not eligible"
+    return validate_user_id_for_self(user_id)
 
-# if len(assertion_details_ai_data_pipelines[0]) > 2 and len(assertion_details_utility_services[0]) > 2:
+
+def validate_and_update_major_badge_industrialized_ai_data_scientist(user_id):
+    if validate_user_id_for_self(user_id):
+        assertion_details_ai_experiment = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, RUN_AI_EXPERIMENT)
+        assertion_details_ai_forensics = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, PERFORM_AI_FORENSICS)
+
+        if assertion_details_ai_forensics is not None and assertion_details_ai_experiment is not None:
+            if len(assertion_details_ai_experiment[0]) > 2 and len(assertion_details_ai_forensics[0]) > 2:
+                add_badge_to_user(user_id, INDUSTRIALIZED_AI_DATA_SCIENTIST, BADGE_STATUS_APPLIED, "work link",
+                                  VALID_ADMIN_USER, "comments")
+                return "Badge added to the user"
+        return "user is not eligible"
+    return validate_user_id_for_self(user_id)
+
+
+def validate_and_update_major_badge_industrialized_ai_leader(user_id):
+    if validate_user_id_for_self(user_id):
+        assertion_details_create_data_story = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, CREATE_DATA_STORY)
+        assertion_details_agile_transformation = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, RUN_AGILE_TRANSFORMATION)
+        if assertion_details_agile_transformation is not None and assertion_details_create_data_story is not None:
+            if len(assertion_details_create_data_story[0]) > 2 and len(assertion_details_agile_transformation[0]) > 2:
+                add_badge_to_user(user_id, INDUSTRIALIZED_AI_LEADER, BADGE_STATUS_APPLIED, "work link",
+                                  VALID_ADMIN_USER, "comments")
+                return "Badge added to the user"
+        return "user is not eligible"
+    return validate_user_id_for_self(user_id)
+
+
+def validate_and_update_major_badge_industrialized_ai_master(user_id):
+    if validate_user_id_for_self(user_id):
+        assertion_details_create_data_story = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, CREATE_DATA_STORY)
+        assertion_details_ai_data_pipelines = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, BUILD_AI_DATA_PIPELINES)
+        assertion_details_ai_experiment = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, RUN_AI_EXPERIMENT)
+        assertion_details_ai_forensics = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, PERFORM_AI_FORENSICS)
+        assertion_details_utility_services = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, BUILD_AI_UTILITY_SERVICES)
+        assertion_details_agile_transformation = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, RUN_AGILE_TRANSFORMATION)
+
+        assertion_details_ai_data_engineer = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, INDUSTRIALIZED_AI_DATA_ENGINEER)
+        assertion_details_ai_data_scientist = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, INDUSTRIALIZED_AI_DATA_SCIENTIST)
+        assertion_details_ai_leader = database. \
+            get_assertions_with_user_id_and_badge_id(user_id, INDUSTRIALIZED_AI_LEADER)
+
+        if assertion_details_create_data_story is not None and assertion_details_ai_data_pipelines is not None and \
+                assertion_details_ai_experiment is not None and assertion_details_ai_forensics is not None and \
+                assertion_details_utility_services is not None and assertion_details_agile_transformation is not None \
+                and assertion_details_ai_data_engineer is not None and assertion_details_ai_data_scientist is not None \
+                and assertion_details_ai_leader is not None:
+            if len(assertion_details_ai_data_pipelines[0]) > 2 and len(
+                    assertion_details_utility_services[0]) > 2 and len(assertion_details_ai_experiment[0]) > 2 and len(
+                assertion_details_ai_forensics[0]) > 2 and len(assertion_details_create_data_story[0]) > 2 and len(
+                assertion_details_agile_transformation[0]) > 2 and len(
+                assertion_details_ai_data_engineer[0]) > 2 and len(assertion_details_ai_data_scientist[0]) > 2 and \
+                    len(assertion_details_ai_leader[0]) > 2:
+                add_badge_to_user(user_id, INDUSTRIALIZED_AI_DATA_MASTER, BADGE_STATUS_APPLIED, "work link",
+                                  VALID_ADMIN_USER, "comments")
+                return "Badge added to the user"
+        return "user is not eligible"
+    return "not a valid user id"
+
+
+def validate_and_update_major_badges(user_id):
+    assertion_details_create_data_story = database.get_assertions_with_user_id_and_badge_id(user_id, CREATE_DATA_STORY)
+    assertion_details_ai_data_pipelines = database.get_assertions_with_user_id_and_badge_id(user_id,
+                                                                                            BUILD_AI_DATA_PIPELINES)
+    assertion_details_agile_transformation = database.get_assertions_with_user_id_and_badge_id(user_id,
+                                                                                               RUN_AGILE_TRANSFORMATION)
+    assertion_details_ai_leader = database.get_assertions_with_user_id_and_badge_id(user_id, INDUSTRIALIZED_AI_LEADER)
+    assertion_details_ai_experiment = database.get_assertions_with_user_id_and_badge_id(user_id, RUN_AI_EXPERIMENT)
+    assertion_details_ai_forensics = database.get_assertions_with_user_id_and_badge_id(user_id, PERFORM_AI_FORENSICS)
+    assertion_details_ai_data_scientist = database.get_assertions_with_user_id_and_badge_id(
+        user_id, INDUSTRIALIZED_AI_DATA_SCIENTIST)
+    assertion_details_utility_services = database.get_assertions_with_user_id_and_badge_id(user_id,
+                                                                                           BUILD_AI_UTILITY_SERVICES)
+    assertion_details_ai_data_engineer = database.get_assertions_with_user_id_and_badge_id(
+        user_id, INDUSTRIALIZED_AI_DATA_ENGINEER)
+    assertion_detailsai_data_master = database.get_assertions_with_user_id_and_badge_id(user_id,
+                                                                                        INDUSTRIALIZED_AI_DATA_MASTER)
+
+    # if len(assertion_details_ai_data_pipelines[0]) > 2 and len(assertion_details_utility_services[0]) > 2:
 
 
 def update_user_badge_status(assertion_id, issuer_id, badge_status_id, comments):
@@ -199,6 +288,7 @@ def deleted_user_badge_collection_for_assertion_id(assertion_id, deleted_by_user
 
     return database.delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_by_user_id)
 
+
 def deleted_user_badge_collection_for_assertion_id_by_user(assertion_id, deleted_by_user_id):
     if validate_assertion_id(assertion_id) == "Assertion ID is not valid":
         return "Assertion ID is not valid"
@@ -210,13 +300,14 @@ def deleted_user_badge_collection_for_assertion_id_by_user(assertion_id, deleted
         return "User ID not Present in User collection DB"
     user_badge_json_val = database.get_all_user_badge_details_by_assertion_id(assertion_id)
     user_badge_json_dict = json.loads(user_badge_json_val[0])
-    #print(user_badge_json_dict[0]['user_details'][0]['_id']['$oid'])
+    # print(user_badge_json_dict[0]['user_details'][0]['_id']['$oid'])
     if user_badge_json_dict[0]['user_details'][0]['_id']['$oid'] != deleted_by_user_id:
         return "User can only delete self badges aquired"
     if user_badge_json_dict[0]['deletedOn'] is not None and user_badge_json_dict[0]['deletedOn'] != "":
         return "Record is already deleted"
-    
+
     return database.delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_by_user_id)
+
 
 def validate_and_update__user_badge_mapping_and_assertions(assertion_id, badge_status_id, work_link, comments,
                                                            public_link, user_id):

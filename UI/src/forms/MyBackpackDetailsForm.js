@@ -13,6 +13,7 @@ import CardMembershipOutlinedIcon from '@material-ui/icons/CardMembershipOutline
 import MyBackpackForm from './MyBackpackForm';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import getLinkedInResponse from '../API/AddLinkedInCertificateAPI';
+import LaunchIcon from '@material-ui/icons/Launch';
 
 const MyBackpackDetailsForm = (props) => {
 
@@ -65,6 +66,12 @@ const MyBackpackDetailsForm = (props) => {
         },
         submit: {
             margin: theme.spacing(3, 0, 2),
+        },
+        innerText :{
+            width :'90%',
+        },
+        innerLogo :{
+            width :'10%',
         },
     }));
 
@@ -143,13 +150,16 @@ return(
                 <img src={badgeIcon} width="150"/>
                 </Typography>
                 
-                <Avatar className={classes.avatar_additional} data-testid="backpackDetails_linkedIn"  onClick={handleLinkedIn}>
+                {/* <Avatar className={classes.avatar_additional} data-testid="backpackDetails_linkedIn"  onClick={handleLinkedIn}>
                     <LinkedInIcon/>
-                    </Avatar>
+                    </Avatar> */}
                     </div>
                 
                 <Typography component="h1" variant="h5" >
                     Assertion Details
+                    <Avatar className={classes.avatar_additional} data-testid="backpackDetails_linkedIn"  onClick={handleLinkedIn}>
+                    <LinkedInIcon/>
+                    </Avatar>
                 </Typography>
                
                 <br></br>
@@ -270,12 +280,12 @@ return(
                             value={badgeReviewer}
                         />
                     </Grid>
-
-                    <Grid item xs={12}>
+                    
+                    <Grid container item xs={12}>
                         <TextField
                             variant="outlined"
-                            fullWidth
                             name="publicLink"
+                            className={classes.innerText}
                             label="Public Link"
                             id="backpackDetails_publiclink"
                             inputProps={{
@@ -283,6 +293,9 @@ return(
                             }}
                             value={publicLink}
                         />
+                           <LaunchIcon className={classes.innerLogo} onClick={() => window.open(publicLink, "_blank")}/>
+                   
+                      
                     </Grid>
 
                 </Grid>

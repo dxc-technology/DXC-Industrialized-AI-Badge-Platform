@@ -36,7 +36,7 @@ describe('<BadgeDetailsForm />', () => {
         it('should properly assert the date to normal date time',async()=>{
             var rawDate = 1601524800000;
             var formattedDate = formatDate(rawDate);
-            expect(formattedDate).toEqual('2020-10-01');
+            expect(formattedDate).toEqual('10-01-2020');
         });
 
         it('should populate fields', () => {
@@ -48,8 +48,8 @@ describe('<BadgeDetailsForm />', () => {
             expect(getByTestId('badgeDetails_owners').value).toEqual('akshay@gmail.com');
             expect(getByTestId('badgeDetails_reviewers').value).toEqual('akshay@gmail.com');
             expect(getByTestId('badgeDetails_badgeType').value).toEqual('Open Badge');
-            expect(getByTestId('badgedetails_createdDate').value).toEqual('2020-10-01');
-            expect(getByTestId('badgeDetails_modifiedDate').value).toEqual('2020-10-01');
+            expect(getByTestId('badgedetails_createdDate').value).toEqual('10-01-2020');
+            expect(getByTestId('badgeDetails_modifiedDate').value).toEqual('10-01-2020');
 
 
         });
@@ -94,7 +94,7 @@ describe('<BadgeDetailsForm />', () => {
         it('should properly assert the date to normal date time',async()=>{
             var rawDate = 1601524800000;
             var formattedDate = formatDate(rawDate);
-            expect(formattedDate).toEqual('2020-10-01');
+            expect(formattedDate).toEqual('10-01-2020');
         });
 
         it('should populate fields', () => {
@@ -106,8 +106,8 @@ describe('<BadgeDetailsForm />', () => {
             expect(getByTestId('badgeDetails_owners').value).toEqual('akshay@gmail.com');
             expect(getByTestId('badgeDetails_reviewers').value).toEqual('akshay@gmail.com');
             expect(getByTestId('badgeDetails_badgeType').value).toEqual('Open Badge');
-            expect(getByTestId('badgedetails_createdDate').value).toEqual('2020-10-01');
-            expect(getByTestId('badgeDetails_modifiedDate').value).toEqual('2020-10-01');
+            expect(getByTestId('badgedetails_createdDate').value).toEqual('10-01-2020');
+            expect(getByTestId('badgeDetails_modifiedDate').value).toEqual('10-01-2020');
         });
 
         it('admin can edit the fields and save the changes',async()=>{

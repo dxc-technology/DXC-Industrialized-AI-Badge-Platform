@@ -16,6 +16,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import LandingForm from './LandingForm';
+import formatTimeStamp from '../scripts/functions'
+import formatDate from '../scripts/functions';
 // import '../index.css'; 
 
 const LoginForm = (props) => {
@@ -245,6 +247,13 @@ const LoginForm = (props) => {
                 </label>
                 
   {/* </form> */}
+  {/* <input
+  type='text'
+  value={formatTimeStamp(1605553582964)}
+
+  /> */}
+
+
 </div>
 
 </Container>

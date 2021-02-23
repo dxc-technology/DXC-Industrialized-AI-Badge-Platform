@@ -4,6 +4,7 @@ import getViewAssertionsResponse from '../API/ViewAssertionsAPI';
 import ViewAssertionsForm from '../forms/ViewAssertionsForm';
 import { screen } from '@testing-library/dom';
 import formatDate from '../scripts/functions';
+import {formatTimestamp} from '../scripts/functions';
 import userEvent from '@testing-library/user-event';
 
 jest.mock('../API/ViewAssertionsAPI')
@@ -41,7 +42,7 @@ describe('<ViewAssertionsForm />', () => {
 
             var rawDate = 1569978678965;
             var formattedDate = formatDate(rawDate);
-            expect(formattedDate).toEqual('2019-10-01');
+            expect(formattedDate).toEqual('10-01-2019');
 
         });
         it('On clicking editAssertionButton should take to assertion-detail screen', async() => {

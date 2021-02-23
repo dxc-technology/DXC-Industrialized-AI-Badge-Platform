@@ -333,7 +333,7 @@ const classes = useStyles();
             {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={fixedHeightPaper}>
-               {clickedItem=='ViewUsersForm'?(<ViewUsersForm/>):
+               {clickedItem=='ViewUsersForm'?(<ViewUsersForm userID={userID}/>):
                (clickedItem=='ViewAssertionsForm'?(<ViewAssertionsForm email={email} userType={userType} userID={userID}/>):
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType} userID={userID}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):

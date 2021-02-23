@@ -18,7 +18,7 @@ cors = CORS(app)
 
 @app.route("/")
 def home():
-    return "Welcome to Industrialized AI Starter Platform!"
+    return "Hello, Flask!"
 
 
 @app.route("/login", methods=['GET'])
@@ -61,7 +61,6 @@ def register_user():
     return registration.register(new_email, new_password, new_user_type, first_name, second_name, middle_name,
                                  organization_name)
 
-
 @app.route("/updateuser", methods=['POST'])
 def update_user_details():
     req_body = request.get_json()
@@ -72,9 +71,12 @@ def update_user_details():
     organization_name = req_body['organizationName']
     admin_id = req_body['adminId']
     user_type = req_body['userType']
+    user_status = req_body['userStatus']
 
-    return create_users.update_user_by_admin(email, first_name, second_name, middle_name, organization_name, admin_id,
-                                             user_type)
+
+    return create_users.update_user_by_admin(email, first_name, second_name, middle_name, organization_name,
+                                             admin_id, user_type, user_status)
+
 
 
 @app.route("/createuser", methods=['GET'])
@@ -150,21 +152,29 @@ def view_user_with_email():
     return view_users.view_user_details_by_name(req_body['email'])
 
 
-@app.route("/addbadge", methods=['GET'])
+@app.route("/addbadge", methods=['POST'])
 def add_new_badge():
-    badge_name = str(request.args.get('name'))
-    badge_description = str(request.args.get('description'))
-    createdtime = str(request.args.get('created'))
-    modifiedtime = str(request.args.get('modified'))
-    link = str(request.args.get('link'))
-    user_requestable = str(request.args.get('requestable'))
-    badge_type = str(request.args.get('badgetype'))
-    owner = str(request.args.get('owner'))
-    reviewer = str(request.args.get('reviewer'))
-    icon = str(request.args.get('icon'))
-    evidence = str(request.args.get('evidence'))
-    return create_badge.add_badge(badge_name, badge_description, createdtime, modifiedtime, link, user_requestable,
+    req_body = request.get_json()
+    badge_name = req_body['name']
+    badge_description = req_body['description']
+    link = req_body['link']
+    user_requestable = req_body['requestable']
+    badge_type = req_body['badgetype']
+    owner = req_body['owner']
+    reviewer = req_body['reviewer']
+    icon = req_body['icon']
+    evidence = req_body['evidence']
+    return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
                                   badge_type, owner, reviewer, icon, evidence)
+
+
+@app.route("/passwordreset", methods=['POST'])
+def password_reset():
+    req_body = request.get_json()
+    email_address = req_body['email']
+    password = req_body['password']
+    confirm_password = req_body['confirm_password']
+    return registration.password_reset(email_address, password, confirm_password)
 
 
 @app.route("/viewallassertions", methods=['POST'])
@@ -176,6 +186,12 @@ def view_all_assertions():
 def view_all_assertions_by_user_id():
     user_id = str(request.args.get('user'))
     return view_assertions.view_all_assertions_by_user_id(user_id)
+
+
+@app.route("/viewallassertionsbyreviewerid", methods=['POST'])
+def view_all_assertions_by_reviewer_id():
+    req_body = request.get_json()
+    return view_assertions.view_all_assertions_by_reviewer_id(req_body['reviewer'])
 
 
 @app.route("/viewallassertionsbybadgeid", methods=['POST'])
@@ -258,7 +274,6 @@ def delete_multiple_assertions_user_badge_details_by_user():
     return user_badge_deactivation.deactivate_user_badge_list_self([assertion_id_list], deleted_by_id)
 
 
-
 @app.route("/updateuserbadgestatus", methods=['POST'])
 def update_user_badge_status():
     # req_body = request.get_json()
@@ -339,5 +354,10 @@ def modify_existing_badge():
     return create_badge.modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
                                      icon, evidence)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+@app.route("/sendpasswordresetemail", methods=['GET'])
+def send_password_reset_email():
+    req_body = request.get_json()
+    email_address = req_body['email_address']
+
+    return registration.password_reset_email(email_address)

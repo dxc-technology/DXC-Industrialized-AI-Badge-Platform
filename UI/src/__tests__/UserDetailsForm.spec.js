@@ -4,10 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/dom';
 
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
+import UpdateUserDetailsResponse from '../API/UpdateUserDetailsAPI';
 import UserDetailsForm from '../forms/UserDetailsForm';
 import formatDate from '../scripts/functions';
 
-// jest.mock('../API/UpdateAssertionAPI');
+jest.mock('../API/UpdateUserDetailsAPI');
 
 jest.mock('../API/UserDetailsByEmailAPI')
 afterEach(() => {
@@ -22,7 +23,7 @@ describe('<UserDetailsForm />', () => {
 
     describe('On load of User details screen', () => {
         beforeEach(async() => {
-            ({ getByTestId } = await render( < UserDetailsForm email = 'srikanth123@gmail.com' / > ));
+            ({ getByTestId } = await render( < UserDetailsForm email = 'srikanth123@gmail.com' userID='5fa9d9eff897b5482159b6a7'/ > ));
         });
 
 
@@ -33,50 +34,48 @@ describe('<UserDetailsForm />', () => {
         });
 
 
-         it('should populate fields', () => {
+         it('should populate fields', async() => {
             expect(getByTestId('userDetails_email').value).toEqual('srikanth123@gmail.com');
-            expect(getByTestId('userDetails_userType').value).toEqual('5f760d3425c1036d4d46655f');
-            expect(getByTestId('userDetails_userStatus').value).toEqual('5f776e5d6289f17659874f27');
-            expect(getByTestId('userDetails_created').value).toEqual('2020-10-26');
-            expect(getByTestId('userDetails_lastModified').value).toEqual('2020-10-26');
+            expect(getByTestId('userDetails_userType').value).toEqual('regular');
+            expect(getByTestId('userDetails_userStatus').value).toEqual('active');
+            expect(getByTestId('userDetails_created').value).toEqual('10-26-2020');
+            expect(getByTestId('userDetails_lastModified').value).toEqual('10-26-2020');
             expect(getByTestId('userDetails_firstName').value).toEqual('Harry');
             expect(getByTestId('userDetails_lastName').value).toEqual('Potter');
             expect(getByTestId('userDetails_middleName').value).toEqual('James');
             expect(getByTestId('userDetails_organizationName').value).toEqual('DXC Technology');
         });
 
-        {/*
+        
         it('save button should call UpdateAssertionAPI', async() => {
 
-            await userEvent.type(getByTestId('assertionDetails_badgeComments'), 'comments456')
-            await userEvent.type(getByTestId('assertionDetails_evidencelink'), 'work link')
-            await userEvent.type(getByTestId('assertionDetails_badgeStatus'), '5f776f416289f17659874f2c')
-            await userEvent.type(getByTestId('assertionDetails_publiclink'), 'link of the badge')
-
-
-            updateAssertionResponse.mockResolvedValueOnce('5f83d0c5c091330db1a59123');
-            await userEvent.click(getByTestId('assertionDetails_saveButton'));
-
+            await userEvent.type(getByTestId('userDetails_firstName'), 'Srik');
+            await userEvent.type(getByTestId('userDetails_lastName'), 'Potter');
+            await userEvent.type(getByTestId('userDetails_middleName'), 'James');
+            await userEvent.type(getByTestId('userDetails_organizationName'), 'DXC Technology');
+            await userEvent.type(getByTestId('userDetails_userStatus'), 'active');
+            await userEvent.type(getByTestId('userDetails_userType'), 'regular');
             
-            expect(updateAssertionResponse).toHaveBeenCalledWith('5f83d0c5c091330db1a59123', '5f776f416289f17659874f2c', 'work link', 'comments456', 'link of the badge');
+            UpdateUserDetailsResponse.mockResolvedValueOnce(200);
+            await userEvent.click(getByTestId('userDetails_saveButton'));
+            expect(UpdateUserDetailsResponse).toHaveBeenCalledWith('srikanth123@gmail.com', 'regular', 'Srik', 'Potter', 'James','DXC Technology','5fa9d9eff897b5482159b6a7','active');
             
         });
 
         it('on save should display successfull saved message', async() => {
-            updateAssertionResponse.mockReturnValueOnce(200)
-            await userEvent.type(getByTestId('assertionDetails_evidencelink'), 'work link')
-            await userEvent.click(getByTestId('assertionDetails_saveButton'));
-            expect(getByTestId('assertionDetails_Result').value).toEqual('Saved Successfully');
+            UpdateUserDetailsResponse.mockReturnValueOnce(200)
+            await userEvent.type(getByTestId('userDetails_userType'), 'admin')
+            await userEvent.click(getByTestId('userDetails_saveButton'));
+            expect(getByTestId('userDetails_Result').value).toEqual('Saved Successfully');
            
         });
-*/}
 
     }); 
 
     describe('On click of Back button takes to View Users form ',()=>{
 
      beforeEach(async() =>{
-            ({ getByTestId } = await render( < UserDetailsForm email = 'srikanth123@gmail.com' / > ));
+            ({ getByTestId } = await render( < UserDetailsForm email = 'srikanth123@gmail.com' userID='5fa9d9eff897b5482159b6a7'/ > ));
              await userEvent.click(getByTestId('userDetails_backButton'));
      });
              it('Takes to view users screen form', async() => {

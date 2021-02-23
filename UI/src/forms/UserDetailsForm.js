@@ -21,6 +21,7 @@ import CardMembershipOutlinedIcon from '@material-ui/icons/CardMembershipOutline
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { InputLabel } from '@material-ui/core';
+import UpdateUserDetailsResponse from '../API/UpdateUserDetailsAPI';
 
 
 const UserDetailsForm = (props) => {
@@ -34,6 +35,7 @@ const UserDetailsForm = (props) => {
     const [lastName, setLastName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [organizationName, setOrganizationName] = useState('');
+    const [adminId, setAdminId] = useState(props.userID);
 
     const [saveFlag, setSaveFlag] = useState('False');
     const [result, setResult] = useState('');
@@ -64,13 +66,14 @@ const UserDetailsForm = (props) => {
     const classes = useStyles();
 
     const handleviewUserByEmail = async () => {
-
+        
         var response1 = new Promise((resolve, reject) => {
             resolve(UserDetailByEmailResponse(email));
         }).then(value => {
             if (value != undefined) {
-                setUserType(value[0].user_type_details[0]._id.$oid);
-                setUserStatus(value[0].user_status_details[0]._id.$oid);
+                setUserType(value[0].user_type_details[0].type);
+                setUserStatus(value[0].user_status_details[0].userStatus);
+                // _id.$oid
                 setCreated(formatDate(value[0].created.$date));
                 setLastModified(formatDate(value[0].modified.$date));
                 setFirstName(value[0].firstName);
@@ -84,20 +87,16 @@ const UserDetailsForm = (props) => {
 
     }
 
-    // const handleSaveAssertion = () => {
-
-    //     var response2 = new Promise((resolve, reject) => {
-    //         resolve(updateAssertionResponse(assertionId, badgeStatus, evidencelink, badgeComments, publicLink));
-    //     }).then(value => {
-    //         if (value==200){
-    //             setResult("Saved Successfully");
-    //             setSaveFlag('False')
-    //         }
-
-            
-
-    //     });
-    // }
+    const handleSaveAssertion = () => {
+        var response2 = new Promise((resolve, reject) => {
+            resolve(UpdateUserDetailsResponse(email, userType, firstName, lastName, middleName, organizationName,adminId,userStatus));
+        }).then(value => {
+            if (value==200){
+                setResult("Saved Successfully");
+                setSaveFlag('False')
+            }
+        });
+    }
 
     const handleBackButtonClick = () =>{
         setBackButtonClicked('True');
@@ -109,34 +108,38 @@ const UserDetailsForm = (props) => {
 
     const handleUserTypeChange = event => {
         setUserType(event.target.value);
-        // setSaveFlag('True');
+        setSaveFlag('True');
     }
     const handleUserStatusChange = event => {
         setUserStatus(event.target.value);
-        // setSaveFlag('True');
+        setSaveFlag('True');
     }
 
     const handleFirstNameChange = event => {
         setFirstName(event.target.value);
+        setSaveFlag('True');
     }
 
     const handleMiddleNameChange = event => {
         setMiddleName(event.target.value);
+        setSaveFlag('True');
     }
 
     const handleLastNameChange = event => {
         setLastName(event.target.value);
+        setSaveFlag('True');
     }
 
     const handleOrganizationNameChange = event => {
         setOrganizationName(event.target.value);
+        setSaveFlag('True');
     }
   
 
     if (backButtonClicked=='True'){
 return(
 <div>
-    <ViewUserForm />
+    <ViewUserForm userID={adminId}/>
 </div>
 );
     }
@@ -159,14 +162,12 @@ return(
                             name="email"
                             variant="outlined"
                             fullWidth
-
                             id="userDetails_email"
                             label="Email"
                             inputProps={{
                                 "data-testid": "userDetails_email",
                             }}
                             value={email}
-
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -186,9 +187,9 @@ return(
                             value={userType}
                             onChange={handleUserTypeChange}
                             >
-                            <MenuItem value={'5f760d3425c1036d4d46655f'}>Regular</MenuItem>
-                            <MenuItem value={'5f760d4325c1036d4d466560'}>Admin</MenuItem>
-                            <MenuItem value={'5fc5567fcd831cc0c83774b8'}>Reviewer</MenuItem>
+                            <MenuItem value={'regular'}>Regular</MenuItem>
+                            <MenuItem value={'admin'}>Admin</MenuItem>
+                            <MenuItem value={'reviewer'}>Reviewer</MenuItem>
                             
                         </Select> 
 
@@ -211,9 +212,9 @@ return(
                               value={userStatus}
                               onChange={handleUserStatusChange}
                             >
-                            <MenuItem value={'5f776e5d6289f17659874f27'}>Active</MenuItem>
-                            <MenuItem value={'5f776e976289f17659874f28'}>Inactive</MenuItem>
-                            <MenuItem value={'5f776ea76289f17659874f29'}>Blocked</MenuItem>                            
+                            <MenuItem value={'active'}>Active</MenuItem>
+                            <MenuItem value={'inactive'}>Inactive</MenuItem>
+                            <MenuItem value={'blocked'}>Blocked</MenuItem>                            
                         </Select> 
                     </Grid>                     
            
@@ -339,7 +340,7 @@ return(
                             className={classes.submit}
                             disabled={saveFlag=='True'?false:true}
                             data-testid="userDetails_saveButton"
-                            // onClick={handleSaveAssertion}
+                            onClick={handleSaveAssertion}
                             >
                             Save
                  </Button>
@@ -359,7 +360,7 @@ return(
                     </Grid>
                 </Grid>
                 <label>{result}</label>
-                <input type="text" hidden data-testid='userDetails_Result' value={result} />
+                <input type="text" hidden readOnly data-testid='userDetails_Result' value={result} />
             </div>
         </Container>
     );

@@ -18,7 +18,6 @@ def login(email, password):
     if len(user_doc) > 0:
         try:
             if password_hash.verify(user_doc['password'], password):
-
                 return str(ObjectId(user_doc['userType']))
 
         except (InvalidHash, HashingError, VerificationError, VerifyMismatchError):
@@ -28,6 +27,9 @@ def login(email, password):
 
 def validate_email_address(email_address):
     regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if(re.search(regex, email_address) and email_address.strip() != "" and email_address is not None):
+    if re.search(regex, email_address) and email_address.strip() != "" and email_address is not None:
         return VALID
     return INVALID
+
+
+
