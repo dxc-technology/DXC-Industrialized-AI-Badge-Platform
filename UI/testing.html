@@ -1,0 +1,93 @@
+<body>
+
+	<h2>Jira Issue Collector Demo</h2>
+	<a href="#" id="feedback_button" class='btn btn-primary btn-large'>Report feedback</a><br />
+	<a href="#" id="bug_button" class='btn btn-primary btn-large'>Report bug</a>
+
+  	<!-- Jira Issue Collector - append this at the bottom of <body> -->
+	<!-- <script type="text/javascript" src="https://<Jira URL>/s/en_US-ydn9lh-418945332/803/1088/1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=<collectorId_1>"></script> -->
+        <script type="text/javascript" src="https://d1pid1qk5rv3eb.cloudfront.net/s/d41d8cd98f00b204e9800998ecf8427e-CDN/-u6mps7/805004/8a7fb8df62aade8b7149085f03c3e6ac/2.2.4.7/_/download/batch/com.atlassian.plugins.jquery:jquery/com.atlassian.plugins.jquery:jquery.js?collectorId=1f6c5087"></script>
+        <script type="text/javascript" src="https://jira.dxc.com/s/9eeb53a28f9ecc909c6a0f03667f1123-T/-u6mps7/805004/8a7fb8df62aade8b7149085f03c3e6ac/4.0.0/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en&collectorId=1f6c5087"></script>
+
+	<!-- We will customize Jira in the following script tag -->
+
+	<script type="text/javascript">
+		// safely use jquery here since the issue collector will load it for you
+		$(document).ready(function() {
+ 
+			window.ATL_JQ_PAGE_PROPS = $.extend(window.ATL_JQ_PAGE_PROPS, {
+ 
+				// ==== feedback collector ====
+				  '<collectorId_1>' : {
+ 
+					// === custom trigger function ===
+					  triggerFunction : function( showCollectorDialog ) {
+						$('#feedback_button').click( function(e) {
+							e.preventDefault();
+							showCollectorDialog();
+						});
+ 					}
+ 
+					// === default and hidden field values ===
+					, fieldValues : {
+ 
+						// default values
+						  summary : 'Feedback for new website designs'
+						, description : 'The font doesn\'t quite look right'
+ 
+						// hidden field value
+						, priority : '2'
+						
+					}
+ 
+				}
+ 
+				// ==== bug collector ====
+				, '<collectorId_2>' : {
+					// === custom trigger function ===
+
+					  triggerFunction : function( showCollectorDialog ) {
+						$('#bug_button').click( function(e) {
+							e.preventDefault();
+							showCollectorDialog();
+						});
+ 					}
+
+
+					// === additional environment details ===
+					, environment : function() {
+		
+						var env_info = {};
+ 
+						if ( window.ADDITIONAL_CUSTOM_CONTEXT ) {
+							env_info[ 'Additional Context Information' ] = window.ADDITIONAL_CUSTOM_CONTEXT;
+						}
+ 
+						return env_info;
+					}
+					// === default field values ===
+					, fieldValues : function() {
+ 
+						var values = {};
+ 		
+						var error_message = $('.error_message');
+						if ( error_message.length !== 0 ) {
+
+							// record error message from the page context rather than asking the user to enter it
+							values[ 'summary' ] = error_message.children('.summary').text();
+							values[ 'description' ] = error_message.children('.description').text();
+
+						}
+ 
+						return values;
+ 
+					}
+ 
+				}
+ 
+			});
+
+		});
+	</script>
+
+</body>
