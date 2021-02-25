@@ -61,6 +61,7 @@ def register_user():
     return registration.register(new_email, new_password, new_user_type, first_name, second_name, middle_name,
                                  organization_name)
 
+
 @app.route("/updateuser", methods=['POST'])
 def update_user_details():
     req_body = request.get_json()
@@ -73,10 +74,8 @@ def update_user_details():
     user_type = req_body['userType']
     user_status = req_body['userStatus']
 
-
     return create_users.update_user_by_admin(email, first_name, second_name, middle_name, organization_name,
                                              admin_id, user_type, user_status)
-
 
 
 @app.route("/createuser", methods=['GET'])
@@ -355,9 +354,8 @@ def modify_existing_badge():
                                      icon, evidence)
 
 
-@app.route("/sendpasswordresetemail", methods=['GET'])
+@app.route("/sendpasswordresetemail", methods=['POST'])
 def send_password_reset_email():
     req_body = request.get_json()
     email_address = req_body['email_address']
-
     return registration.password_reset_email(email_address)
