@@ -18,7 +18,7 @@ cors = CORS(app)
 
 @app.route("/")
 def home():
-    return "Hello, Flask!"
+    return "Welcome to Industrialized AI Starter Application!"
 
 
 @app.route("/login", methods=['GET'])
