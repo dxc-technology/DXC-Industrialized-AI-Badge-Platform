@@ -664,11 +664,17 @@ class EndpointTest(unittest.TestCase):
         data = resp.get_data()
         self.assertIn(INVALID, str(data))
 
+    def test_reset_password_email(self):
+        info = {'email_address': "mailtosrik@gmail.com"}
+        resp = self.app.post("http://127.0.0.1:5000/sendpasswordresetemail", json=info)
+        data = resp.get_data()
+        self.assertIn("Email sent successfully", str(data))
+
 
 # class AssignMajorBadgeIndustrializedAiDataEngineer(unittest.TestCase):
 #     def test_check_for_necessary_approved_badges(self):
 #         assert user_badge_mapping.validate_and_update_major_badge_industrialized_ai_data_engineer(
-#             "6009e2241637bdd807a6aefc") == 1
+#             "6009e2241637bdd807a6aefc") == "Badge added to the user"
 
 
 # class AssignMajorBadgeToUsers(unittest.TestCase):

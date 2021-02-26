@@ -7,19 +7,10 @@ from flask_mail import Mail
 from dotenv import load_dotenv
 from argon2 import PasswordHasher
 import database
-
-ENV_PATH = 'backend_variable.env'
-load_dotenv(dotenv_path=ENV_PATH)
-
-app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['MAIL_SERVER'] = 'smtp.office365.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
-app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-mail = Mail(app)
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 
 VALID = r"valid"
 INVALID = r"invalid"
@@ -81,7 +72,7 @@ def verify_hashed_password(password):
 
 
 def register(email, password, user_type, first_name, second_name, middle_name, organization_name):
-    if validate_email_exist(email) == "email already exists":
+    if validate_email_exist(email.lower()) == "email already exists":
         return "user already exists"
     if validate_input(email, password) == "invalid":
         return "invalid"
@@ -136,6 +127,30 @@ def password_reset(email_address, password, confirm_password):
     return "user does not exist"
 
 
+def email_content(email_address, body):
+    env_path = 'backend_variable.env'
+    load_dotenv(dotenv_path=env_path)
+    sender_email = "panoply.dxc@outlook.com"
+    receiver_email = email_address
+
+    msg = MIMEMultipart()
+    msg['Subject'] = 'AI Industrial Badger - Password Reset'
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+
+    msg_text = MIMEText('<b>%s</b>' % body, 'html')
+    msg.attach(msg_text)
+
+    try:
+        with smtplib.SMTP('smtp.office365.com', 587) as smtpObj:
+            smtpObj.ehlo()
+            smtpObj.starttls()
+            smtpObj.login(os.getenv("MAIL_USERNAME"), "Alohomora@123")
+            smtpObj.sendmail(sender_email, receiver_email, msg.as_string())
+    except Exception as e:
+        print(e)
+
+
 def password_reset_email(email_address):
     if email_address == "":
         return "email is empty"
@@ -143,14 +158,6 @@ def password_reset_email(email_address):
         return "email is not correct"
     user_doc = database.get_user_details(email_address)
     if len(user_doc) > 0:
-        mail_from = "panoply_dxc@outlook.com"
-        mail_to = email_address
-        subject = "Industrial AI Starter - Password Reset"
-        reply_to = "panoply_dxc@outlook.com"
-        body = "Hi" + email_address + ", Please click the below URL to reset your password"
-        message = Message(subject, sender=mail_from, recipients=[mail_to], reply_to=reply_to)
-        message.body = body
-        with app.app_context():
-            mail.send(message)
+        email_content(email_address, "Password reset email")
         return "Email sent successfully"
     return "user does not exist"
