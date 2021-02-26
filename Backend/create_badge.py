@@ -22,18 +22,6 @@ connect_str = "DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;Accoun
 # my_connection_string = os.getenv("DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net")
 
 def upload_file_to_azure(badge_name, filepath):
-    # local_path=os.path.abspath(os.path.curdir)
-    # #local_file_name =input(filepath)
-    # full_path_to_file =os.path.join(local_path, filepath)
-
-    # if os.path.isfile(filepath):
-    #     print(filepath)
-    #     blob_service.create_blob_from_path("iconimages", badge_name, full_path_to_file)                                           
-    #     ref = AZURE_CONTAINER_BASE_URL + badge_name
-    #     return ref
-    # return "Please enter a valid file name"
-
-    
     if os.path.isfile(filepath):
         blob_service_client = BlobServiceClient.from_connection_string(connect_str)
         blob_client = blob_service_client.get_blob_client(container="iconimages", blob=badge_name)
@@ -169,7 +157,7 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
     badge_type_status = badge_type_validation(badge_type)
     owner_email_result = split_owner_emails(owner)
     reviewer_email_result = split_reviewer_emails(reviewer)
-    icon_url = upload_file_to_azure(badge_name, icon)
+   
 
     if badge_input_status == "Valid":
         if user_requestable_status == user_requestable:
@@ -177,6 +165,7 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
                 if owner_email_result == "valid owner":
                     if reviewer_email_result == "valid reviewer":
                         if user_evidence_status == evidence:
+                            icon_url = upload_file_to_azure(badge_name, icon)
                             if icon_url != "Please enter a valid file name":
                                 database.insert_new_badge(badge_name, badge_description, link, user_requestable,
                                                           badge_type, owner.split(","), reviewer.split(","), icon_url,
