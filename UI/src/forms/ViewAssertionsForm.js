@@ -11,6 +11,7 @@ import formatDate from '../scripts/functions';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton'
 import AssertionDetailsForm from './AssertionDetailsForm';
+import getViewAssertionsForReviewersResponse from '../API/ViewAssertionForReviewersAPI'
 
 const ViewAssertionsForm = (props) => {
 
@@ -47,7 +48,23 @@ const ViewAssertionsForm = (props) => {
 
 
   const handleviewAssertions = async () => {
-
+    if (userType=='5fc5567fcd831cc0c83774b8'){
+      var response1 = new Promise((resolve, reject) => {
+        resolve(getViewAssertionsForReviewersResponse(userID));
+      }).then(value => {
+        if (value != undefined) {
+          setresponse(value.length);
+          const temp_rows = []
+          for (var i = 0; i < value.length; i++) {
+            temp_rows.push(createData(i, value[i]._id.$oid, value[i].user_email_address[0].email, value[i].badge_details[0].name, value[i].issuedOn.$date, value[i].badge_status[0].badgeStatus));
+  
+          }
+  
+          setrows(temp_rows);
+        }
+      });
+  }
+  else{
     var response1 = new Promise((resolve, reject) => {
       resolve(getViewAssertionsResponse());
     }).then(value => {
@@ -64,6 +81,9 @@ const ViewAssertionsForm = (props) => {
     });
   }
 
+}
+  
+
 
 
 
@@ -73,7 +93,54 @@ const ViewAssertionsForm = (props) => {
 
   if (assertionDetailClick == 'true') { return (<div><AssertionDetailsForm assertionId={clickedAssertion} email ={email} userType={userType} userID={userID} /></div>); }
   else {
+// if(userType=='5fc5567fcd831cc0c83774b8')//reviewer
+// {
+//   return (
+//     <div>
+//       <input data-testid='viewAssertions_RowCount' hidden value={response} />
 
+//       <React.Fragment>
+//         {/* <Title>Recent Orders</Title> */}
+//         <Table size="small">
+//           <TableHead>
+//             <TableRow>
+//               <TableCell></TableCell>
+//               <TableCell data-testid='viewAssertions_badgeName'>User</TableCell>
+//               <TableCell>Badge</TableCell>
+//               <TableCell>Issued On</TableCell>
+//               <TableCell>Status</TableCell>
+//               <TableCell align="right">Options</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {rows.map((row) => (
+//               <TableRow data-testid={'viewAssertions_RowID' + row.id} key={row.id} >
+
+//                 <TableCell></TableCell>
+
+//                 {/* <TableCell display="none" >{row.mongoId}</TableCell> */}
+
+//                 <TableCell>{row.user}</TableCell>
+//                 <TableCell >{row.badgeName}</TableCell>
+
+//                 <TableCell>{formatDate(row.issuedOn)}</TableCell>
+//                 <TableCell>{row.status}</TableCell>
+//                 {/* <TableCell align="right"><EditSharpIcon id="viewAssertions_MongoID" value={row.mongoId} /></TableCell> */}
+//                 <TableCell align="right">
+//                   <IconButton data-testid={'viewAssertions_editAssertionButton' + row.id} value={row.mongoId} onClick={handleAssertionDetails}>
+//                     <EditSharpIcon />
+//                   </IconButton>
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </React.Fragment>
+//     </div >
+
+//   );
+// }
+// else{
     return (
       <div>
         <input data-testid='viewAssertions_RowCount' hidden value={response} />
@@ -120,5 +187,6 @@ const ViewAssertionsForm = (props) => {
     );
   }
 };
+// }
 
 export default ViewAssertionsForm;

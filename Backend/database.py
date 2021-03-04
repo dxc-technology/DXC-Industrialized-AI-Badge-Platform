@@ -521,7 +521,7 @@ def view_all_assertions_by_reviewer_id(reviewer_id):
         {
             '$lookup': {
                 'from': 'Users',
-                'localField': 'user',
+                'localField': 'userID',
                 'foreignField': '_id',
                 'as': 'user_email_address'
             }
@@ -567,8 +567,8 @@ def view_all_assertions_by_reviewer_id(reviewer_id):
             }
         },
         {
-            '$project': {"user_email_address._id": 1, "user_email_address.email": 1, "badge_name.name": 1,
-                         "badge_name.link": 1, "badge_name.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
+            '$project': {"user_email_address._id": 1, "user_email_address.email": 1, "badge_details.name": 1,
+                         "badge_details.link": 1, "badge_details.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
                          "_id": 1, "reviewer": 1}
         }
     ])

@@ -4,8 +4,10 @@ import userEvent from '@testing-library/user-event';
 import LandingForm from '../forms/LandingForm';
 import { screen } from '@testing-library/dom';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
+import getJIRAResponse from '../API/AddJIRARequestAPI';
 
 jest.mock('../API/UserDetailsByEmailAPI')
+jest.mock('../API/AddJIRARequestAPI')
 afterEach(() => {
     jest.clearAllMocks()
 })
@@ -98,6 +100,19 @@ describe('<LandingForm />', () => {
 
         it('redirects to View Users form', () => {
             expect(getByTestId('viewUsers_email')).not.toBeNull();
+        });
+        
+    });
+  
+    describe('Clicking on Support button', () => {
+        beforeEach(async() => {
+            ({ getByTestId } = render( < LandingForm userType='5f760d4325c1036d4d466560' / > ));
+            await userEvent.click(getByTestId('LandingForm_raiseSupportButton'));
+        });
+
+        it('redirects to View Users form', () => {
+              expect(getJIRAResponse).toHaveBeenCalled();
+
         });
         
     });

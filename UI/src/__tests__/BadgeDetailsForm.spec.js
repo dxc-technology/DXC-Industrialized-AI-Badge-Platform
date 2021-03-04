@@ -74,14 +74,11 @@ describe('<BadgeDetailsForm />', () => {
             expect(getByTestId('badgeDetails_RequestResult').value).toEqual('Request for Badge is successfully submitted'); 
            
         });
-  
-
-
-    });
+      });
 
     describe('On load of Badges details screen for admin user', () => {
         beforeEach(async () => {
-            ({ getByTestId } = await render(< BadgeDetailsForm userType='5f760d4325c1036d4d466560' badgeName='Create a Data Story' />));
+            ({ getByTestId } = await render(< BadgeDetailsForm userType='5f760d4325c1036d4d466560' badgeName='Create a Data Story' clickType='AdminEdit' />));
         });
 
 
@@ -144,7 +141,34 @@ describe('<BadgeDetailsForm />', () => {
 
 
     });
+    describe('On click of View button takes to badge details screen for admin user ',()=>{
 
+        beforeEach(async() =>{
+               ({ getByTestId } = await render( < BadgeDetailsForm userType='5f760d4325c1036d4d466560' clickType='AdminView' badgeName='Create a Data Story'/ > ));
+               
+        });
+        it('on click of Assign Badge Button',async()=>{
+            userEvent.click(getByTestId('badgeDetails_assignButton'));
+            expect(getByTestId('badgeDetails_assigneeEmail')).not.toBeNull();
+           
+            await userEvent.type(getByTestId('badgeDetails_assigneeEmail'), 'test123@test.com');
+
+            userEvent.click(getByTestId('badgeDetails_assignBadge'));
+            
+            expect(addNewAssertionResponse).toHaveBeenCalledWith('5f96641d67f54726880f8cc0', '5f83c8aa8f7fa4485c16faec', '', '', '', '');
+          
+    
+         });
+
+         it('on save should display successfull saved message', async() => {
+            addNewAssertionResponse.mockReturnValueOnce(200);
+            await userEvent.click(getByTestId('badgeDetails_assignButton'));
+            await userEvent.type(getByTestId('badgeDetails_assigneeEmail'), 'test123@test.com');
+            await userEvent.click(getByTestId('badgeDetails_assignBadge'));
+            expect(getByTestId('badgeDetails_AssignResult').value).toEqual('Badge Assigned successfully'); 
+           
+        });
+   });
     describe('On click of Back button takes to View Badges form ',()=>{
 
         beforeEach(async() =>{
