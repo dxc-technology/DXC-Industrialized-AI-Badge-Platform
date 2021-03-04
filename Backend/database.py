@@ -528,6 +528,14 @@ def view_all_assertions_by_reviewer_id(reviewer_id):
         },
         {
             '$lookup': {
+                'from': 'Assertions',
+                'localField': 'assertionID',
+                'foreignField': '_id',
+                'as': 'assertion_details'
+            }
+        },
+        {
+            '$lookup': {
                 'from': 'Users',
                 'localField': 'issuer',
                 'foreignField': '_id',
@@ -567,9 +575,11 @@ def view_all_assertions_by_reviewer_id(reviewer_id):
             }
         },
         {
-            '$project': {"user_email_address._id": 1, "user_email_address.email": 1, "badge_details.name": 1,
+
+            '$project': {"assertion_details._id": 1,"user_email_address._id": 1, "user_email_address.email": 1, "badge_details.name": 1,
                          "badge_details.link": 1, "badge_details.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
-                         "_id": 1, "reviewer": 1}
+                          "_id":0, "reviewer": 1}
+
         }
     ])
 

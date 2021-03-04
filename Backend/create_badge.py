@@ -21,26 +21,14 @@ connect_str = "DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;Accoun
 # blob_service_client = BlobServiceClient.from_connection_string(connect_str)
 # my_connection_string = os.getenv("DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net")
 
-def upload_file_to_azure(badge_name, filepath):
-    # local_path=os.path.abspath(os.path.curdir)
-    # #local_file_name =input(filepath)
-    # full_path_to_file =os.path.join(local_path, filepath)
-
-    # if os.path.isfile(filepath):
-    #     print(filepath)
-    #     blob_service.create_blob_from_path("iconimages", badge_name, full_path_to_file)                                           
-    #     ref = AZURE_CONTAINER_BASE_URL + badge_name
-    #     return ref
-    # return "Please enter a valid file name"
-
-    
-    if os.path.isfile(filepath):
+def upload_file_to_azure(filename):
+    if os.path.isfile(filename):
         blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-        blob_client = blob_service_client.get_blob_client(container="iconimages", blob=badge_name)
+        blob_client = blob_service_client.get_blob_client(container="iconimages", blob=filename)
         image_content_setting = ContentSettings(content_type='image/jpeg')
-        with open(filepath, "rb") as data:
+        with open(filename, "rb") as data:
             blob_client.upload_blob(data, overwrite=True,content_settings=image_content_setting)
-        ref = AZURE_CONTAINER_BASE_URL + badge_name
+        ref = AZURE_CONTAINER_BASE_URL + filename
         return ref
     return "Please enter a valid file name"
 
@@ -169,7 +157,7 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
     badge_type_status = badge_type_validation(badge_type)
     owner_email_result = split_owner_emails(owner)
     reviewer_email_result = split_reviewer_emails(reviewer)
-    icon_url = upload_file_to_azure(badge_name, icon)
+   
 
     if badge_input_status == "Valid":
         if user_requestable_status == user_requestable:
@@ -177,6 +165,7 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
                 if owner_email_result == "valid owner":
                     if reviewer_email_result == "valid reviewer":
                         if user_evidence_status == evidence:
+                            icon_url = upload_file_to_azure(icon)
                             if icon_url != "Please enter a valid file name":
                                 database.insert_new_badge(badge_name, badge_description, link, user_requestable,
                                                           badge_type, owner.split(","), reviewer.split(","), icon_url,
@@ -191,7 +180,7 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
     return badge_input_status
 
 
-def validate_badge_values(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer, icon,
+def validate_badge_values(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
                           evidence):
     badge_type_status = badge_type_validation(badge_type)
     user_requestable_type_validation(
@@ -215,8 +204,8 @@ def validate_badge_values(badge_name, badge_description, link, badge_type, user_
     #     return "not a valid owner"
     # if reviewer == "":
     #     return "not a valid reviewer"
-    if icon == "":
-        return "Empty icon"
+    # if icon == "":
+    #     return "Empty icon"
     if user_evidence_status == "Please choose the evidence Type":
         return "Please choose the evidence Type"
     if user_evidence_status == "Invalid Evidence":
@@ -231,12 +220,15 @@ def validate_badge_values(badge_name, badge_description, link, badge_type, user_
 
 def modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer, icon, evidence):
     badge_input_status = validate_badge_values(badge_name, badge_description, link, badge_type, user_requestable, owner,
-                                               reviewer, icon, evidence)
+                                               reviewer, evidence)       
     if badge_input_status == "Valid entry":
-        badge_linked = database.modify_badge_in_db(badge_name, badge_description, link, badge_type, user_requestable,
-                                                   owner.split(","), reviewer.split(","), icon, evidence)
-        if badge_linked == "updated":
-            print("badge details =" + badge_linked)
-            return "updated"
+        icon_url = upload_file_to_azure(icon)
+        print(icon_url)
+        if icon_url != "Please enter a valid file name":
+            badge_linked = database.modify_badge_in_db(badge_name, badge_description, link, badge_type, user_requestable,
+                                                    owner.split(","), reviewer.split(","), icon_url, evidence)
+            if badge_linked == "updated":
+                print("badge details =" + badge_linked)
+                return "updated"
 
     return badge_input_status

@@ -10,11 +10,11 @@ INVALID = r"invalid"
 
 def login(email, password):
     password_hash = PasswordHasher()
-    if email == "" or password == "":
+    if email.lower() == "" or password == "":
         return "username or password is empty"
-    if validate_email_address(email) == INVALID:
+    if validate_email_address(email.lower()) == INVALID:
         return "email is not correct"
-    user_doc = database.get_user_details(email)
+    user_doc = database.get_user_details(email.lower())
     if len(user_doc) > 0:
         try:
             if password_hash.verify(user_doc['password'], password):
@@ -27,9 +27,7 @@ def login(email, password):
 
 def validate_email_address(email_address):
     regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if re.search(regex, email_address) and email_address.strip() != "" and email_address is not None:
+    if re.search(regex,
+                 email_address.lower()) and email_address.strip().lower() != "" and email_address.lower() is not None:
         return VALID
     return INVALID
-
-
-

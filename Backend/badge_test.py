@@ -3,6 +3,16 @@ import unittest
 import database
 import create_badge
 import app
+import io
+from io import StringIO
+import string
+from collections import Counter
+from werkzeug.datastructures import FileStorage
+import os.path
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 utc_created_time = datetime.now(timezone.utc)
 utc_modified_time = datetime.now(timezone.utc)
@@ -147,38 +157,38 @@ class UpdateBadgeDetails(unittest.TestCase):
                                          "", "Open Badge", "True", "akshay@gmail.com", "akshay@gmail.com",
                                          "url for icon image", "True") == "Empty link"
 
-    def test_badge_type(self):
+    def test_badge_type_empty(self):
         assert create_badge.modify_badge("Create a Data Story",
                                          "The simplest way to find your AI potential is to identify intelligence gaps in the business, build a portfolio of AI data stories to fill those gaps, and identify specific business value targets for each story. In this badge, you will create a data story that describes how AI could be applied in the company. The AI data stories represent a portfolio of experiments that should drive your AI innovation program.",
                                          "test for badge", "", "True", "akshay@gmail.com", "akshay@gmail.com",
                                          "url for icon image", "True") == "Invalid badge type"
 
-    def test_badge_user_requestable(self):
+    def test_badge_user_requestable_empty(self):
         assert create_badge.modify_badge("Create a Data Story",
                                          "The simplest way to find your AI potential is to identify intelligence gaps in the business, build a portfolio of AI data stories to fill those gaps, and identify specific business value targets for each story. In this badge, you will create a data story that describes how AI could be applied in the company. The AI data stories represent a portfolio of experiments that should drive your AI innovation program.",
                                          "test for badge", "Open Badge", "", "akshay@gmail.com", "akshay@gmail.com",
                                          "url for icon image", "True") == "Invalid user requestable type"
 
-    def test_badge_owner(self):
+    def test_badge_owner_empty(self):
         assert create_badge.modify_badge("Create a Data Story",
                                          "The simplest way to find your AI potential is to identify intelligence gaps in the business, build a portfolio of AI data stories to fill those gaps, and identify specific business value targets for each story. In this badge, you will create a data story that describes how AI could be applied in the company. The AI data stories represent a portfolio of experiments that should drive your AI innovation program.",
                                          "test for badge", "Open Badge", "True", "", "akshay@gmail.com",
                                          "url for icon image", "True") == "Empty Owner email address"
 
-    def test_badge_reviewer(self):
+    def test_badge_reviewer_empty(self):
         assert create_badge.modify_badge("Create a Data Story",
                                          "The simplest way to find your AI potential is to identify intelligence gaps in the business, build a portfolio of AI data stories to fill those gaps, and identify specific business value targets for each story. In this badge, you will create a data story that describes how AI could be applied in the company. The AI data stories represent a portfolio of experiments that should drive your AI innovation program.",
                                          "test for badge", "Open Badge", "True",
                                          "akshay@gmail.com,sampleusertester@gmail.com", "",
                                          "url for icon image", "True") == "Empty reviewer email address"
 
-    def test_badge_icon(self):
-        assert create_badge.modify_badge("Create a Data Story",
-                                         "The simplest way to find your AI potential is to identify intelligence gaps in the business, build a portfolio of AI data stories to fill those gaps, and identify specific business value targets for each story. In this badge, you will create a data story that describes how AI could be applied in the company. The AI data stories represent a portfolio of experiments that should drive your AI innovation program.",
-                                         "test for badge", "Open Badge", "True", "akshay@gmail.com", "akshay@gmail.com",
-                                         "", "True") == "Empty icon"
+    # def test_badge_icon_invalid(self):
+    #     assert create_badge.modify_badge("Create a Data Story",
+    #                                      "The simplest way to find your AI potential is to identify intelligence gaps in the business, build a portfolio of AI data stories to fill those gaps, and identify specific business value targets for each story. In this badge, you will create a data story that describes how AI could be applied in the company. The AI data stories represent a portfolio of experiments that should drive your AI innovation program.",
+    #                                      "test for badge", "Open Badge", "True", "akshay@gmail.com", "akshay@gmail.com",
+    #                                      "", "True") == "Please enter a valid file name"
 
-    def test_badge_update_evidence(self):
+    def test_badge_update_evidence_empty(self):
         assert create_badge.modify_badge("Create a Data Story",
                                          "The simplest way to find your AI potential is to identify intelligence gaps in the business, build a portfolio of AI data stories to fill those gaps, and identify specific business value targets for each story. In this badge, you will create a data story that describes how AI could be applied in the company. The AI data stories represent a portfolio of experiments that should drive your AI innovation program.",
                                          "test for badge", "Open Badge", "True", "akshay@gmail.com", "akshay@gmail.com",
@@ -230,140 +240,227 @@ class EndpointTest(unittest.TestCase):
         self.app.testing = True
 
     def test_addbadge_end_point_for_empty_badge_name(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "", 'description': 'test_description', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge", 'owner': "akshay@gmail.com", 'reviewer': 'akshay@gmail.com',
-                'icon': 'iconlink', 'evidence': "True"}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+                'icon': my_file, 'evidence': "True"}
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Badge name is Empty', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_empty_badge_description(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "test_badge", 'description': '', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge", 'owner': "akshay@gmail.com", 'reviewer': 'akshay@gmail.com',
-                'icon': 'icon_link', 'evidence': "True"}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+                'icon': my_file, 'evidence': "True"}
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Badge description is Empty', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_existing_badge_name(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Create a Data Story", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge", 'owner': "akshay@gmail.com", 'reviewer': 'akshay@gmail.com',
-                'icon': 'icon_link', 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+                'icon': my_file, 'evidence': True}
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Badge name already exists', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_empty_owner(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge", 'owner': "", 'reviewer': 'akshay@gmail.com',
-                'icon': 'icon_link', 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+                'icon': my_file, 'evidence': True}
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Empty Owner email address', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_empty_reviewer(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge", 'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-                'reviewer': '', 'icon': 'iconlink', 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+                'reviewer': '', 'icon': my_file, 'evidence': True}
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Empty reviewer email address', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_non_registered_owner(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge", 'owner': "sss@gmail.com",
-                'reviewer': 'newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com', 'icon': 'iconlink',
+                'reviewer': 'newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com', 'icon': my_file,
                 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Invalid Email address in Owner - sss@gmail.com', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_non_registered_reviewer(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge", 'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-                'reviewer': 'siiii@gmail.com', 'icon': 'iconlink',
+                'reviewer': 'siiii@gmail.com', 'icon': my_file,
                 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Invalid Email address in reviewer - siiii@gmail.com', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_empty_requestable_type(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': '',
                 'badgetype': "Open Badge", 'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-                'reviewer': 'newtesting@gmail.com', 'icon': 'icon_link',
+                'reviewer': 'newtesting@gmail.com', 'icon': my_file,
                 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Please choose the User Requestable Type', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_invalid_requestable_type(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'Yes',
                 'badgetype': "Open Badge", 'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-                'reviewer': 'newtesting@gmail.com', 'icon': 'icon_link',
+                'reviewer': 'newtesting@gmail.com', 'icon': my_file,
                 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Invalid User Requestable type', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_empty_badge_type(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "", 'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-                'reviewer': 'newtesting@gmail.com', 'icon': 'icon_link',
+                'reviewer': 'newtesting@gmail.com', 'icon': my_file,
                 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Please choose the Badge Type', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_invalid_badge_type(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Private Badge",
                 'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-                'reviewer': 'newtesting@gmail.com', 'icon': 'icon_link',
+                'reviewer': 'newtesting@gmail.com', 'icon': my_file,
                 'evidence': True}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Invalid Badge type', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_empty_badge_evidence(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge",
                 'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-                'reviewer': 'newtesting@gmail.com', 'icon': 'icon_link',
+                'reviewer': 'newtesting@gmail.com', 'icon': my_file,
                 'evidence': ''}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Please choose the evidence Type', str(data))
         data = resp.get_data()
 
     def test_addbadge_endpoint_for_invalid_badge_evidence(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
                 'badgetype': "Open Badge",
                 'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-                'reviewer': 'newtesting@gmail.com', 'icon': 'icon_link',
+                'reviewer': 'newtesting@gmail.com','icon': my_file,
                 'evidence': 'Yes'}
-        resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Invalid Evidence', str(data))
         data = resp.get_data()
 
     # def test_addbadge_endpoint_successfull_insert(self):
+
+    #     image = os.path.join("./testFile.PNG")
+    #     my_file = FileStorage(
+    #     stream=open(image, "rb"),
+    #     filename="testFile.PNG",
+    #     content_type="image/png",
+    #      ),
+
     #     info = {'name': "Test_name", 'description': 'Test_desc', 'link': "test_link", 'requestable': 'True',
     #             'badgetype': "Open Badge",
     #             'owner': "newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com",
-    #             'reviewer': 'newtesting@gmail.com', 'icon': 'icon_link',
+    #             'reviewer': 'newtesting@gmail.com', 'icon': my_file,
     #             'evidence': 'True'}
-    #     resp = self.app.post("http://127.0.0.1:5000/addbadge", json=info)
+
+    #     resp = self.app.post("http://127.0.0.1:5000/addbadge", data=info, content_type='multipart/form-data')
     #     data = resp.get_data()
     #     self.assertIn('New badge added successfully', str(data))
     #     data = resp.get_data()
@@ -376,85 +473,145 @@ class EndpointTest(unittest.TestCase):
 
     # Modify testcaases
     def test_modify_badge_endpoint_with_empty_badge_name(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': '', 'description': 'Test', 'link': 'test', 'badgetype': 'Open', 'requestable': 'True',
                 'owner': 'newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com',
-                'reviewer': 'newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com', 'icon': 'sampleiconurl',
+                'reviewer': 'newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com', 'icon': my_file,
                 'evidence': 'True'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Empty badge name', str(data))
 
     def test_modify_badge_endpoint_with_empty_badge_description(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': 'Create a Data Story', 'description': '', 'link': 'test', 'badgetype': 'Open',
                 'requestable': 'True', 'owner': 'newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com',
                 'reviewer': 'akshay@gmail.com',
-                'icon': 'sampleiconurl', 'evidence': 'True'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+                'icon': my_file, 'evidence': 'True'}
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Empty description', str(data))
 
     def test_modify_badge_endpoint_with_empty_badge_link(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': 'Create a Data Story', 'description': 'test', 'link': '', 'badgetype': 'Open',
                 'requestable': 'True', 'owner': 'akshay@gmail.com', 'reviewer': 'akshay@gmail.com',
-                'icon': 'sampleiconurl', 'evidence': 'True'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+                'icon': my_file, 'evidence': 'True'}
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Empty link', str(data))
 
     def test_modify_badge_endpoint_with_empty_badge_type(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': 'Create a Data Story', 'description': 'test', 'link': 'testlink', 'badgetype': '',
                 'requestable': 'True', 'owner': 'akshay@gmail.com', 'reviewer': 'akshay@gmail.com',
-                'icon': 'sampleiconurl', 'evidence': 'True'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+                'icon': my_file, 'evidence': 'True'}
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Invalid badge type', str(data))
 
     def test_modify_badge_endpoint_with_empty_badge_user_requestable(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': 'Create a Data Story', 'description': 'test', 'link': 'testlink', 'badgetype': 'Open Badge',
-                'requestable': '', 'owner': 'akshay@gmail.com', 'reviewer': 'akshay@gmail.com', 'icon': 'sampleiconurl',
+                'requestable': '', 'owner': 'akshay@gmail.com', 'reviewer': 'akshay@gmail.com', 'icon': my_file,
                 'evidence': 'True'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Invalid user requestable type', str(data))
 
     def test_modify_badge_endpoint_with_empty_badge_owner(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': 'Create a Data Story', 'description': 'test', 'link': 'testlink', 'badgetype': 'Open Badge',
                 'requestable': 'True', 'owner': 'newtesting@gmail.com,sampleusertester@gmail.com,akshay@gmail.com,None',
-                'reviewer': 'akshay@gmail.com', 'icon': 'sampleiconurl',
+                'reviewer': 'akshay@gmail.com', 'icon': my_file,
                 'evidence': 'True'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Invalid Email address in Owner - None', str(data))
 
     def test_modify_badge_endpoint_with_empty_badge_reviewer(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': 'Create a Data Story', 'description': 'test', 'link': 'testlink', 'badgetype': 'Open Badge',
-                'requestable': 'True', 'owner': 'akshay@gmail.com', 'reviewer': '', 'icon': 'sampleiconurl',
+                'requestable': 'True', 'owner': 'akshay@gmail.com', 'reviewer': '', 'icon': my_file,
                 'evidence': 'True'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Empty reviewer email address', str(data))
 
-    def test_modify_badge_endpoint_with_empty_badge_icon(self):
-        info = {'name': 'Create a Data Story', 'description': 'test', 'link': 'testlink', 'badgetype': 'Open Badge',
-                'requestable': 'True', 'owner': 'akshay@gmail.com', 'reviewer': 'akshay@gmail.com', 'icon': '',
-                'evidence': 'True'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
-        data = resp.get_data()
-        self.assertIn('Empty icon', str(data))
+    # def test_modify_badge_endpoint_with_empty_badge_icon(self):
+    #     image = os.path.join("./testFile.PNG")
+    #     my_file = FileStorage(
+    #     stream=open(image, "rb"),
+    #     filename="testFile.PNG",
+    #     content_type="image/png",
+    #      ),
+    #     info = {'name': 'Create a Data Story', 'description': 'test', 'link': 'testlink', 'badgetype': 'Open Badge',
+    #             'requestable': 'True', 'owner': 'akshay@gmail.com', 'reviewer': 'akshay@gmail.com', 'icon': 'priya.png',
+    #             'evidence': 'True'}
+    #     resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
+    #     data = resp.get_data()
+    #     self.assertIn('Please enter a valid file name', str(data))
 
     def test_modify_badge_endpoint_with_empty_badge_evidence(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': 'Create a Data Story', 'description': 'test', 'link': 'testlink', 'badgetype': 'Open Badge',
                 'requestable': 'True', 'owner': 'akshay@gmail.com', 'reviewer': 'akshay@gmail.com',
-                'icon': 'sampleicon', 'evidence': ''}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+                'icon': my_file, 'evidence': ''}
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Please choose the evidence Type', str(data))
 
     def test_modify_badge_endpoint_with_invalid_badge_evidence(self):
+        image = os.path.join("./testFile.PNG")
+        my_file = FileStorage(
+        stream=open(image, "rb"),
+        filename="testFile.PNG",
+        content_type="image/png",
+         ),
         info = {'name': 'Create a Data Story', 'description': 'test', 'link': 'testlink', 'badgetype': 'Open Badge',
                 'requestable': 'True', 'owner': 'akshay@gmail.com', 'reviewer': 'akshay@gmail.com',
-                'icon': 'sampleicon', 'evidence': 'test'}
-        resp = self.app.post("http://127.0.0.1:5000/modifybadge", json=info)
+                'icon': my_file, 'evidence': 'test'}
+        resp = self.app.post("http://127.0.0.1:5000/modifybadge", data=info, content_type='multipart/form-data')
         data = resp.get_data()
         self.assertIn('Not a valid evidence', str(data))
 

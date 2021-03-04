@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
 import login
@@ -11,10 +11,17 @@ import view_user_badge_details
 import create_users
 import user_badge_mapping
 import user_badge_deactivation
+import os
+from PIL import Image
+import io
+from io import StringIO
+import os.path
+from os import path
 
 app = Flask(__name__)
 cors = CORS(app)
 
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 
 @app.route("/")
 def home():
@@ -61,6 +68,7 @@ def register_user():
     return registration.register(new_email, new_password, new_user_type, first_name, second_name, middle_name,
                                  organization_name)
 
+
 @app.route("/updateuser", methods=['POST'])
 def update_user_details():
     req_body = request.get_json()
@@ -73,10 +81,8 @@ def update_user_details():
     user_type = req_body['userType']
     user_status = req_body['userStatus']
 
-
     return create_users.update_user_by_admin(email, first_name, second_name, middle_name, organization_name,
                                              admin_id, user_type, user_status)
-
 
 
 @app.route("/createuser", methods=['GET'])
@@ -152,21 +158,45 @@ def view_user_with_email():
     return view_users.view_user_details_by_name(req_body['email'])
 
 
-@app.route("/addbadge", methods=['POST'])
+@app.route("/addbadge", methods=['GET', 'POST'])
 def add_new_badge():
-    req_body = request.get_json()
-    badge_name = req_body['name']
-    badge_description = req_body['description']
-    link = req_body['link']
-    user_requestable = req_body['requestable']
-    badge_type = req_body['badgetype']
-    owner = req_body['owner']
-    reviewer = req_body['reviewer']
-    icon = req_body['icon']
-    evidence = req_body['evidence']
-    return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
-                                  badge_type, owner, reviewer, icon, evidence)
+   
+    badge_name = request.form.get("name")
+    badge_description = request.form.get("description")
+    link = request.form.get("link")
+    user_requestable = request.form.get("requestable")
+    badge_type = request.form.get("badgetype")
+    owner = request.form.get("owner")
+    reviewer = request.form.get("reviewer")
+    icon = request.files['icon']
+    evidence = request.form.get("evidence")
+    icon.save(icon.filename)
 
+    return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
+                                  badge_type, owner, reviewer, icon.filename, evidence)
+    #image_bytes = Image.open(io.BytesIO(icon.read()))
+    #image_bytes = Image.open(icon.stream)
+    # icon = request.form["icon"]
+    # if filename != '':
+    #     file_ext = os.path.splitext(filename)[1]
+    #     if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+    #icon = request.files['icon']
+    
+    # if icon.filename == '':
+	# 	resp = jsonify({'message': 'No file selected for uploading'})
+	# 	resp.status_code = 400
+    # badge_name = str(request.args.get('name'))
+    # badge_description = str(request.args.get('description'))
+    # link = str(request.args.get('link'))
+    # user_requestable = str(request.args.get('requestable'))
+    # badge_type = str(request.args.get('badgetype'))
+    # owner = str(request.args.get('owner'))
+    # reviewer = str(request.args.get('reviewer')) 
+    # evidence = str(request.args.get('evidence'))
+    # icon = request.args.get'icon')
+
+    # return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
+    #                               badge_type, owner, reviewer, icon, evidence)
 
 @app.route("/passwordreset", methods=['POST'])
 def password_reset():
@@ -340,24 +370,36 @@ def update_assertions_user_badge_details():
 
 @app.route("/modifybadge", methods=['POST'])
 def modify_existing_badge():
-    req_body = request.get_json()
-    badge_name = req_body['name']
-    badge_description = req_body['description']
-    link = req_body['link']
-    user_requestable = req_body['requestable']
-    badge_type = req_body['badgetype']
-    owner = req_body['owner']
-    reviewer = req_body['reviewer']
-    icon = req_body['icon']
-    evidence = req_body['evidence']
+    # req_body = request.get_json()
+    # badge_name = req_body['name']
+    # badge_description = req_body['description']
+    # link = req_body['link']
+    # user_requestable = req_body['requestable']
+    # badge_type = req_body['badgetype']
+    # owner = req_body['owner']
+    # reviewer = req_body['reviewer']
+    # icon = req_body['icon']
+    # evidence = req_body['evidence']
+    
+    badge_name = request.form.get("name")
+    badge_description = request.form.get("description")
+    link = request.form.get("link")
+    user_requestable = request.form.get("requestable")
+    badge_type = request.form.get("badgetype")
+    owner = request.form.get("owner")
+    reviewer = request.form.get("reviewer")
+    icon = request.files['icon']
+    evidence = request.form.get("evidence")
+    if path.isfile(icon.filename):
+        icon.save(icon.filename)
 
-    return create_badge.modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
-                                     icon, evidence)
+        return create_badge.modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
+                                        icon.filename, evidence)
+    return "Select a valid file"
 
 
-@app.route("/sendpasswordresetemail", methods=['GET'])
+@app.route("/sendpasswordresetemail", methods=['POST'])
 def send_password_reset_email():
     req_body = request.get_json()
     email_address = req_body['email_address']
-
     return registration.password_reset_email(email_address)

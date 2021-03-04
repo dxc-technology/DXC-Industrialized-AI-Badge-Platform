@@ -114,6 +114,7 @@ oauthlib==3.1.0
 packaging==20.4
 pluggy==0.13.1
 py==1.9.0
+image
 pycodestyle==2.6.0
 pycparser==2.20
 pyflakes==2.2.0
