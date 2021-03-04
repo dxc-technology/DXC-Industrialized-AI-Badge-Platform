@@ -15,6 +15,8 @@ import os
 from PIL import Image
 import io
 from io import StringIO
+import os.path
+from os import path
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -388,10 +390,12 @@ def modify_existing_badge():
     reviewer = request.form.get("reviewer")
     icon = request.files['icon']
     evidence = request.form.get("evidence")
-    icon.save(icon.filename)
+    if path.isfile(icon.filename):
+        icon.save(icon.filename)
 
-    return create_badge.modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
-                                     icon.filename, evidence)
+        return create_badge.modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
+                                        icon.filename, evidence)
+    return "Select a valid file"
 
 
 @app.route("/sendpasswordresetemail", methods=['POST'])

@@ -186,7 +186,7 @@ class UpdateBadgeDetails(unittest.TestCase):
     #     assert create_badge.modify_badge("Create a Data Story",
     #                                      "The simplest way to find your AI potential is to identify intelligence gaps in the business, build a portfolio of AI data stories to fill those gaps, and identify specific business value targets for each story. In this badge, you will create a data story that describes how AI could be applied in the company. The AI data stories represent a portfolio of experiments that should drive your AI innovation program.",
     #                                      "test for badge", "Open Badge", "True", "akshay@gmail.com", "akshay@gmail.com",
-    #                                      "priya.png", "True") == "Please enter a valid file name"
+    #                                      "", "True") == "Please enter a valid file name"
 
     def test_badge_update_evidence_empty(self):
         assert create_badge.modify_badge("Create a Data Story",
