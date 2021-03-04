@@ -274,7 +274,7 @@ def delete_assertions_user_badge_details():
     return user_badge_mapping.deleted_user_badge_collection_for_assertion_id(assertion_id, deleted_by_id)
 
 
-@app.route("/deleteuserbadgesLlistbyadmin", methods=['POST'])
+@app.route("/deleteuserbadgeslistbyadmin", methods=['POST'])
 def delete_multiple_assertions_user_badge_details():
     req_body = request.get_json()
     if req_body['assertionID'] == "None":

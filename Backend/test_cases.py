@@ -505,25 +505,25 @@ class EndpointTest(unittest.TestCase):
 
     def test_delete_assertions_user_badge_collection_endpoint_for_invalid_assertion_id_admin(self):
         info = {'assertionID': [INVALID_ASSERTION_ID], 'deletedBy': VALID_ADMIN_USER}
-        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesLlistbyadmin", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgeslistbyadmin", json=info)
         data = resp.get_data()
         self.assertIn('Assertion ID is not valid', str(data))
 
     def test_delete_assertions_user_badge_collection_endpoint_for_invalid_deleted_by_id_admin(self):
         info = {'assertionID': [VALID_ASSERTION_ID], 'deletedBy': INVALID_ASSERTION_ID}
-        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesLlistbyadmin", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgeslistbyadmin", json=info)
         data = resp.get_data()
         self.assertIn('User ID is not valid', str(data))
 
     def test_delete_assertions_user_badge_collection_endpoint_for_already_deleted_record_admin(self):
         info = {'assertionID': [VALID_ASSERTION_ID], 'deletedBy': VALID_ADMIN_USER}
-        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesLlistbyadmin", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgeslistbyadmin", json=info)
         data = resp.get_data()
         self.assertIn('Record is already deleted', str(data))
 
     def test_delete_assertions_user_badge_collection_endpoint_for_non_admin_user_admin(self):
         info = {'assertionID': [VALID_ASSERTION_ID], 'deletedBy': VALID_USER_ID}
-        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesLlistbyadmin", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgeslistbyadmin", json=info)
         data = resp.get_data()
         self.assertIn('Requesting user is not an admin', str(data))
 

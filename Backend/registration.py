@@ -1,16 +1,14 @@
 import re
 import os
 from datetime import datetime, timezone
-from flask import Flask
-from flask_mail import Message
-from flask_mail import Mail
 from dotenv import load_dotenv
 from argon2 import PasswordHasher
 import database
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
+import random
+import array
 
 VALID = r"valid"
 INVALID = r"invalid"
@@ -71,6 +69,34 @@ def verify_hashed_password(password):
     return VALID
 
 
+def generate_strong_password():
+    maximum_length = 12
+    digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    lowercase_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+                            't', 'u', 'v', 'w', 'x', 'y', 'z']
+    uppercase_characters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'O', 'p', 'Q', 'R', 'S',
+                            'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    symbols = ['@', '#', '$', '%', '=', ':', '?', '.', '/', '|', '~', '>', '*', '(', ')', '<']
+    combined_list = digits + lowercase_characters + uppercase_characters + symbols
+
+    random_digit = random.choice(digits)
+    random_upper = random.choice(uppercase_characters)
+    random_lower = random.choice(lowercase_characters)
+    random_symbol = random.choice(symbols)
+
+    temporary_password = random_digit + random_upper + random_lower + random_symbol
+
+    for x in range(maximum_length - 4):
+        temporary_password = temporary_password + random.choice(combined_list)
+        temporary_password_list = array.array('u', temporary_password)
+        random.shuffle(temporary_password_list)
+
+    password = ""
+    for x in temporary_password_list:
+        password = password + x
+    return password
+
+
 def register(email, password, user_type, first_name, second_name, middle_name, organization_name):
     if validate_email_exist(email.lower()) == "email already exists":
         return "user already exists"
@@ -110,18 +136,16 @@ def validate_second_name(second_name):
     return VALID
 
 
-def password_reset(email_address, password, confirm_password):
+def password_reset(email_address, password):
     if email_address == "":
         return "email is empty"
     if validate_email_address(email_address) == INVALID:
         return "email is not correct"
     if password is None or password.strip() == "":
         return "password is empty"
-    if confirm_password is None or confirm_password.strip() == "" or password.strip() != confirm_password:
-        return "Re-type your password correctly"
     user_doc = database.get_user_details(email_address)
     if len(user_doc) > 0:
-        hashed_password = hash_password(confirm_password)
+        hashed_password = hash_password(password)
         database.update_user_password(email_address, hashed_password)
         return "Password reset is complete"
     return "user does not exist"
@@ -137,7 +161,6 @@ def email_content(email_address, body):
     msg['Subject'] = 'AI Industrial Badger - Password Reset'
     msg['From'] = sender_email
     msg['To'] = receiver_email
-
     msg_text = MIMEText('<b>%s</b>' % body, 'html')
     msg.attach(msg_text)
 
@@ -145,7 +168,7 @@ def email_content(email_address, body):
         with smtplib.SMTP('smtp.office365.com', 587) as smtpObj:
             smtpObj.ehlo()
             smtpObj.starttls()
-            smtpObj.login(os.getenv("MAIL_USERNAME"), "Alohomora@123")
+            smtpObj.login(os.getenv("MAIL_USERNAME"), os.getenv("MAIL_PASSWORD"))
             smtpObj.sendmail(sender_email, receiver_email, msg.as_string())
     except Exception as e:
         print(e)
@@ -158,6 +181,8 @@ def password_reset_email(email_address):
         return "email is not correct"
     user_doc = database.get_user_details(email_address)
     if len(user_doc) > 0:
-        email_content(email_address, "Password reset email")
+        password = generate_strong_password()
+        email_content(email_address, "This is your new password: " + password)
+        password_reset(email_address, password)
         return "Email sent successfully"
     return "user does not exist"
