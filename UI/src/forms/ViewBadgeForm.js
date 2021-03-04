@@ -21,6 +21,7 @@ const ViewBadgeForm = (props) => {
   const [userID, setUserID ]= useState(props.userID);
   const [badgeDetailsClick, setBadgeDetailsClick] = useState('false');
   const [clickedBadge, setClickedBadge]=useState('');
+  const [clickType, setClickType] = useState('');
 
   function createData(id, mongoID, name, description, count, lastIssued, icon ) {
     return { id, mongoID, name, description, count, lastIssued, icon};
@@ -30,11 +31,22 @@ const ViewBadgeForm = (props) => {
   const [passwordClick,setPasswordClick] = useState('False');
 
 
-  const handleBadgeDetails=event=>{
+  const handleUserViewBadgeDetails=event=>{
     setBadgeDetailsClick('true');
+    setClickType('UserView');
     setClickedBadge(event.currentTarget.value);
+  }
 
-    //
+  const handleAdminEditBadgeDetails=event=>{
+    setBadgeDetailsClick('true');
+    setClickType('AdminEdit');
+    setClickedBadge(event.currentTarget.value);
+  }
+
+  const handleAdminViewBadgeDetails=event=>{
+    setBadgeDetailsClick('true');
+    setClickType('AdminView');
+    setClickedBadge(event.currentTarget.value);
   }
 
 
@@ -76,14 +88,14 @@ const ViewBadgeForm = (props) => {
     handleviewBadge()
   }, []);
 
-if(badgeDetailsClick=='true'){ return (<div><BadgeDetailsForm userType={userType} badgeName={clickedBadge} userID={userID}/></div>);}
+if(badgeDetailsClick=='true'){ return (<div><BadgeDetailsForm userType={userType} clickType={clickType} badgeName={clickedBadge} userID={userID}/></div>);}
 else
 {
   
   return (
     
     <div>
-      <input data-testid='viewBadge_RowCount' hidden value={response} />
+      <input data-testid='viewBadge_RowCount' hidden value={response} readOnly />
 
       <React.Fragment>
         {/* <Title>Recent Orders</Title> */}
@@ -109,13 +121,17 @@ else
                 <TableCell >{row.count}</TableCell>
                 {userType=='5f760d4325c1036d4d466560'?
                 <TableCell align="right">
-                <IconButton data-testId={'viewBadge_editBadgeButton'+row.id} value={row.name} onClick={handleBadgeDetails}>
+                <IconButton data-testId={'viewBadge_viewBadgeButton'+row.id} value={row.name} onClick={handleAdminViewBadgeDetails}>
+                <PageviewIcon/>
+                </IconButton>
+
+                <IconButton data-testId={'viewBadge_editBadgeButton'+row.id} value={row.name} onClick={handleAdminEditBadgeDetails}>
                 <EditSharpIcon/>
                 </IconButton>
                 </TableCell>
                 :
                 <TableCell align="right">
-                <IconButton data-testId={'viewBadge_viewBadgeButton'+row.id} value={row.name} onClick={handleBadgeDetails}>
+                <IconButton data-testId={'viewBadge_viewBadgeButton'+row.id} value={row.name} onClick={handleUserViewBadgeDetails}>
                 <PageviewIcon/>
                 </IconButton>
                 </TableCell>}
