@@ -249,7 +249,7 @@ const LoginForm = (props) => {
   {/* </form> */}
   {/* <input
   type='text'
-  value={formatTimeStamp(1605553582964)}
+  value={result}
 
   /> */}
 

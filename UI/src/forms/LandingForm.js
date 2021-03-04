@@ -33,6 +33,7 @@ import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import CreateBadgeForm from './CreateBadgeForm';
 import logo from '../assets/Tables-charts-graphs.mp4';
+
 import ViewBadgeForm from './ViewBadgeForm';
 import ViewAssertionsForm from './ViewAssertionsForm';
 import ViewUsersForm from './ViewUsersForm';
@@ -40,7 +41,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import MyBackpackForm from './MyBackpackForm';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 import ReactPlayer from 'react-player';
-
+import $ from 'jquery'; 
+import getJIRAResponse from '../API/AddJIRARequestAPI';
+ 
 const LandingForm = (props)=>
 {
     const [clickedItem,setClickedItem] = useState('');
@@ -75,6 +78,18 @@ const LandingForm = (props)=>
       setClickedItem('ViewUsersForm');
     }
 
+    const handleSupportButtonClick =()=> {
+      
+      var response = new Promise((resolve, reject) => {
+        resolve(getJIRAResponse());
+    }).then(value => {
+       window.close();
+    }
+    );
+
+    }
+
+   
     const useStylesBootstrap = makeStyles((theme) => ({
       arrow: {
         color: theme.palette.common.black,
@@ -84,6 +99,7 @@ const LandingForm = (props)=>
       },
     }));
 
+   
     function BootstrapTooltip(props) {
       const classes = useStylesBootstrap();
     
@@ -110,7 +126,9 @@ const LandingForm = (props)=>
             </ListItemIcon>
             <ListItemText primary="Badges" />
           </ListItem>
-          <ListItem button component="a" href="mailto:panoply@dxc.com">
+          {/* <ListItem button component="a" href="mailto:panoply@dxc.com"> */}
+          <ListItem button id="LandingForm_feedbackButton" onClick={handleSupportButtonClick}>
+          
             <ListItemIcon>
             <BootstrapTooltip title ="Support"><BarChartIcon /></BootstrapTooltip>
             </ListItemIcon>
@@ -275,8 +293,11 @@ const classes = useStyles();
 
 }
 
+
+
   useEffect(() => {
     handleviewUserByEmail();
+  
 }, []);
 
 

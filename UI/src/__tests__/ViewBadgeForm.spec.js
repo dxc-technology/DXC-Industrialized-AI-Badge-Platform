@@ -37,7 +37,7 @@ describe('<ViewBadgeForm />', () => {
             const editBadgeButton = screen.queryByTestId(/viewBadge_editBadgeButton0/);
             expect(editBadgeButton).not.toBeNull();
             const viewBadgeButton = screen.queryByTestId(/viewBadge_viewBadgeButton0/);
-            expect(viewBadgeButton).toBeNull();
+            expect(viewBadgeButton).not.toBeNull();
 
         });
 

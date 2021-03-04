@@ -28,6 +28,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import addNewAssertionResponse from '../API/AddNewAssertionAPI';
+import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 
 
 
@@ -37,6 +38,7 @@ const BadgeDetailsForm = (props) => {
   const [badgeName, setbadgeName] = useState(props.badgeName);
   const [userType, setUserType]=useState(props.userType);
   const [userID, setUserID]=useState(props.userID);
+  const [clickType, setClickType] = useState(props.clickType);
   const [badgeDescriptoion, setBadgeDescription] = useState('');
   const [createdDate, setCreatedDate] = useState('');
   const [modifiedDate, setModifiedDate] = useState('');
@@ -50,9 +52,13 @@ const BadgeDetailsForm = (props) => {
   const [saveFlag, setSaveFlag]=useState('False');
   const [result, setResult]=useState('');
   const [requestBadgeResult,setrequestBadgeResult]=useState('');
+  const [assignBadgeResult, setAssignBadgeResult]=useState('');
   const [backbuttonClicked, setBackButtonClicked]=useState('False');
   const [requestBadgeButtonClicked, setRequestBadgeButtonClicked]=useState(false);
+  const [assignBadgeButtonClicked, setAssignBadgeButtonClicked]=useState(false);
   const [workLink, setWorkLink]=useState('');
+  const [assigneeEmail, setAssigneeEmail] = useState('');
+  const [assigneeID, setAssigneeID] = useState('');
 
   const useStyles = makeStyles((theme) => ({
     paper: {
@@ -115,6 +121,11 @@ const BadgeDetailsForm = (props) => {
     setWorkLink(event.target.value);
 
   }
+
+  const handleAssigneeEmailChange =event =>{
+    setAssigneeEmail(event.target.value);
+  }
+
   const handleSaveButtonClick = () =>{
     var response2 = new Promise((resolve, reject) => {
       resolve(updateBadgeResponseAPI(badgeName, badgeDescriptoion, link, userRequestable, badgeType, owners, reviewers, 'icon link',evidenceRequired));
@@ -133,25 +144,51 @@ const BadgeDetailsForm = (props) => {
   const handleRequestBadgeButtonClick =() =>{
     setRequestBadgeButtonClicked(true);
   }
-  const handleClose = () => {
+
+  const handleAssignBadgeButtonClick =() =>{
+    setAssignBadgeButtonClicked(true);
+  }
+
+  const handleRequestBadgeButtonClose = () => {
     setRequestBadgeButtonClicked(false);
+  };
+
+  const handleAssignBadgeButtonClose = () => {
+    setAssignBadgeButtonClicked(false);
   };
 
   const handlerequestBadge = async() => {
     var response3 = new Promise((resolve, reject) => {
       resolve(addNewAssertionResponse(userID,badgeId,'',workLink,'',''));
-    }).then(value => {
-   
+    }).then(value => {   
       if (value == 200) {
         setrequestBadgeResult('Request for Badge is successfully submitted');
-       
-
       }
 
 
     });
     setRequestBadgeButtonClicked(false);
   };
+
+  const handleAssignBadge =async() => {
+    var response4 = new Promise((resolve, reject) => {
+      resolve(UserDetailByEmailResponse(assigneeEmail));
+      }).then(value => {
+      if (value != undefined) {
+          setAssigneeID(value[0]._id.$oid);
+      }
+    });
+    var response5 = new Promise((resolve, reject) => {
+      resolve(addNewAssertionResponse(assigneeID,badgeId,'','','',''));
+    }).then(value => {   
+      if (value == 200) {
+        setAssignBadgeResult('Badge Assigned successfully');
+      }
+
+
+    });
+    setAssignBadgeButtonClicked(false);
+  }
   const handleviewBadgeByName = async () => {
 
     var response1 = new Promise((resolve, reject) => {
@@ -169,10 +206,6 @@ const BadgeDetailsForm = (props) => {
         setCreatedDate(formatDate(value[0].created.$date));
         setModifiedDate(formatDate(value[0].modified.$date));
         setIcon(value[0].icon);
-
-        // setresponse(value.length);
-        // console.log(response);
-
       }
 
 
@@ -191,7 +224,7 @@ return (
 );
 }
 else{
-if(userType=='5f760d4325c1036d4d466560'){
+if(clickType=='AdminEdit'){
 return (
 <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -441,7 +474,220 @@ return (
     </Container>
 );
 }
-else{
+else if(clickType=='AdminView'){
+  return (
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Typography >
+          <img src={icon} width="150"/>
+        </Typography>
+        <Typography component="h1" variant="h5">
+          Badge Details
+      </Typography>
+        <br></br>
+        {/* <form className={classes.form} noValidate> */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} >
+            <TextField
+              name="badgeName"
+              variant="outlined"
+              fullWidth
+
+              id="badgeName"
+              label="Badge Name"
+              inputProps={{
+                "data-testid": "badgeDetails_badgeName",
+              }}
+              value={badgeName}
+            />
+          </Grid>
+          <Grid item xs={12} >
+            <TextField
+              variant="outlined"
+              fullWidth
+              multiline
+              id="badgeDescription"
+              label="Badge Description"
+              name="badgeDescription"
+              inputProps={{
+                "data-testid": "badgeDetails_badgeDescription",
+              }}
+              value={badgeDescriptoion}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              id="createdDate"
+              label="Created Date"
+              name="createdDate"
+              inputProps={{
+                "data-testid": "badgedetails_createdDate",
+              }}
+              value={createdDate}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              id="modifiedDate"
+              label="modified Date"
+              name="modifiedDate"
+              inputProps={{
+                "data-testid": "badgeDetails_modifiedDate",
+              }}
+              value={modifiedDate}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              name="link"
+              label="Link"
+              id="link"
+              inputProps={{
+                "data-testid": "badgeDetails_link",
+              }}
+              value={link}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              name="badgeType"
+              label="Badge Type"
+              id="badgeType"
+              inputProps={{
+                "data-testid": "badgeDetails_badgeType",
+              }}
+              value={badgeType}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              name="evidenceRequired"
+              label="Evidence Required"
+              id="evidenceRequired"
+              inputProps={{
+                "data-testid": "badgeDetails_evidenceRequired",
+              }}
+              value={evidenceRequired}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              name="userRequestable"
+              label="User Requestable"
+              id="userRequestable"
+              inputProps={{
+                "data-testid": "badgeDetails_userRequestable",
+              }}
+              value={userRequestable}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              name="owners"
+              label="Owners of Badge"
+              id="owners"
+              inputProps={{
+                "data-testid": "badgeDetails_owners",
+              }}
+              value={owners}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              
+              name="reviewers"
+              label="Reviewers of Badge"
+              id="reviewers"
+              inputProps={{
+                "data-testid": "badgeDetails_reviewers",
+              }}
+              value={reviewers}
+            />
+          </Grid>
+
+        </Grid>
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={6}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              data-testid="badgeDetails_assignButton" 
+              onClick={handleAssignBadgeButtonClick}>
+              Assign Badge
+        </Button>
+        <Dialog open={assignBadgeButtonClicked} onClose={handleAssignBadgeButtonClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Assign Badge</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To assign this badge to many users, enter all email addresses here separated with a comma
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="assigneeEmail"
+            label="Assignee Emails"
+            type="url"
+            fullWidth
+            onChange={handleAssigneeEmailChange}
+            value={assigneeEmail}
+            required
+            inputProps={{
+              "data-testid": "badgeDetails_assigneeEmail",
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAssignBadgeButtonClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAssignBadge} data-testid="badgeDetails_assignBadge"  color="primary">
+            Assign Badge
+          </Button>
+        </DialogActions>
+      </Dialog>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            data-testid="badgeDetails_backButton" 
+            onClick={handleBackButtonClick}>
+            Back to Badges
+        </Button>
+          </Grid>
+        </Grid>
+        <label>{assignBadgeResult}</label>
+        <input type="text" hidden data-testid='badgeDetails_AssignResult' value={assignBadgeResult} readOnly />
+      </div>
+    </Container>
+  );
+      }
+
+else {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -478,9 +724,9 @@ else{
               variant="outlined"
               fullWidth
               multiline
-              id="badgeDescriptoion"
+              id="badgeDescription"
               label="Badge Description"
-              name="badgeDescriptoion"
+              name="badgeDescription"
               inputProps={{
                 "data-testid": "badgeDetails_badgeDescription",
               }}
@@ -607,7 +853,7 @@ else{
               onClick={handleRequestBadgeButtonClick}>
               Request Badge
         </Button>
-        <Dialog open={requestBadgeButtonClicked} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <Dialog open={requestBadgeButtonClicked} onClose={handleRequestBadgeButtonClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Request Badge</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -629,7 +875,7 @@ else{
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleRequestBadgeButtonClose} color="primary">
             Cancel
           </Button>
           <Button onClick={handlerequestBadge} data-testid="badgeDetails_applyBadge"  color="primary">
@@ -639,15 +885,16 @@ else{
       </Dialog>
           </Grid>
           <Grid item xs={12} sm={6}>
-            {/* <Button
+            <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
-            data-testid="badgeDetails_backButton" >
+            data-testid="badgeDetails_backButton" 
+            onClick={handleBackButtonClick} >
             Back to Badges
-        </Button> */}
+        </Button>
           </Grid>
         </Grid>
         <label>{requestBadgeResult}</label>
@@ -655,8 +902,9 @@ else{
       </div>
     </Container>
   );
-      }
-    }
+      } 
+
+}
   //   }
   // }
 };
