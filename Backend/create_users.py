@@ -3,6 +3,7 @@ import re
 from argon2 import PasswordHasher
 from bson.objectid import ObjectId
 import database
+import json
 
 import user_badge_mapping
 
@@ -163,8 +164,8 @@ def validate_user_type_id(usertype_id):
         return "Usertype avalilable"
     return "Usertype unavailable"
 
+def update_user(userid, first_name, second_name, middle_name, organization_name):
 
-def update_user(first_name, second_name, middle_name, organization_name):
     if validate_first_name(first_name) == INVALID:
         return INVALID
     if validate_second_name(second_name) == INVALID:
@@ -173,7 +174,7 @@ def update_user(first_name, second_name, middle_name, organization_name):
         return INVALID
 
     update_user_id = database.modify_existing_user(
-        first_name, second_name, middle_name, organization_name)
+        userid, first_name, second_name, middle_name, organization_name)
     if update_user_id == "updated":
         return "User details successfully updated"
     return None
