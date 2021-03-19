@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import LandingForm from './LandingForm';
+import ForgotPasswordForm from  './ForgotPasswordForm';
 import formatTimeStamp from '../scripts/functions'
 import formatDate from '../scripts/functions';
 // import '../index.css'; 
@@ -27,6 +28,7 @@ const LoginForm = (props) => {
     const [password, setPassword] = useState('');
     const [result, setResult] = useState(props.result);
     const [registration, setRegistration] = useState('');
+    const [forgotPassword, setForgotPassword] = useState('');
 
     const handlePasswordChange = event => {
         setPassword(event.target.value);
@@ -38,6 +40,10 @@ const LoginForm = (props) => {
 
     const handleRegister = event => {
         setRegistration('register');
+    };
+
+    const handleForgotPassword = event => {
+      setForgotPassword('forgotpassword');
     };
 
     const useStyles = makeStyles((theme) => ({
@@ -93,141 +99,98 @@ const LoginForm = (props) => {
             </div>
         );
     }
+
+    else{    
+      if (forgotPassword == 'forgotpassword') {
+          return (
+              <div>
+                  <ForgotPasswordForm />
+              </div>
+          );
+      }
+   
     else {
         return (
-      
-            // <div>
-            //     <br></br>
-            //     <div>
-            //         <label> Enter Email</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            //     <input type="text"
-            //             data-testid="loginId"
-            //             value={email}
-            //             onChange={handleEmailChange}
-            //         />
-
-            //     </div>
-            //     <br></br>
-            //     <div>
-            //         <label>Enter Password</label>&nbsp;&nbsp;&nbsp;&nbsp;
-            // <input type="password"
-            //             data-testid="password"
-            //             value={password}
-            //             onChange={handlePasswordChange}
-            //         />
-            //         <br></br>
-            //     </div>
-            //     <br></br>
-            //     <button data-testid="loginButton" onClick={handleLogin}>
-            //         Login
-            // </button>
-            //  &nbsp;&nbsp;&nbsp;&nbsp;
-            //  &nbsp;&nbsp;&nbsp;&nbsp;
-
-
-            //     <button data-testid="registerButton" onClick={handleRegister} >
-            //         Register
-            // </button>
-            //     <br></br>
-            //     <input
-            //         type="text"
-            //         data-testid="result"
-            //         value={result}
-            //         hidden
-            //         readOnly
-            //     />
-
-            //     <input
-            //         type="text"
-            //         data-testid="registration"
-            //         value={registration}
-            //         hidden
-            //         readOnly
-            //     />
-            //     <label>
-            //         {result}
-            //     </label>
-
-            // </div>
-
-<Container component="main" maxWidth="xs">
-<CssBaseline />
-<div className={classes.paper}>
-{/* <div>Here{process.env.REACT_APP_APILINK}</div> */}
-  <Avatar className={classes.avatar}>
-    <LockOutlinedIcon />
-  </Avatar>
-  <Typography component="h1" variant="h5">
-    Sign in 
-  </Typography>
-  {/* <form className={classes.form} noValidate> */}
-    <TextField
-      variant="outlined"
-      margin="normal"
-      required
-      fullWidth
-      id="email"
-      label="Email Address"
-      name="email"
-      className={((email.length=='')&& (emailClick=='True')) ? 'emptyfield' : ''}
-      autoComplete="email"
-      autoFocus
-        inputProps={{
-            "data-testid": "loginId",
-        }}
-        // data-testid="loginId"
-        value={email}
-        onChange={handleEmailChange}
-    />
-    <TextField
-      variant="outlined"
-      margin="normal"
-      required
-      fullWidth
-      name="password"
-      label="Password"
-      type="password"
-      id="password"
-      className={((password.length=='')&& (passwordClick=='True'))  ? 'emptyfield' : ''}
-      autoComplete="current-password"
-      inputProps={{
-        "data-testid": "password",
-    }}
-        
-        value={password}
-        onChange={handlePasswordChange}
-    />
-    {/* <FormControlLabel
-      control={<Checkbox value="remember" color="primary" />}
-      label="Remember me"
-    /> */}
-    <Button
-      type="submit"
-      fullWidth
-      variant="contained"
-      color="primary"
-      className={classes.submit}
-      data-testid="loginButton" 
-      
-      onClick={handleLogin}
-    >
-      Sign In
-    </Button>
-    <Grid container>
-      <Grid item xs>
-        {/* <Link href="#" variant="body2">
-          Forgot password?
-        </Link> */}
-      </Grid>
-      <Grid item>
-        <Link href="#" variant="body2" 
-        data-testid="registerButton" 
-        onClick={handleRegister}>
-          {"Don't have an account? Sign Up"}
-        </Link>
-      </Grid>
-    </Grid>
-    <input
+            <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+            {/* <div>Here{process.env.REACT_APP_APILINK}</div> */}
+              <Avatar className={classes.avatar}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign in 
+              </Typography>
+              {/* <form className={classes.form} noValidate> */}
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  className={((email.length=='')&& (emailClick=='True')) ? 'emptyfield' : ''}
+                  autoComplete="email"
+                  autoFocus
+                    inputProps={{
+                        "data-testid": "loginId",
+                    }}
+                    // data-testid="loginId"
+                    value={email}
+                    onChange={handleEmailChange}
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  className={((password.length=='')&& (passwordClick=='True'))  ? 'emptyfield' : ''}
+                  autoComplete="current-password"
+                  inputProps={{
+                    "data-testid": "password",
+                }}
+                    
+                    value={password}
+                    onChange={handlePasswordChange}
+                />
+                {/* <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                /> */}
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  data-testid="loginButton" 
+                  
+                  onClick={handleLogin}
+                >
+                  Sign In
+                </Button>
+                <Grid container>
+                  <Grid item xs>
+                    <Link href="#" variant="body2"
+                    data-testid="forgotPasswordButton" 
+                    onClick={handleForgotPassword}>
+                      Forgot password?
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link href="#" variant="body2" 
+                    data-testid="registerButton" 
+                    onClick={handleRegister}>
+                      {"Don't have an account? Sign Up"}
+                    </Link>
+                  </Grid>
+                </Grid>
+                <input
                     type="text"
                     data-testid="result"
                     value={result}
@@ -245,20 +208,12 @@ const LoginForm = (props) => {
                 <label>
                     {result}
                 </label>
-                
-  {/* </form> */}
-  {/* <input
-  type='text'
-  value={result}
-
-  /> */}
-
-
-</div>
+              </div>
 
 </Container>
         );
     }
+}
 }
 };
 

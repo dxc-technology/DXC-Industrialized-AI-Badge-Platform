@@ -12,7 +12,6 @@ import create_users
 import user_badge_mapping
 import user_badge_deactivation
 import os
-from PIL import Image
 import io
 from io import StringIO
 import os.path
