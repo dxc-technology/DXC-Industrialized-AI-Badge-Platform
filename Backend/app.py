@@ -129,12 +129,13 @@ def create_user_admin():
 @app.route("/modifyusers", methods=['POST'])
 def modify_users():
     req_body = request.get_json()
+    userid = req_body['email']
     first_name = req_body['firstName']
     second_name = req_body['secondName']
     middle_name = req_body['middleName']
     organization_name = req_body['organizationName']
 
-    return create_users.update_user(first_name, second_name, middle_name, organization_name)
+    return create_users.update_user(userid, first_name, second_name, middle_name, organization_name)
 
 
 @app.route("/viewbadges", methods=['POST'])
@@ -392,6 +393,7 @@ def modify_existing_badge():
     reviewer = request.form.get("reviewer")
     icon = request.files['icon']
     evidence = request.form.get("evidence")
+
     if path.isfile(icon.filename):
         icon.save(icon.filename)
 

@@ -112,15 +112,11 @@ def add_new_user(email, password, user_type, created_time_utc, modified_time_utc
     new_user_doc = user_collection.insert_one(new_user)
     return str(new_user_doc.inserted_id)
 
-
-USERID = "5f8372f4f05bd4915d4dc86b"
-
-
-def modify_existing_user(first_name, second_name, middle_name, organization_name):
+def modify_existing_user(userid, first_name, second_name, middle_name, organization_name):
     modified_time_utc = datetime.now(timezone.utc)
     user_collection = myDB["Users"]
     user_collection.update(
-        {"_id": ObjectId(USERID)},
+        {"_id": ObjectId(userid)},
         {
             "$set": {
                 "modified": modified_time_utc, "firstName": first_name, "secondName": second_name,
