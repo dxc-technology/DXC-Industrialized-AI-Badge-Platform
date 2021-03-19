@@ -33,15 +33,16 @@ import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import CreateBadgeForm from './CreateBadgeForm';
 import logo from '../assets/Tables-charts-graphs.mp4';
-
+import PersonIcon from '@material-ui/icons/Person';
 import ViewBadgeForm from './ViewBadgeForm';
 import ViewAssertionsForm from './ViewAssertionsForm';
+import ViewProfileForm from './ViewProfileForm';
 import ViewUsersForm from './ViewUsersForm';
 import Tooltip from '@material-ui/core/Tooltip';
 import MyBackpackForm from './MyBackpackForm';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 import ReactPlayer from 'react-player';
-import $ from 'jquery'; 
+// import $ from 'jquery'; 
 import getJIRAResponse from '../API/AddJIRARequestAPI';
  
 const LandingForm = (props)=>
@@ -77,6 +78,11 @@ const LandingForm = (props)=>
     const handleViewUsersButtonClick =()=> {
       setClickedItem('ViewUsersForm');
     }
+
+    const handleUpdateProfileButtonClick =()=> {
+      setClickedItem('ViewProfileForm');
+    }
+
 
     const handleSupportButtonClick =()=> {
       
@@ -139,6 +145,13 @@ const LandingForm = (props)=>
             <BootstrapTooltip title ="FAQ"><LayersIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="FAQ" />
+          </ListItem>
+          <ListItem button id="LandingForm_updateProfile" onClick={handleUpdateProfileButtonClick}>
+          
+            <ListItemIcon>
+            <BootstrapTooltip title ="Profile"><PersonIcon /></BootstrapTooltip>
+            </ListItemIcon>
+            <ListItemText primary="Profile"/>
           </ListItem>
         </div>
       );
@@ -359,12 +372,13 @@ const classes = useStyles();
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType} userID={userID}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
+               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):
                (<div>
                  <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
                    <source src={logo} type="video/mp4"></source>
                    </video> */}
-                 </div>)))))}
+                 </div>))))))}
               </Paper>
             </Grid>
           

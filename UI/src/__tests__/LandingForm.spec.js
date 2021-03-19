@@ -117,6 +117,18 @@ describe('<LandingForm />', () => {
         
     });
 
+    describe('Clicking on Update Profile button', () => {
+        beforeEach(async() => {
+            ({ getByTestId } = render( < LandingForm userType='5f760d4325c1036d4d466560' / > ));
+            await userEvent.click(getByTestId('LandingForm_updateProfile'));
+        });
+
+        it('redirects to View Profile form', () => {
+            //   expect(viewUsers_email).toHaveBeenCalled();
+
+        });
+        
+    });
     {/* describe('Clicking on Reviewer Assertions button', () => {
         beforeEach(async() => {
             ({ getByTestId } = render( < LandingForm userType='5fc5567fcd831cc0c83774b8' email = 'reviewer2@test.com'/ > ));
