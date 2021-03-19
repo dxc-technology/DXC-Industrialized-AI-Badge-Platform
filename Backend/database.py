@@ -576,9 +576,10 @@ def view_all_assertions_by_reviewer_id(reviewer_id):
         },
         {
 
-            '$project': {"assertion_details._id": 1,"user_email_address._id": 1, "user_email_address.email": 1, "badge_details.name": 1,
+            '$project': {"assertion_details._id": 1, "user_email_address._id": 1, "user_email_address.email": 1,
+                         "badge_details.name": 1,
                          "badge_details.link": 1, "badge_details.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
-                          "_id":0, "reviewer": 1}
+                         "_id": 0, "reviewer": 1}
 
         }
     ])
@@ -823,8 +824,7 @@ def delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_
         {
             "$set": {
                 "deletedOn": datetime.now(timezone.utc), "deletedBy": ObjectId(deleted_by_user_id),
-                "modified": datetime.now(timezone.utc)
-
+                "modified": datetime.now(timezone.utc), "badgeStatus": ObjectId("60416608ab8f4c15c115e6eb")
             }
         }, upsert=True
     )

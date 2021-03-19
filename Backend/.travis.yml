@@ -1,0 +1,22 @@
+---
+matrix:
+  include:
+    - addons:
+        sonarcloud:
+          organization: ppreethi89
+          token:
+            secure: r7afZgERhhRwaVgZ0fvLMn32lu+eOhDYWJF99sEilcabxju/OzWp2wIdpIsew3cVXORgB6m0m6YhowXPXszlJTlXpE4tJ5LkNwsIH1FsZll6LM2vYBae863Ootwf+CEUDEd54mFQFk/dNehUJmf++aaj9OGSki6/t0kqh2OE8mg7lRYiC7pvS0AKsAncwmPYTWSBzp973K7IgvwmaIvKQbhU7a6CbPU+fYzWCr/v9eAG4KPzTAi9MJVFQ46rlcfr3uLTEuLgdCEtsBsb0qegk8kFbur1QqoZu/qRekRn+yvavC5J8ddtRmuAjtvdfWwDjL1ZsNMCRU1E88ubc8CH0ld5gOciJtTtaEudJfpCTiYjSsfxIBtpMSP+n85kC0oz1cMZHWVNFADTwFeMXbX3USGgQLhp+8bUFAMCCBQ6ETlXPwkwtXkkjgjY5Ky+ut5x/45lg3v5l5as6z0L513cHfm4An+ha4IVmhjTXAaVKrHnFXSByB0eAI67/q8LKV50D783L71mTvShKMJuXra5iyu8dgWh18k51VnwRBTV5Q/ccyW8i/+z4KKptZqjxT3fYvy9wb+eppRuw9LILwByhFbyfM3h162V7ZWj93zWt8wKGxXSC/cmjiU0/FEzTjOqJhICXZqwLMP6MeN3WNfqkmNZeOBciMjlyACjsLzLzYg=
+      install:
+        - "pip install codecov"
+        - "pip install pylint"
+        - "pip install -r requirements.txt"
+        - "pip install flask_cors"
+      language: python
+      script:
+        - "pytest --pylint"
+        - "coverage run test_cases.py"
+
+  script:
+    - sonar-scanner
+
+

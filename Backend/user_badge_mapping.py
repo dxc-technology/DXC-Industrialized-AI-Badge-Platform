@@ -286,7 +286,7 @@ def deleted_user_badge_collection_for_assertion_id(assertion_id, deleted_by_user
     if user_badge_json_dict[0]['deletedOn'] is not None and user_badge_json_dict[0]['deletedOn'] != "":
         return "Record is already deleted"
 
-    return database.delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_by_user_id)
+    database.delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_by_user_id)
 
 
 def deleted_user_badge_collection_for_assertion_id_by_user(assertion_id, deleted_by_user_id):
