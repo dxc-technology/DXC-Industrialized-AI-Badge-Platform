@@ -211,20 +211,20 @@ class DatabaseTest(unittest.TestCase):
 class UpdateUsers(unittest.TestCase):
 
     def test_first_name_empty_for_modify_users(self):
-        assert create_users.update_user("", "New Test", "new",
+        assert create_users.update_user("5f8372f4f05bd4915d4dc86b", "", "new", "New Test",
                                         "DXC") == INVALID
 
     def test_last_name_empty_for_modify_users(self):
-        assert create_users.update_user("New Test", "", "new",
+        assert create_users.update_user("5f8372f4f05bd4915d4dc86b", "New Test", "", "new",
                                         "DXC") == INVALID
 
     def test_empty_organization_for_modify_users(self):
-        assert create_users.update_user("New Test", "New Test", "new",
+        assert create_users.update_user("5f8372f4f05bd4915d4dc86b", "New Test", "New Test", "new",
                                         "") == INVALID
 
-    # def test_modify_users_successful(self):
-    #      assert create_users.update_user("5f760d3425c1036d4d46655f", "New Test", "New Test", "new", 
-    #                                       "DXC") == "User details successfully updated"
+    def test_modify_users_successful(self):
+         assert create_users.update_user("60416e63b6b0d5f904905b3b", "Muthu", "Natesan", "", 
+                                          "DXC") == "User details successfully updated"
 
 
 class EndpointTest(unittest.TestCase):
@@ -505,25 +505,25 @@ class EndpointTest(unittest.TestCase):
 
     def test_delete_assertions_user_badge_collection_endpoint_for_invalid_assertion_id_admin(self):
         info = {'assertionID': [INVALID_ASSERTION_ID], 'deletedBy': VALID_ADMIN_USER}
-        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesLlistbyadmin", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgeslistbyadmin", json=info)
         data = resp.get_data()
         self.assertIn('Assertion ID is not valid', str(data))
 
     def test_delete_assertions_user_badge_collection_endpoint_for_invalid_deleted_by_id_admin(self):
         info = {'assertionID': [VALID_ASSERTION_ID], 'deletedBy': INVALID_ASSERTION_ID}
-        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesLlistbyadmin", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgeslistbyadmin", json=info)
         data = resp.get_data()
         self.assertIn('User ID is not valid', str(data))
 
     def test_delete_assertions_user_badge_collection_endpoint_for_already_deleted_record_admin(self):
         info = {'assertionID': [VALID_ASSERTION_ID], 'deletedBy': VALID_ADMIN_USER}
-        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesLlistbyadmin", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgeslistbyadmin", json=info)
         data = resp.get_data()
         self.assertIn('Record is already deleted', str(data))
 
     def test_delete_assertions_user_badge_collection_endpoint_for_non_admin_user_admin(self):
         info = {'assertionID': [VALID_ASSERTION_ID], 'deletedBy': VALID_USER_ID}
-        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgesLlistbyadmin", json=info)
+        resp = self.app.post("http://127.0.0.1:5000/deleteuserbadgeslistbyadmin", json=info)
         data = resp.get_data()
         self.assertIn('Requesting user is not an admin', str(data))
 
@@ -644,25 +644,35 @@ class EndpointTest(unittest.TestCase):
         self.assertIn("email does not exist", str(data))
 
     def test_modify_users_empty_first_name(self):
-        info = {'firstName': "", 'secondName': "New Test",
+        info = {'email':"5f8372f4f05bd4915d4dc86b",'firstName': "", 'secondName': "New Test",
                 'middleName': "new", 'organizationName': "DXC"}
         resp = self.app.post("http://127.0.0.1:5000/modifyusers", json=info)
         data = resp.get_data()
         self.assertIn(INVALID, str(data))
 
     def test_modify_users_empty_second_name(self):
-        info = {'firstName': "New Test", 'secondName': "",
+        info = {'email':"5f8372f4f05bd4915d4dc86b",'firstName': "New Test", 'secondName': "",
                 'middleName': "new", 'organizationName': "DXC"}
         resp = self.app.post("http://127.0.0.1:5000/modifyusers", json=info)
         data = resp.get_data()
         self.assertIn(INVALID, str(data))
 
     def test_modify_users_empty_organization_name(self):
-        info = {'firstName': "New Test", 'secondName': "New",
+        info = {'email':"5f8372f4f05bd4915d4dc86b",'firstName': "New Test", 'secondName': "New",
                 'middleName': "new", 'organizationName': ""}
         resp = self.app.post("http://127.0.0.1:5000/modifyusers", json=info)
         data = resp.get_data()
         self.assertIn(INVALID, str(data))
+
+    # def test_modify_users_sucess(self):
+    #     info = {"email":"60416e63b6b0d5f904905b3b",
+    #             "firstName": "Muthu",
+    #             "secondName": "Natesan",
+    #             "middleName": "", 
+    #             "organizationName": "DXC"}
+    #     resp = self.app.post("http://127.0.0.1:5000/modifyusers", json=info)
+    #     data = resp.get_data()
+    #     self.assertIn("User details successfully updated", str(data))
 
     def test_reset_password_email(self):
         info = {'email_address': "mailtosrik@gmail.com"}

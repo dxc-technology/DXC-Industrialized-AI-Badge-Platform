@@ -112,15 +112,11 @@ def add_new_user(email, password, user_type, created_time_utc, modified_time_utc
     new_user_doc = user_collection.insert_one(new_user)
     return str(new_user_doc.inserted_id)
 
-
-USERID = "5f8372f4f05bd4915d4dc86b"
-
-
-def modify_existing_user(first_name, second_name, middle_name, organization_name):
+def modify_existing_user(userid, first_name, second_name, middle_name, organization_name):
     modified_time_utc = datetime.now(timezone.utc)
     user_collection = myDB["Users"]
     user_collection.update(
-        {"_id": ObjectId(USERID)},
+        {"_id": ObjectId(userid)},
         {
             "$set": {
                 "modified": modified_time_utc, "firstName": first_name, "secondName": second_name,
@@ -576,9 +572,10 @@ def view_all_assertions_by_reviewer_id(reviewer_id):
         },
         {
 
-            '$project': {"assertion_details._id": 1,"user_email_address._id": 1, "user_email_address.email": 1, "badge_details.name": 1,
+            '$project': {"assertion_details._id": 1, "user_email_address._id": 1, "user_email_address.email": 1,
+                         "badge_details.name": 1,
                          "badge_details.link": 1, "badge_details.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
-                          "_id":0, "reviewer": 1}
+                         "_id": 0, "reviewer": 1}
 
         }
     ])
@@ -823,8 +820,7 @@ def delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_
         {
             "$set": {
                 "deletedOn": datetime.now(timezone.utc), "deletedBy": ObjectId(deleted_by_user_id),
-                "modified": datetime.now(timezone.utc)
-
+                "modified": datetime.now(timezone.utc), "badgeStatus": ObjectId("60416608ab8f4c15c115e6eb")
             }
         }, upsert=True
     )

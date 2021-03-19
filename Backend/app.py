@@ -22,6 +22,7 @@ cors = CORS(app)
 
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 
+
 @app.route("/")
 def home():
     return "Welcome to Industrialized AI Starter Application!"
@@ -127,12 +128,13 @@ def create_user_admin():
 @app.route("/modifyusers", methods=['POST'])
 def modify_users():
     req_body = request.get_json()
+    userid = req_body['email']
     first_name = req_body['firstName']
     second_name = req_body['secondName']
     middle_name = req_body['middleName']
     organization_name = req_body['organizationName']
 
-    return create_users.update_user(first_name, second_name, middle_name, organization_name)
+    return create_users.update_user(userid, first_name, second_name, middle_name, organization_name)
 
 
 @app.route("/viewbadges", methods=['POST'])
@@ -159,7 +161,6 @@ def view_user_with_email():
 
 @app.route("/addbadge", methods=['GET', 'POST'])
 def add_new_badge():
-   
     badge_name = request.form.get("name")
     badge_description = request.form.get("description")
     link = request.form.get("link")
@@ -173,29 +174,31 @@ def add_new_badge():
 
     return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
                                   badge_type, owner, reviewer, icon.filename, evidence)
-    #image_bytes = Image.open(io.BytesIO(icon.read()))
-    #image_bytes = Image.open(icon.stream)
+    # image_bytes = Image.open(io.BytesIO(icon.read()))
+    # image_bytes = Image.open(icon.stream)
     # icon = request.form["icon"]
     # if filename != '':
     #     file_ext = os.path.splitext(filename)[1]
     #     if file_ext not in app.config['UPLOAD_EXTENSIONS']:
-    #icon = request.files['icon']
-    
-    # if icon.filename == '':
-	# 	resp = jsonify({'message': 'No file selected for uploading'})
-	# 	resp.status_code = 400
-    # badge_name = str(request.args.get('name'))
-    # badge_description = str(request.args.get('description'))
-    # link = str(request.args.get('link'))
-    # user_requestable = str(request.args.get('requestable'))
-    # badge_type = str(request.args.get('badgetype'))
-    # owner = str(request.args.get('owner'))
-    # reviewer = str(request.args.get('reviewer')) 
-    # evidence = str(request.args.get('evidence'))
-    # icon = request.args.get'icon')
+    # icon = request.files['icon']
 
-    # return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
-    #                               badge_type, owner, reviewer, icon, evidence)
+    # if icon.filename == '':
+
+
+# 	resp = jsonify({'message': 'No file selected for uploading'})
+# 	resp.status_code = 400
+# badge_name = str(request.args.get('name'))
+# badge_description = str(request.args.get('description'))
+# link = str(request.args.get('link'))
+# user_requestable = str(request.args.get('requestable'))
+# badge_type = str(request.args.get('badgetype'))
+# owner = str(request.args.get('owner'))
+# reviewer = str(request.args.get('reviewer'))
+# evidence = str(request.args.get('evidence'))
+# icon = request.args.get'icon')
+
+# return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
+#                               badge_type, owner, reviewer, icon, evidence)
 
 @app.route("/passwordreset", methods=['POST'])
 def password_reset():
@@ -273,11 +276,11 @@ def delete_assertions_user_badge_details():
     return user_badge_mapping.deleted_user_badge_collection_for_assertion_id(assertion_id, deleted_by_id)
 
 
-@app.route("/deleteuserbadgesLlistbyadmin", methods=['POST'])
+@app.route("/deleteuserbadgeslistbyadmin", methods=['POST'])
 def delete_multiple_assertions_user_badge_details():
     req_body = request.get_json()
     if req_body['assertionID'] == "None":
-        [assertion_id_list] = ""
+        assertion_id = ""
     else:
         [assertion_id_list] = req_body['assertionID']
     if req_body['deletedBy'] == "None":
@@ -379,7 +382,7 @@ def modify_existing_badge():
     # reviewer = req_body['reviewer']
     # icon = req_body['icon']
     # evidence = req_body['evidence']
-    
+
     badge_name = request.form.get("name")
     badge_description = request.form.get("description")
     link = request.form.get("link")
@@ -389,11 +392,13 @@ def modify_existing_badge():
     reviewer = request.form.get("reviewer")
     icon = request.files['icon']
     evidence = request.form.get("evidence")
+
     if path.isfile(icon.filename):
         icon.save(icon.filename)
 
-        return create_badge.modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
-                                        icon.filename, evidence)
+        return create_badge.modify_badge(badge_name, badge_description, link, badge_type, user_requestable, owner,
+                                         reviewer,
+                                         icon.filename, evidence)
     return "Select a valid file"
 
 
