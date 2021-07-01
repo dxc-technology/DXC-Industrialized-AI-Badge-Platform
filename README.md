@@ -130,6 +130,6 @@ We have implemented Travis for continuous integration with our GitHub repository
 
 ## Author
 
-👤 **Akshay Adiga (@adigaakshaym), Muthunatesan Palaniappan(@mp3573), Srikanth Anantharaman(@mailtosrik), Preethi Prabhakar(@ppreethi89), Priyadarshini Thotta Jayachandran(@priyatj)**
+👤 **Akshay Adiga (@adigaakshaym), Muthunatesan Palaniappan(@muthunatesan), Srikanth Anantharaman(@mailtosrik), Preethi Prabhakar(@ppreethi89), Priyadarshini Thotta Jayachandran(@priyatj)**
 
 
