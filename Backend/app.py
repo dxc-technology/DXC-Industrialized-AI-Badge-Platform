@@ -128,7 +128,7 @@ def create_user_admin():
 @app.route("/modifyusers", methods=['POST'])
 def modify_users():
     req_body = request.get_json()
-    userid = req_body['email']
+    userid = req_body['userId']
     first_name = req_body['firstName']
     second_name = req_body['secondName']
     middle_name = req_body['middleName']
@@ -161,19 +161,31 @@ def view_user_with_email():
 
 @app.route("/addbadge", methods=['GET', 'POST'])
 def add_new_badge():
-    badge_name = request.form.get("name")
-    badge_description = request.form.get("description")
-    link = request.form.get("link")
-    user_requestable = request.form.get("requestable")
-    badge_type = request.form.get("badgetype")
-    owner = request.form.get("owner")
-    reviewer = request.form.get("reviewer")
-    icon = request.files['icon']
-    evidence = request.form.get("evidence")
-    icon.save(icon.filename)
+    #Comemnted by muthu for image upload request by Tina
+    # badge_name = request.form.get("name")
+    # badge_description = request.form.get("description")
+    # link = request.form.get("link")
+    # user_requestable = request.form.get("requestable")
+    # badge_type = request.form.get("badgetype")
+    # owner = request.form.get("owner")
+    # reviewer = request.form.get("reviewer")
+    # #icon = request.files['icon']
+    # evidence = request.form.get("evidence")
+    # #icon.save(icon.filename)
+    # icon = request.form.get("icon")
+
+    badge_name = str(request.args.get('name'))
+    badge_description = str(request.args.get('description'))
+    link = str(request.args.get('link'))
+    user_requestable = str(request.args.get('requestable'))
+    badge_type = str(request.args.get('badgetype'))
+    owner = str(request.args.get('owner'))
+    reviewer = str(request.args.get('reviewer'))
+    icon = str(request.args.get('icon'))
+    evidence = str(request.args.get('evidence'))
 
     return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
-                                  badge_type, owner, reviewer, icon.filename, evidence)
+                                  badge_type, owner, reviewer, icon, evidence)
     # image_bytes = Image.open(io.BytesIO(icon.read()))
     # image_bytes = Image.open(icon.stream)
     # icon = request.form["icon"]
