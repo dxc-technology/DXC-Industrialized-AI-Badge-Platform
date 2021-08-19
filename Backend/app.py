@@ -128,7 +128,7 @@ def create_user_admin():
 @app.route("/modifyusers", methods=['POST'])
 def modify_users():
     req_body = request.get_json()
-    userid = req_body['email']
+    userid = req_body['userId']
     first_name = req_body['firstName']
     second_name = req_body['secondName']
     middle_name = req_body['middleName']
