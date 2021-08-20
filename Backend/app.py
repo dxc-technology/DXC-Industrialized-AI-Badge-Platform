@@ -161,19 +161,31 @@ def view_user_with_email():
 
 @app.route("/addbadge", methods=['GET', 'POST'])
 def add_new_badge():
-    badge_name = request.form.get("name")
-    badge_description = request.form.get("description")
-    link = request.form.get("link")
-    user_requestable = request.form.get("requestable")
-    badge_type = request.form.get("badgetype")
-    owner = request.form.get("owner")
-    reviewer = request.form.get("reviewer")
-    icon = request.files['icon']
-    evidence = request.form.get("evidence")
-    icon.save(icon.filename)
+    #Comemnted by muthu for image upload request by Tina
+    # badge_name = request.form.get("name")
+    # badge_description = request.form.get("description")
+    # link = request.form.get("link")
+    # user_requestable = request.form.get("requestable")
+    # badge_type = request.form.get("badgetype")
+    # owner = request.form.get("owner")
+    # reviewer = request.form.get("reviewer")
+    # #icon = request.files['icon']
+    # evidence = request.form.get("evidence")
+    # #icon.save(icon.filename)
+    # icon = request.form.get("icon")
+
+    badge_name = str(request.args.get('name'))
+    badge_description = str(request.args.get('description'))
+    link = str(request.args.get('link'))
+    user_requestable = str(request.args.get('requestable'))
+    badge_type = str(request.args.get('badgetype'))
+    owner = str(request.args.get('owner'))
+    reviewer = str(request.args.get('reviewer'))
+    icon = str(request.args.get('icon'))
+    evidence = str(request.args.get('evidence'))
 
     return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
-                                  badge_type, owner, reviewer, icon.filename, evidence)
+                                  badge_type, owner, reviewer, icon, evidence)
     # image_bytes = Image.open(io.BytesIO(icon.read()))
     # image_bytes = Image.open(icon.stream)
     # icon = request.form["icon"]
@@ -305,6 +317,11 @@ def delete_multiple_assertions_user_badge_details_by_user():
 
     return user_badge_deactivation.deactivate_user_badge_list_self([assertion_id_list], deleted_by_id)
 
+
+@app.route("/deleteuser", methods=['POST'])
+def delete_user():
+    req_body = request.get_json()
+    return view_users.delete_user(req_body['email'])
 
 @app.route("/updateuserbadgestatus", methods=['POST'])
 def update_user_badge_status():
