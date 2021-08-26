@@ -8,6 +8,7 @@ import create_badge
 import view_users
 import view_assertions
 import view_user_badge_details
+import view_notifications
 import create_users
 import user_badge_mapping
 import user_badge_deactivation
@@ -407,3 +408,25 @@ def send_password_reset_email():
     req_body = request.get_json()
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
+
+
+
+
+@app.route("/viewnotificationsbylogonid", methods=['POST'])
+def view_all_notifications_by_logon_id():
+    req_body = request.get_json()
+    return view_notifications.view_all_notifications(req_body['logon_id'])
+
+@app.route("/viewnotificationcountbylogonid", methods=['POST'])
+def view_notification_count_by_logon_id():
+    req_body = request.get_json()
+    return view_notifications.get_total_notifications_count(req_body['logon_id'])
+
+
+
+
+
+# @app.route("/viewuserdetailsbyemail", methods=['POST'])
+# def view_user_with_email():
+#     req_body = request.get_json()
+#     return view_users.view_user_details_by_name(req_body['email'])

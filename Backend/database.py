@@ -500,6 +500,8 @@ def get_assertions_with_user_id(user_id):
             '$project': {"user_email_address._id": 1, "user_email_address.email": 1, "badge_name.name": 1,
                          "badge_name.link": 1, "badge_name.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
                          "_id": 1}
+
+                         
         }
     ])
 
@@ -1028,3 +1030,132 @@ def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_req
         }, upsert=True
     )
     return "updated"
+
+
+# ------------------------------- NOTIFICATIONS ---------------------------
+
+def get_notifications_for_user(user_id):
+    user_notifications_collection = myDB["Notifications_User"]
+    data = user_notifications_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'userID',
+                'foreignField': '_id',
+                'as': 'user_email_address'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'reviewerID',
+                'foreignField': '_id',
+                'as': 'reviewer_email_address'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badge_name'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'newBadgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status'
+            }
+        },
+        {
+            '$match': {
+                'userID': ObjectId(user_id)
+            }
+        },
+        {
+            '$project': {"_id": 1, "logDate": 1, "comments": 1, "user_email_address.email": 1, "reviewer_email_address.email": 1, "badge_name.name": 1,
+                         "badge_status.badgeStatus": 1}
+        }
+    ])
+    return list(data)
+    # o = list(data)
+    # json = dumps(o, indent=2)
+    # return json, {'content-type': 'application/json'}
+
+def get_notifications_for_reviewer(reviewer_id):
+    reviewer_notifications_collection = myDB["Notifications_Reviewer"]
+    data = reviewer_notifications_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'userID',
+                'foreignField': '_id',
+                'as': 'user_email_address'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'reviewerID',
+                'foreignField': '_id',
+                'as': 'reviewer_email_address'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badge_name'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'newBadgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status'
+            }
+        },
+        {
+            '$match': {
+                'reviewerID': ObjectId(reviewer_id)
+            }
+        },
+        {
+            '$project': {"_id": 1, "logDate": 1, "comments": 1, "user_email_address.email": 1, "reviewer_email_address.email": 1, "badge_name.name": 1,
+                         "badge_status.badgeStatus": 1}
+        }
+    ])
+    return list(data)
+    # o = list(data)
+    # json = dumps(o, indent=2)
+    # return json, {'content-type': 'application/json'}
+
+def get_logon_notifications(user_logon_id):
+    o = get_notifications_for_user(user_logon_id)
+    r = get_notifications_for_reviewer(user_logon_id)
+    merge = o + r
+    json = dumps(merge, indent=2)
+    return json, {'content-type': 'application/json'}
+
+
+def count_user_notifications(user_id):
+    user_notifications_collection = myDB["Notifications_User"].find(
+        {
+            'userID': ObjectId(user_id)
+        } 
+    )
+    return user_notifications_collection.count()
+
+
+def count_reviewer_notifications(reviewer_id):
+    reviewer_notifications_collection = myDB["Notifications_Reviewer"].find(
+        {
+            'reviewerID': ObjectId(reviewer_id)
+        } 
+    )
+    return reviewer_notifications_collection.count()
+
