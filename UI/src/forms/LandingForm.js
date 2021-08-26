@@ -38,6 +38,7 @@ import ViewBadgeForm from './ViewBadgeForm';
 import ViewAssertionsForm from './ViewAssertionsForm';
 import ViewProfileForm from './ViewProfileForm';
 import ViewUsersForm from './ViewUsersForm';
+import NotificationsPopover from './NotificationsPopover';
 import Tooltip from '@material-ui/core/Tooltip';
 import MyBackpackForm from './MyBackpackForm';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
@@ -306,7 +307,32 @@ const classes = useStyles();
 
 }
 
-
+const handleViewNotifications = async () => {
+  var response1 = new Promise((resolve, reject) => {
+    resolve(getViewNotificationsResponse());
+  }).then(value => {
+    if (value != undefined)
+    {
+      setresponse(value.length);
+      // console.log(response);
+       
+        const temp_rows = []
+        for (var i = 0; i < value.length; i++) {
+          temp_rows.push(createData(i,
+            value[i]._id.$oid, 
+            value[i].logDate.$date, 
+            value[i].comments, 
+            value[i].user_email_address[0].email,
+            value[i].reviewer_email_address[0].email,
+            value[i].badgbadge_name[0].name,
+            value[i].badge_status[0].badgeStatus
+            ));         
+  
+        }
+        setrows (temp_rows);
+    }
+  });
+}
 
   useEffect(() => {
     handleviewUserByEmail();
@@ -336,11 +362,20 @@ const classes = useStyles();
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
           DXC Industrialized AI Badge Platform
           </Typography>
-          <IconButton color="inherit">
+          <NotificationsPopover />
+          <IconButton 
+            color="inherit"
+            onClick={handleViewNotifications}
+          >
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
           </IconButton>
+          
+          <NotificationsPopover />
+
+
+          
         </Toolbar>
       </AppBar>
       <Drawer
