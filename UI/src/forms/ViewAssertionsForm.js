@@ -12,6 +12,9 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton'
 import AssertionDetailsForm from './AssertionDetailsForm';
 import getViewAssertionsForReviewersResponse from '../API/ViewAssertionForReviewersAPI'
+import XLSX from 'xlsx'
+import Button from '@material-ui/core/Button';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
 const ViewAssertionsForm = (props) => {
 
@@ -40,11 +43,34 @@ const ViewAssertionsForm = (props) => {
   const useStyles = makeStyles((theme) => ({
     seeMore: {
       marginTop: theme.spacing(3),
-    },
+      },
+    exportbtnRight: {
+          marginTop: theme.spacing(3),
+          float: "right",
+
+      }
   }));
 
 
-  const classes = useStyles();
+    const classes = useStyles();
+    function getFileName() {
+        let d = new Date();
+        let dformat = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}T${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}-`;
+
+        console.log("getCurrentDate : ", dformat);
+        return dformat + "assertions-export" + ".xlsx";
+    }
+   const handleexportData = async () => {
+       
+        const workSheet = XLSX.utils.json_to_sheet(rows)
+        const workBook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workBook, workSheet, 'AssertionDetails')
+        let buf = XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' })
+
+       XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
+       XLSX.writeFile(workBook, getFileName())
+
+   }
 
 
   const handleviewAssertions = async () => {
@@ -82,10 +108,6 @@ const ViewAssertionsForm = (props) => {
   }
 
 }
-  
-
-
-
 
   useEffect(() => {
     handleviewAssertions()
@@ -181,6 +203,8 @@ const ViewAssertionsForm = (props) => {
               ))}
             </TableBody>
           </Table>
+           <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
+          </Button>
         </React.Fragment>
       </div >
 

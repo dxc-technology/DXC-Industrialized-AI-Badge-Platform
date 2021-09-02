@@ -9,9 +9,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import EditSharpIcon from '@material-ui/icons/EditSharp';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import BadgeDetailsForm from './BadgeDetailsForm';
-import IconButton from '@material-ui/core/IconButton'
-
-
+import IconButton from '@material-ui/core/IconButton';
+import XLSX from 'xlsx'
+import Button from '@material-ui/core/Button';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+/*import { DataGrid } from '@material-ui/data-grid'*/
 
 const ViewBadgeForm = (props) => {
 
@@ -22,6 +24,7 @@ const ViewBadgeForm = (props) => {
   const [badgeDetailsClick, setBadgeDetailsClick] = useState('false');
   const [clickedBadge, setClickedBadge]=useState('');
   const [clickType, setClickType] = useState('');
+
 
   function createData(id, mongoID, name, description, count, lastIssued, icon ) {
     return { id, mongoID, name, description, count, lastIssued, icon};
@@ -52,14 +55,57 @@ const ViewBadgeForm = (props) => {
 
   const useStyles = makeStyles((theme) => ({
     seeMore: {
-      marginTop: theme.spacing(3),
-    },
+          marginTop: theme.spacing(3),
+         
+      },
+     titleItemRight: {
+          marginTop: theme.spacing(3),
+          float: "right",
+          
+      }
   }));
 
 
   const classes = useStyles();
+//--added--
+    //function flatten(array) {
+    //    var result = [];
+        
+    //    Array.from(array).forEach(function iter(o) {
+    //        var temp = {},
+    //            keys = Object.keys(o);
 
+    //        if (keys.length > 1) {
+    //            keys.forEach(function (k) {
+    //                if (k !== 'children') {
+    //                    temp[k] = o[k];
+    //                }
+    //            });
+    //            temp.type = 'url' in o ? 'bookmark' : 'folder';
+    //            result.push(temp);
+    //        }
+    //        Array.isArray(o.children) && o.children.forEach(iter);
+    //    });
+    //    return result;
+    //}
+    function getFileName() {
+        let d = new Date();
+        let dformat = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}T${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}-`;
 
+        console.log("getCurrentDate : ", dformat);
+        return  dformat +"badger-export-users"+ ".xlsx";
+    }
+    const handleexportData = async() => {
+
+    const workSheet = XLSX.utils.json_to_sheet(rows)
+    const workBook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workBook, workSheet, 'BadgerDetails')
+    let buf = XLSX.write(workBook, { bookType :'xlsx', type: 'buffer'})
+
+    XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
+    XLSX.writeFile(workBook, getFileName())
+
+    }
   const handleviewBadge = async () => {
 
     var response1 = new Promise((resolve, reject) => {
@@ -137,8 +183,14 @@ else
                 </TableCell>}
               </TableRow>
             ))}
+          
           </TableBody>
         </Table>
+
+      <Button data-testId={'exportBadge_exportBadgeButton'} variant="contained" onClick={handleexportData} size="small" color="primary" className={classes.titleItemRight} startIcon={<ArrowDownwardIcon/>}> Export to Excel
+      </Button>
+          
+        
         {/* <div className={classes.seeMore}>
           <Link color="primary" href="#" onClick={preventDefault}>
             See more orders

@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Backend",
+    "\\UI",
+    "\\UI\\src",
+    "\\UI\\src\\API",
+    "\\UI\\src\\forms"
+  ],
+  "SelectedNode": "\\UI\\src\\forms\\LoginForm.js",
+  "PreviewInSolutionExplorer": false
+}
