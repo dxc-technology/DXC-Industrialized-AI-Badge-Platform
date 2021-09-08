@@ -11,6 +11,7 @@ import view_user_badge_details
 import create_users
 import user_badge_mapping
 import user_badge_deactivation
+import database
 import os
 import io
 from io import StringIO
@@ -420,10 +421,15 @@ def send_password_reset_email():
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
 
-
 @app.route("/viewusertypeoptions", methods=['POST'])
+def get_user_type_options():
+    return database.get_user_type_options()
 
+@app.route("/viewuserstatusoptions", methods=['POST'])
+def get_user_status_options():
+    return database.get_user_status_options()
 
+@app.route("/viewbadgetypeoptions", methods=['POST'])
+def get_badge_type_options():
+    return database.get_badge_type_options()
 
-
-@app.route("/viewusertypeoptions", methods=['POST'])
