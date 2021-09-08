@@ -1,5 +1,5 @@
-const getViewNotificationsResponse = async(logonID) => {
-    var url = process.env.REACT_APP_APILINK+'/viewnotificationsbylogonid';
+const getViewNotificationsCountResponse = async(logonID) => {
+    var url = process.env.REACT_APP_APILINK+'/viewnotificationcountbylogonid';
     return await fetch(url, {
             method: 'POST',
             headers: {
