@@ -5,15 +5,19 @@ from bson.json_util import dumps
 from dotenv import load_dotenv
 from bson import ObjectId
 import create_badge
+import certifi
 
 ENV_PATH = 'backend_variable.env'
 load_dotenv(dotenv_path=ENV_PATH)
 client = MongoClient(
     # 'mongodb+srv://dbuser:admin123@badger.1phkn.azure.mongodb.net/Badger_dev?retryWrites=true&w=majority'
     # 'mongodb+srv://dbuser:admin123@panoplycluster0.ssmov.mongodb.net/Panoply?retryWrites=true&w=majority'
-    os.getenv("DB_CONNECTION_STRING")
+    os.getenv("DB_CONNECTION_STRING"),tlsCAFile=certifi.where()
 )
 myDB = client[os.getenv("DB_NAME")]
+
+
+
 
 
 def connect():

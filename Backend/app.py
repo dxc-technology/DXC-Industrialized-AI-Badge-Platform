@@ -419,3 +419,11 @@ def send_password_reset_email():
     req_body = request.get_json()
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
+
+
+@app.route("/viewusertypeoptions", methods=['POST'])
+
+
+
+
+@app.route("/viewusertypeoptions", methods=['POST'])
