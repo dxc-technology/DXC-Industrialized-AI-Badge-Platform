@@ -1,5 +1,6 @@
 import React from 'react';
 import LoginForm from './forms/LoginForm';
+import LandingForm from './forms/LandingForm';
 import RegistrationForm from './forms/RegistrationForm';
 import CreateBadgeForm from './forms/CreateBadgeForm';
 import CertificateForm from '../src/forms/CertificatePublicLinkForm';
@@ -16,11 +17,12 @@ const App = () => {
   return (
     <Router>
     <div>
-      {/* <LoginForm /> */}
-      {/* <CreateBadgeForm /> */}
+      
       <Switch>
+          <Route path="/" exact component={LoginForm}/>
+          <Route path="/D" component={LandingForm}/>
           <Route path="/:assertionId" children={<CertificateForm />} />
-          <Route path="" children={<LoginForm/>}/>
+          {/* <Route path="" children={<LoginForm/>}/> */}
       </Switch>
     </div>
     </Router>

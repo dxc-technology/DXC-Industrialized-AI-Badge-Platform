@@ -50,8 +50,12 @@ const LandingForm = (props)=>
     const [clickedItem,setClickedItem] = useState('');
     const windowWidth = window.screen.width;
     const drawerWidth = 220;
-    const [userType,setUserType] = useState(props.userType);
-    const [email,setEmail] = useState(props.email);
+    // const [userType,setUserType] = useState(props.userType);
+    // const [email,setEmail] = useState(props.email);
+    const token = sessionStorage.getItem("Token");
+    const em = sessionStorage.getItem("Email");
+    const [userType,setUserType] = useState(token);
+    const [email,setEmail] = useState(em);
     const [userID,setuserID] = useState('');
 
     const handleCreateBadgeButtonClick =()=>{
@@ -81,6 +85,13 @@ const LandingForm = (props)=>
 
     const handleUpdateProfileButtonClick =()=> {
       setClickedItem('ViewProfileForm');
+    }
+
+    const handleLogout =()=>{
+      sessionStorage.removeItem("Token");
+      sessionStorage.removeItem("Email");
+      localStorage.removeItem("Id");
+      localStorage.removeItem("token");
     }
 
 
@@ -311,7 +322,7 @@ const classes = useStyles();
   useEffect(() => {
     handleviewUserByEmail();
   
-}, []);
+}, [email]);
 
 
 
@@ -340,6 +351,9 @@ const classes = useStyles();
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
+          </IconButton>
+          <IconButton onClick={handleLogout} variant="outlined" color="secondary" href="/"  >
+           Logout
           </IconButton>
         </Toolbar>
       </AppBar>
