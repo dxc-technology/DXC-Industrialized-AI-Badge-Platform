@@ -5,10 +5,8 @@
     "\\UI",
     "\\UI\\src",
     "\\UI\\src\\API",
-    "\\UI\\src\\assets",
-    "\\UI\\src\\forms",
-    "\\UI\\src\\scripts"
+    "\\UI\\src\\forms"
   ],
-  "SelectedNode": "\\UI\\src\\forms\\ViewBadgeForm.js",
+  "SelectedNode": "\\UI\\src\\forms\\LoginForm.js",
   "PreviewInSolutionExplorer": false
 }

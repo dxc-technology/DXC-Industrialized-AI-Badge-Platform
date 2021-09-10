@@ -17,8 +17,6 @@ import AddUserForm from './AddUserForm';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import XLSX from 'xlsx'
 
 const ViewUsersForm = (props) => {
 
@@ -33,10 +31,6 @@ const ViewUsersForm = (props) => {
     return { id, mongoId, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName};
   }
 
-  function exportData(id, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName) {
-        return { id, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName };
-  }
-
   const [rows, setrows] = useState([]);
   // //   const [passwordClick,setPasswordClick] = useState('False');
 
@@ -48,12 +42,7 @@ const ViewUsersForm = (props) => {
   const useStyles = makeStyles((theme) => ({
     seeMore: {
       marginTop: theme.spacing(3),
-      },
-      exportbtnRight: {
-          marginTop: theme.spacing(3),
-          float: "right",
-
-      }
+    },
   }));
 
 
@@ -61,49 +50,7 @@ const ViewUsersForm = (props) => {
 
   const handleAddUserButton = () =>{
     setAddUserButtonClick('true');
-    }
-
-  function getFileName() {
-        let d = new Date();
-        let dformat = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}T${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}-`;
-
-        console.log("getCurrentDate : ", dformat);
-        return dformat + "user-management-export" + ".xlsx";
-   }
-  const handleexportData = async () => {
-        //const filterData = rows.map(row => {
-            
-        //    row.issuedOn = formatDate(row.issuedOn)
-        //    row.createdDate = formatDate(row.createdDate)
-        //    row.lastModified = formatDate(row.lastModified)
-        //    delete row.mongoId
-        //    return row
-        //})
-
-        var response1 = new Promise((resolve, reject) => {
-            resolve(ViewUsersResponse());
-        }).then(value => {
-            if (value != undefined) {
-                const filterData = []
-
-                for (var i = 0; i < value.length; i++) {
-                    filterData.push(exportData(i, value[i].email, value[i].user_type_details[0].type, value[i].user_status_details[0].userStatus, formatDate(value[i].created.$date), formatDate(value[i].modified.$date), value[i].firstName, value[i].secondName, value[i].middleName, value[i].organizationName));
-
-                }
-
-
-                const workSheet = XLSX.utils.json_to_sheet(filterData)
-                const workBook = XLSX.utils.book_new()
-                XLSX.utils.book_append_sheet(workBook, workSheet, 'UserFormDetails')
-                let buf = XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' })
-
-                XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
-                XLSX.writeFile(workBook, getFileName())
-            }
-        });
-
-    }
-
+  }
 
 
   const handleviewUsers = async () => {
@@ -199,8 +146,6 @@ else{
               ))}
             </TableBody>
           </Table>
-          <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
-          </Button>
         </React.Fragment>
       </div >
 
