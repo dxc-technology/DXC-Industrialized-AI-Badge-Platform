@@ -28,7 +28,11 @@ const ViewAssertionsForm = (props) => {
 
   function createData(id, mongoId, user, badgeName, issuedOn, status) {
     return { id, mongoId, user, badgeName, issuedOn, status };
-  }
+    }
+
+    function exportData(id, user, badgeName, issuedOn, status) {
+        return { id, user, badgeName, issuedOn, status };
+    }
 
   const [rows, setrows] = useState([]);
   // //   const [passwordClick,setPasswordClick] = useState('False');
@@ -36,8 +40,6 @@ const ViewAssertionsForm = (props) => {
   const handleAssertionDetails = event => {
     setAssertionDetailClick('true');
     setClickedAssertion(event.currentTarget.value);
-
-    //
   }
 
   const useStyles = makeStyles((theme) => ({
@@ -60,17 +62,36 @@ const ViewAssertionsForm = (props) => {
         console.log("getCurrentDate : ", dformat);
         return dformat + "assertions-export" + ".xlsx";
     }
-   const handleexportData = async () => {
-       
-        const workSheet = XLSX.utils.json_to_sheet(rows)
-        const workBook = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(workBook, workSheet, 'AssertionDetails')
-        let buf = XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' })
+    const handleexportData = async () => {
+        //const filterData = rows.map(row => {
+        //    delete row.mongoId
+        //    row.issuedOn = formatDate(row.issuedOn)
+        //    return row            
+        //})
+        var response1 = new Promise((resolve, reject) => {
+            resolve(getViewAssertionsResponse());
+        }).then(value => {
+            if (value != undefined) {
+                const filterData = []
+                
+                for (var i = 0; i < value.length; i++) {
+                    filterData.push(exportData(i, value[i].user_email_address[0].email, value[i].badge_name[0].name, formatDate(value[i].issuedOn.$date), value[i].badge_status[0].badgeStatus));
 
-       XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
-       XLSX.writeFile(workBook, getFileName())
+                }           
 
-   }
+                
+                const workSheet = XLSX.utils.json_to_sheet(filterData)
+                const workBook = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(workBook, workSheet, 'AssertionDetails')
+                let buf = XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' })
+
+                XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
+                XLSX.writeFile(workBook, getFileName())
+            }
+        });
+
+    }
+             
 
 
   const handleviewAssertions = async () => {
@@ -84,9 +105,10 @@ const ViewAssertionsForm = (props) => {
           for (var i = 0; i < value.length; i++) {
             temp_rows.push(createData(i, value[i]._id.$oid, value[i].user_email_address[0].email, value[i].badge_details[0].name, value[i].issuedOn.$date, value[i].badge_status[0].badgeStatus));
   
-          }
+            }
   
-          setrows(temp_rows);
+            setrows(temp_rows);
+
         }
       });
   }
@@ -102,7 +124,8 @@ const ViewAssertionsForm = (props) => {
 
         }
 
-        setrows(temp_rows);
+          setrows(temp_rows);
+          
       }
     });
   }

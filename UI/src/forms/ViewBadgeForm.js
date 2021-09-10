@@ -29,6 +29,9 @@ const ViewBadgeForm = (props) => {
   function createData(id, mongoID, name, description, count, lastIssued, icon ) {
     return { id, mongoID, name, description, count, lastIssued, icon};
   }
+  function exportData(id, name, description, count, lastIssued) {
+      return { id, name, description, count, lastIssued };
+  }
 
   const [rows, setrows] = useState([]);
   const [passwordClick,setPasswordClick] = useState('False');
@@ -67,45 +70,42 @@ const ViewBadgeForm = (props) => {
 
 
   const classes = useStyles();
-//--added--
-    //function flatten(array) {
-    //    var result = [];
-        
-    //    Array.from(array).forEach(function iter(o) {
-    //        var temp = {},
-    //            keys = Object.keys(o);
 
-    //        if (keys.length > 1) {
-    //            keys.forEach(function (k) {
-    //                if (k !== 'children') {
-    //                    temp[k] = o[k];
-    //                }
-    //            });
-    //            temp.type = 'url' in o ? 'bookmark' : 'folder';
-    //            result.push(temp);
-    //        }
-    //        Array.isArray(o.children) && o.children.forEach(iter);
-    //    });
-    //    return result;
-    //}
-    function getFileName() {
+    function getfileName() {
         let d = new Date();
         let dformat = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}T${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}-`;
 
         console.log("getCurrentDate : ", dformat);
         return  dformat +"badger-export-users"+ ".xlsx";
     }
-    const handleexportData = async() => {
+    const handleexportData = async () => {
+        //const clrData = rows.map(row => {
+        //        delete row.mongoID
+        //        delete row.icon
+        //        return row
+        //    })
+        var response1 = new Promise((resolve, reject) => {
+            resolve(getViewBadgeResponse());
+        }).then(value => {
+            if (value != undefined) {
+                const filterData = []
 
-    const workSheet = XLSX.utils.json_to_sheet(rows)
-    const workBook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workBook, workSheet, 'BadgerDetails')
-    let buf = XLSX.write(workBook, { bookType :'xlsx', type: 'buffer'})
+                for (var i = 0; i < value.length; i++) {
+                    filterData.push(exportData(i, value[i].name, value[i].description, value[i].lastIssued, value[i].count)); //*lastIssued need to be in date format , needs correction wherever declared
 
-    XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
-    XLSX.writeFile(workBook, getFileName())
+                }
+                const workSheet = XLSX.utils.json_to_sheet(filterData)
+                const workBook = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(workBook, workSheet, 'BadgerDetails')
+                let buf = XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' })
 
-    }
+                XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
+                XLSX.writeFile(workBook, getfileName())
+
+            }
+        });
+}
+    
   const handleviewBadge = async () => {
 
     var response1 = new Promise((resolve, reject) => {
