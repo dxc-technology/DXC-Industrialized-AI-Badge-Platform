@@ -1,12 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Backend",
+    "\\DXC-Industrialized-AI-Badge-Platform",
+    "\\DXC-Industrialized-AI-Badge-Platform\\Backend",
+    "\\DXC-Industrialized-AI-Badge-Platform\\UI",
+    "\\DXC-Industrialized-AI-Badge-Platform\\UI\\src",
+    "\\DXC-Industrialized-AI-Badge-Platform\\UI\\src\\__tests__",
     "\\UI",
     "\\UI\\src",
-    "\\UI\\src\\API",
-    "\\UI\\src\\forms"
+    "\\UI\\src\\forms",
+    "\\UI\\src\\scripts"
   ],
-  "SelectedNode": "\\UI\\src\\forms\\LoginForm.js",
+  "SelectedNode": "\\UI\\src\\forms\\ViewBadgeForm.js",
   "PreviewInSolutionExplorer": false
 }

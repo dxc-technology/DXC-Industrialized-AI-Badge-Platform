@@ -25,7 +25,7 @@ app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 
 @app.route("/")
 def home():
-    return "Welcome to Industrialized AI Starter Application!!"
+    return "Welcome to Industrialized AI Starter Application!"
 
 
 @app.route("/login", methods=['GET'])

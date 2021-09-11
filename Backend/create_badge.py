@@ -165,13 +165,13 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
                 if owner_email_result == "valid owner":
                     if reviewer_email_result == "valid reviewer":
                         if user_evidence_status == evidence:
-                            #icon_url = upload_file_to_azure(icon)
-                            #if icon_url != "Please enter a valid file name":
+                            icon_url = upload_file_to_azure(icon)
+                            if icon_url != "Please enter a valid file name":
                                 database.insert_new_badge(badge_name, badge_description, link, user_requestable,
-                                                          badge_type, owner.split(","), reviewer.split(","), icon,
+                                                          badge_type, owner.split(","), reviewer.split(","), icon_url,
                                                           evidence)
                                 return "New badge added successfully"
-                            #return "Please enter a valid file name"
+                            return "Please enter a valid file name"
                         return user_evidence_status
                     return reviewer_email_result
                 return owner_email_result
