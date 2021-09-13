@@ -44,7 +44,7 @@ def delete_user_details(user_email):
     result = user_collection.find_one(query)
     database.session.delete(result)
     database.session.commit()
-    return 'Done', 201
+    return 'Deleted the user Sucessfully'
 
 
 def delete_badge_details(badgeid):
@@ -53,7 +53,7 @@ def delete_badge_details(badgeid):
     badge_result = badge_collection.find_one(query)
     database.session.delete(badge_result)
     database.session.commit()
-    return 'Done', 202
+    return 'Deleted the Badge Sucessfully'
 
 
 def get_user_type(user_type):
@@ -379,14 +379,14 @@ def get_badge_status_id(badge_status_id):
 def insert_new_badge(badge_name, badge_description, link, user_requestable,
                      badge_type, owner_list, reviewer_list, icon, evidence):
     badge_collection = myDB["Badges"]
-    owner_values = []
-    reviewer_values = []
-    for owner in owner_list:
-        owner_doc = get_user_details(owner)
-        owner_values.append(owner_doc["_id"])
-    for reviewer in reviewer_list:
-        reviewer_doc = get_user_details(reviewer)
-        reviewer_values.append(reviewer_doc["_id"])
+   # owner_values = []
+  #  reviewer_values = []
+   # for owner in owner_list:
+       # owner_doc = get_user_details(owner)
+      #  owner_values.append(owner_doc["_id"])
+  #  for reviewer in reviewer_list:
+       # reviewer_doc = get_user_details(reviewer)
+      #  reviewer_values.append(reviewer_doc["_id"])
     badge_doc = get_badge_type(badge_type)
     new_badge = {"name": badge_name, "description": badge_description, "created": datetime.now(timezone.utc),
                  "modified": datetime.now(timezone.utc), "link": link,
