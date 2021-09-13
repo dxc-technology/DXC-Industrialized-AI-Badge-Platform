@@ -1,17 +1,18 @@
 from datetime import datetime, timezone
 import os
-from pymongo import MongoClient
+from pymongo import MongoClient, database
 from bson.json_util import dumps
 from dotenv import load_dotenv
 from bson import ObjectId
 import create_badge
+import certifi
 
 ENV_PATH = 'backend_variable.env'
 load_dotenv(dotenv_path=ENV_PATH)
 client = MongoClient(
     # 'mongodb+srv://dbuser:admin123@badger.1phkn.azure.mongodb.net/Badger_dev?retryWrites=true&w=majority'
     # 'mongodb+srv://dbuser:admin123@panoplycluster0.ssmov.mongodb.net/Panoply?retryWrites=true&w=majority'
-    os.getenv("DB_CONNECTION_STRING")
+    os.getenv("DB_CONNECTION_STRING"),tlsCAFile=certifi.where()
 )
 myDB = client[os.getenv("DB_NAME")]
 
@@ -36,6 +37,23 @@ def get_user_details(email):
     for x in my_doc:
         user_doc = x
     return user_doc
+
+def delete_user_details(user_email):
+    user_collection = myDB["users"]
+    query = {"email": user_email}
+    result = user_collection.find_one(query)
+    database.session.delete(result)
+    database.session.commit()
+    return 'Done', 201
+
+
+def delete_badge_details(badgeid):
+    badge_collection = myDB["Badges"]
+    query = {'_id': ObjectId(badgeid)}
+    badge_result = badge_collection.find_one(query)
+    database.session.delete(badge_result)
+    database.session.commit()
+    return 'Done', 202
 
 
 def get_user_type(user_type):

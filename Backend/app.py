@@ -318,10 +318,16 @@ def delete_multiple_assertions_user_badge_details_by_user():
     return user_badge_deactivation.deactivate_user_badge_list_self([assertion_id_list], deleted_by_id)
 
 
-@app.route("/deleteuser", methods=['POST'])
+@app.route("/deleteuserdetailsbyemail", methods=['DELETE'])
 def delete_user():
     req_body = request.get_json()
     return view_users.delete_user(req_body['email'])
+
+
+@app.route("deletebadgedetails", methods=["DELETE"])
+def delete_badge():
+    req_body = request.get_json()
+    return view_users.delete_user(req_body['name'])
 
 @app.route("/updateuserbadgestatus", methods=['POST'])
 def update_user_badge_status():

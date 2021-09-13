@@ -3,7 +3,6 @@ import database
 import json
 from bson.objectid import ObjectId
 from bson import ObjectId
-import user_badge_mapping
 
 
 def view_all_users():
@@ -16,6 +15,5 @@ def view_user_details_by_name(user_email):
 
 
 def delete_user(user_email):
-    user_doc=database.get_users_by_name(user_email)
-    return user_badge_mapping.validate_user_id_for_self(user_doc)
-
+    database.delete_user_details(user_email)
+    return True

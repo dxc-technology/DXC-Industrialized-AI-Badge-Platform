@@ -12,3 +12,8 @@ def get_badge_count():
     user_doc = database.count_badges()
     return str(user_doc)
 
+
+def delete_badge(badgeid):
+    database.delete_user_details(badgeid)
+    return True
+
