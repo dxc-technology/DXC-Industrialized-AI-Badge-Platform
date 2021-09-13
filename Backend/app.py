@@ -324,7 +324,7 @@ def delete_user():
     return view_users.delete_user(req_body['email'])
 
 
-@app.route("deletebadgedetails", methods=["DELETE"])
+@app.route("/deletebadgedetails", methods=["DELETE"])
 def delete_badge():
     req_body = request.get_json()
     return view_users.delete_user(req_body['name'])
