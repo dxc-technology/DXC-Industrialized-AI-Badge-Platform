@@ -15,5 +15,5 @@ def view_user_details_by_name(user_email):
 
 
 def delete_user(user_email):
-    database.delete_user_details(user_email)
-    return True
+    user_doc=database.delete_user_details(user_email)
+    return user_doc

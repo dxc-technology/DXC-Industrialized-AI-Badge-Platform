@@ -327,7 +327,7 @@ def delete_user():
 @app.route("/deletebadgedetails", methods=["DELETE"])
 def delete_badge():
     req_body = request.get_json()
-    return view_users.delete_user(req_body['name'])
+    return view_badge.delete_badge(req_body['badgeid'])
 
 @app.route("/updateuserbadgestatus", methods=['POST'])
 def update_user_badge_status():

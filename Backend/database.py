@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from logging import NullHandler
 import os
 from pymongo import MongoClient, database
 from bson.json_util import dumps
@@ -41,19 +42,29 @@ def get_user_details(email):
 def delete_user_details(user_email):
     user_collection = myDB["users"]
     query = {"email": user_email}
-    result = user_collection.find_one(query)
-    database.session.delete(result)
-    database.session.commit()
-    return 'Deleted the user Sucessfully'
+    result = user_collection.find(query)
+    for x in result:
+        if (x != None):
+            x = user_collection.delete_one(query)
+            database.session.comit()
+            print ("x:", type(x), "-- deleted count:", x.deleted_count)
+        else:
+            print('No user found with the sepicifed details')
+    return print("API call recieved:")
 
 
 def delete_badge_details(badgeid):
     badge_collection = myDB["Badges"]
     query = {'_id': ObjectId(badgeid)}
-    badge_result = badge_collection.find_one(query)
-    database.session.delete(badge_result)
-    database.session.commit()
-    return 'Deleted the Badge Sucessfully'
+    badge_result = badge_collection.find(query)
+    for x in badge_result:
+        if (x != None):
+            x = badge_collection.delete_one(query)
+            database.session.comit()
+            print ("x:", type(x), "-- deleted count:", x.deleted_count)
+        else:
+            print('No badge found with the sepicifed details')
+    return print("API call recieved:")
 
 
 def get_user_type(user_type):
@@ -379,14 +390,14 @@ def get_badge_status_id(badge_status_id):
 def insert_new_badge(badge_name, badge_description, link, user_requestable,
                      badge_type, owner_list, reviewer_list, icon, evidence):
     badge_collection = myDB["Badges"]
-   # owner_values = []
-  #  reviewer_values = []
-   # for owner in owner_list:
-       # owner_doc = get_user_details(owner)
-      #  owner_values.append(owner_doc["_id"])
-  #  for reviewer in reviewer_list:
-       # reviewer_doc = get_user_details(reviewer)
-      #  reviewer_values.append(reviewer_doc["_id"])
+    owner_values = []
+    reviewer_values = []
+    for owner in owner_list:
+        owner_doc = get_user_details(owner)
+        owner_values.append(owner_doc["_id"])
+    for reviewer in reviewer_list:
+        reviewer_doc = get_user_details(reviewer)
+        reviewer_values.append(reviewer_doc["_id"])
     badge_doc = get_badge_type(badge_type)
     new_badge = {"name": badge_name, "description": badge_description, "created": datetime.now(timezone.utc),
                  "modified": datetime.now(timezone.utc), "link": link,
