@@ -88,7 +88,7 @@ const LoginForm = (props) => {
         return (
             <div>
                 {/* <LandingForm userType={result} email={email}/> */}
-                return <Redirect to="/D" />
+                return <Redirect to="/Dashboard" />
 
             </div>
         );

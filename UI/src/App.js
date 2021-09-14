@@ -20,7 +20,7 @@ const App = () => {
       
       <Switch>
           <Route path="/" exact component={LoginForm}/>
-          <Route path="/D" component={LandingForm}/>
+          <Route exact path="/Dashboard" component={LandingForm}/>
           <Route path="/:assertionId" children={<CertificateForm />} />
           {/* <Route path="" children={<LoginForm/>}/> */}
       </Switch>

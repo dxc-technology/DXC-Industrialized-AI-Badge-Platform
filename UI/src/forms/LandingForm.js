@@ -44,6 +44,8 @@ import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 import ReactPlayer from 'react-player';
 // import $ from 'jquery'; 
 import getJIRAResponse from '../API/AddJIRARequestAPI';
+import Button from '@material-ui/core/Button';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
  
 const LandingForm = (props)=>
 {
@@ -322,7 +324,7 @@ const classes = useStyles();
   useEffect(() => {
     handleviewUserByEmail();
   
-}, [email]);
+}, []);
 
 
 
@@ -352,9 +354,9 @@ const classes = useStyles();
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <IconButton onClick={handleLogout} variant="outlined" color="secondary" href="/"  >
+          <Button onClick={handleLogout} size="large" color="inherit" endIcon={<ExitToAppIcon />} href="/">
            Logout
-          </IconButton>
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer
