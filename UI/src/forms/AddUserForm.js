@@ -35,6 +35,7 @@ const AddUserForm = (props) => {
     const [organizationName, setOrganizationName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [adminId, setAdminId] = useState(props.userID);
 
     const [firstNameClick,setFirstNameClick] = useState('False');
     const [lastNameClick,setLastNameClick] = useState('False');
@@ -89,7 +90,7 @@ const AddUserForm = (props) => {
           }
           else{
         var response2 = new Promise((resolve, reject) => {
-            resolve(addNewUserResponse(email, password, userType, firstName, lastName, middleName, organizationName));
+            resolve(addNewUserResponse(email, password, userType, firstName, lastName, middleName, organizationName, adminId));
         }).then(value => {
             if (value=='registered'){
                 setResult("Created User Successfully");
@@ -159,7 +160,7 @@ const AddUserForm = (props) => {
     if (backButtonClicked=='True'){
     return(
     <div>
-        <ViewUserForm />
+        <ViewUserForm userID={adminId}/>
     </div>
     );
     }
@@ -198,7 +199,7 @@ const AddUserForm = (props) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            required
+                            
                             name="middlename"
                             label="Middle Name"
                             id="addUser_middleName"

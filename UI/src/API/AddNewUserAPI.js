@@ -1,9 +1,9 @@
-const addNewUserResponse = async (email,password, userType, firstName, secondName, middleName, organizationName) => {
+const addNewUserResponse = async (email,password, userType, firstName, secondName, middleName, organizationName, adminID) => {
     //GET request
     var url = process.env.REACT_APP_APILINK+'/createuser?email=' + email + '&password=' + password + '&userType=' + userType
-        + '&firstName=' + firstName + '&secondName=' + secondName + '&middleName=' + middleName + '&organizationName=' +organizationName ;
+        + '&firstName=' + firstName + '&secondName=' + secondName + '&middleName=' + middleName + '&organizationName=' +organizationName + '&adminId=' +adminID;
     return await fetch(url, {
-        method: 'GET',
+        method: 'POST',
         //Request Type
     })
         .then((response) => response.text())
