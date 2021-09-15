@@ -5,13 +5,15 @@ from bson.json_util import dumps
 from dotenv import load_dotenv
 from bson import ObjectId
 import create_badge
+import NEW_complete_badge
+import certifi
 
 ENV_PATH = 'backend_variable.env'
 load_dotenv(dotenv_path=ENV_PATH)
 client = MongoClient(
     # 'mongodb+srv://dbuser:admin123@badger.1phkn.azure.mongodb.net/Badger_dev?retryWrites=true&w=majority'
     # 'mongodb+srv://dbuser:admin123@panoplycluster0.ssmov.mongodb.net/Panoply?retryWrites=true&w=majority'
-    os.getenv("DB_CONNECTION_STRING")
+    os.getenv("DB_CONNECTION_STRING"), tlsCAFile=certifi.where()
 )
 myDB = client[os.getenv("DB_NAME")]
 
@@ -852,6 +854,7 @@ def update_user_badge_status(assertion_id, issuer_id, badge_status_id, comments)
                 }
             }, upsert=True
         )
+
     else:
         user_badge__details_collection.find_one_and_update(
             {
@@ -880,11 +883,33 @@ def update_user_badge_status(assertion_id, issuer_id, badge_status_id, comments)
     return get_all_user_badge_details_by_assertion_id(assertion_id)
     # return None
 
+def get_badge_in_assertion(assertion_id):
+    assertion_collection = myDB["Assertions"]
+
+    query = {'_id': assertion_id}
+    output = {'badge': 1, '_id': False}
+
+    user_badge_status = assertion_collection.find_one(query, output)
+    return user_badge_status.get('badge')
 
 def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, public_link, user_id,
                               is_badge_status_changed):
     user_badge__details_collection = myDB["User_Badge_Details"]
     assertions_collection = myDB["Assertions"]
+   
+   
+    # badge = assertions_collection.find_one(
+    #     {
+    #         "_id": ObjectId(assertion_id)
+    #     },
+    #     {
+    #         "badge": 1, '_id': False
+    #     }
+    # ).get("badge")
+
+    badge = NEW_complete_badge.get_badge_in_assertion(assertion_id)
+
+
     if is_badge_status_changed:
         user_badge__details_collection.find_one_and_update(
             {
@@ -908,6 +933,7 @@ def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, p
         )
         # if assertions_collection.matched_count and user_badge__details_collection.matched_count > 0:
         # return get_all_user_badge_details_by_assertion_id(assertion_id)
+        
     else:
         user_badge__details_collection.find_one_and_update(
             {
@@ -920,6 +946,11 @@ def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, p
                 }
             }, upsert=True
         )
+
+    print("Start before auto add")
+    NEW_complete_badge.auto_add_major_badge(user_id, badge)
+    NEW_complete_badge.auto_add_master_badge(user_id, badge)
+    print("End auto add")
 
     # if user_badge__details_collection.matched_count > 0:
     return get_all_user_badge_details_by_assertion_id(assertion_id)
