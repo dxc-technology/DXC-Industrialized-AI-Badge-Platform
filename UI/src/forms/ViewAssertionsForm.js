@@ -56,7 +56,7 @@ const ViewAssertionsForm = (props) => {
           setresponse(value.length);
           const temp_rows = []
           for (var i = 0; i < value.length; i++) {
-            temp_rows.push(createData(i, value[i]._id.$oid, value[i].user_email_address[0].email, value[i].badge_details[0].name, value[i].issuedOn.$date, value[i].badge_status[0].badgeStatus));
+            temp_rows.push(createData(i, value[i].reviewer.$oid, value[i].user_email_address[0].email, value[i].badge_details[0].name, value[i].issuedOn.$date, value[i].badge_status[0].badgeStatus));
   
           }
   
