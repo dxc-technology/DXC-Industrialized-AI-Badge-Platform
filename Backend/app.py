@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
+from pymongo import database
 import login
 import registration
 import view_badge
@@ -11,6 +12,7 @@ import view_user_badge_details
 import create_users
 import user_badge_mapping
 import user_badge_deactivation
+import database
 import os
 import io
 from io import StringIO
