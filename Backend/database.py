@@ -1001,19 +1001,19 @@ def auto_add_master_badge(user_id, badge_updated):
 
     assertion_collection = myDB["Assertions"]
     check_badge_to_earn_exists = {"user": ObjectId(user_id), "badge": master_badge_to_earn,
-                                "badgeStatus": ObjectId("5f776f416289f17659874f2c")}
+                                "badgeStatus": ObjectId(APPROVED_BADGE_STATUS)} 
     new_badge_to_user = {"user": ObjectId(user_id), "badge": master_badge_to_earn,
-                         "badgeStatus": ObjectId("5f776f416289f17659874f2c"),
+                         "badgeStatus": ObjectId(APPROVED_BADGE_STATUS), 
                          "issuedOn": datetime.now(timezone.utc)}
 
     if (isCompleted == True):
         if (assertion_collection.count_documents(check_badge_to_earn_exists) == 0):
             assertion_collection.insert_one(new_badge_to_user)
-            return new_badge_to_user
+            return "Master Badge added"
         else:
             return "Master Badge already exists"
-    if (isCompleted == False):
-        if (assertion_collection.count_documents(check_badge_to_earn_exists) == 1):
+    if (isCompleted == False):   
+        if (assertion_collection.count_documents(check_badge_to_earn_exists) ==  1):
             assertion_collection.delete_one(check_badge_to_earn_exists)
             return "Deleted because major badge is not approved"
         else:
