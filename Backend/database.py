@@ -882,15 +882,6 @@ def update_user_badge_status(assertion_id, issuer_id, badge_status_id, comments)
     return get_all_user_badge_details_by_assertion_id(assertion_id)
     # return None
 
-def get_badge_in_assertion(assertion_id):
-    assertion_collection = myDB["Assertions"]
-
-    query = {'_id': assertion_id}
-    output = {'badge': 1, '_id': False}
-
-    user_badge_status = assertion_collection.find_one(query, output)
-    return user_badge_status.get('badge')
-
 def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, public_link, user_id,
                               is_badge_status_changed):
     user_badge__details_collection = myDB["User_Badge_Details"]
@@ -947,19 +938,19 @@ def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, p
 
 ## ------------------------ AUTO ADD BADGE ----------------------------------
 
-
+#TESTED - OKAY
 def auto_add_major_badge(user_id, badge_updated):
     isCompleted = validate_badge_completion(user_id, badge_updated)
     major_badge_to_earn = get_badge_to_earn(badge_updated)
 
     assertion_collection = myDB["Assertions"]
+    user_badge_details_collection = myDB["User_Badge_Details"]
     check_badge_to_earn_exists = {"user": ObjectId(user_id), "badge": major_badge_to_earn}
     check_approved_badge_to_earn_exists = {"user": ObjectId(user_id), "badge": major_badge_to_earn,
                                 "badgeStatus": ObjectId("5f776f416289f17659874f2c")}
-    new_badge_to_user = {"user": ObjectId(user_id), "badge": major_badge_to_earn,
-                         "badgeStatus": ObjectId("5f776f416289f17659874f2c"),
-                         "issuedOn": datetime.now(timezone.utc)}
-
+    work_link = ''
+    public_link = ''
+    comments = "You have earned this major badge as you have completed the required minor badges."
 
     # update_existing_badge =    {
     #                     {'user': ObjectId(user_id)},
@@ -976,23 +967,25 @@ def auto_add_major_badge(user_id, badge_updated):
         #     return "Major Badge updated"
         #     print("Badge update stil not working")
         # el
-        if (assertion_collection.count_documents(check_approved_badge_to_earn_exists) == 0):
-            assertion_collection.insert_one(new_badge_to_user)
-            return "Major Badge added"    
-
-            # Trigger add in Badge_User_Details
-
+        if (assertion_collection.count_documents(check_approved_badge_to_earn_exists) == 0):  
+            add_assertion(user_id, major_badge_to_earn, APPROVED_BADGE_STATUS)
+            assertion_id = get_assertion_id(user_id, major_badge_to_earn)
+            add_user_badge_mapping(user_id, major_badge_to_earn, APPROVED_BADGE_STATUS, work_link, assertion_id, public_link, comments)
+            return "Major Badge added"  
         else:
             return "Major Badge already exists"
     if (isCompleted == False):
         if (assertion_collection.count_documents(check_approved_badge_to_earn_exists) == 1):
-            assertion_collection.delete_one(check_approved_badge_to_earn_exists)
+            assertion_id = get_assertion_id(user_id, major_badge_to_earn)
+            assertion_collection.delete_one({"_id": assertion_id})
+            user_badge_details_collection.delete_one({"assertionID": assertion_id})
             return "Deleted because minor badge is not approved"
         else:
             return "No Major Badge added"
     else:
         "Error"
 
+#TESTED - OKAY
 def auto_add_master_badge(user_id, badge_updated):
     major_badge = get_badge_to_earn(badge_updated)
     isCompleted = validate_badge_completion(user_id, major_badge)
@@ -1000,21 +993,27 @@ def auto_add_master_badge(user_id, badge_updated):
     master_badge_to_earn = get_badge_to_earn(major_badge)
 
     assertion_collection = myDB["Assertions"]
+    user_badge_details_collection = myDB["User_Badge_Details"]
     check_badge_to_earn_exists = {"user": ObjectId(user_id), "badge": master_badge_to_earn,
                                 "badgeStatus": ObjectId(APPROVED_BADGE_STATUS)} 
-    new_badge_to_user = {"user": ObjectId(user_id), "badge": master_badge_to_earn,
-                         "badgeStatus": ObjectId(APPROVED_BADGE_STATUS), 
-                         "issuedOn": datetime.now(timezone.utc)}
+    
+    work_link = ''
+    public_link = ''
+    comments = "You have earned this master badge as you have completed the required major badges."
 
     if (isCompleted == True):
         if (assertion_collection.count_documents(check_badge_to_earn_exists) == 0):
-            assertion_collection.insert_one(new_badge_to_user)
+            add_assertion(user_id, master_badge_to_earn, APPROVED_BADGE_STATUS)
+            assertion_id = get_assertion_id(user_id, master_badge_to_earn)
+            add_user_badge_mapping(user_id, master_badge_to_earn, APPROVED_BADGE_STATUS, work_link, assertion_id, public_link, comments)
             return "Master Badge added"
         else:
             return "Master Badge already exists"
     if (isCompleted == False):   
         if (assertion_collection.count_documents(check_badge_to_earn_exists) ==  1):
-            assertion_collection.delete_one(check_badge_to_earn_exists)
+            assertion_id = get_assertion_id(user_id, master_badge_to_earn)
+            assertion_collection.delete_one({"_id": assertion_id})
+            user_badge_details_collection.delete_one({"assertionID": assertion_id})
             return "Deleted because major badge is not approved"
         else:
             return "No Master Badge added"
@@ -1023,7 +1022,18 @@ def auto_add_master_badge(user_id, badge_updated):
 
 # ------ SUB FUNCTIONS
 
+def get_assertion_id(user_id, badge):
+    assertion_collection = myDB["Assertions"]
 
+    query = {
+        'user': ObjectId(user_id),
+        'badge': ObjectId(badge)
+        # 'badgeStatus': ObjectId(status)
+        }
+    output = {'_id': True}
+
+    assertion_id = assertion_collection.find_one(query, output)
+    return assertion_id.get('_id')
 
 #TESTED - OKAY
 def get_badge_by_assertion_id(assertion_id): 
@@ -1393,3 +1403,4 @@ def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_req
         }, upsert=True
     )
     return "updated"
+
