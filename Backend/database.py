@@ -989,6 +989,15 @@ def auto_add_major_badge(user_id, badge_updated):
             add_assertion(user_id, major_badge_to_earn, APPROVED_BADGE_STATUS)
             assertion_id = get_assertion_id(user_id, major_badge_to_earn)
             add_user_badge_mapping(user_id, major_badge_to_earn, APPROVED_BADGE_STATUS, work_link, assertion_id, public_link, comments)
+            user_badge_details_collection.find_one_and_update(
+            {
+                "assertionID": ObjectId(assertion_id)
+            },
+            {
+                "$set": {
+                    "issuedOn": datetime.now(timezone.utc)
+                }
+            })
             print("Major Badge Added")
             return "Major Badge added"  
         else:
@@ -1028,6 +1037,15 @@ def auto_add_master_badge(user_id, badge_updated):
             add_assertion(user_id, master_badge_to_earn, APPROVED_BADGE_STATUS)
             assertion_id = get_assertion_id(user_id, master_badge_to_earn)
             add_user_badge_mapping(user_id, master_badge_to_earn, APPROVED_BADGE_STATUS, work_link, assertion_id, public_link, comments)
+            user_badge_details_collection.find_one_and_update(
+            {
+                "assertionID": ObjectId(assertion_id)
+            },
+            {
+                "$set": {
+                    "issuedOn": datetime.now(timezone.utc)
+                }
+            })
             print("Master Badge added")
             return "Master Badge added"
         else:
