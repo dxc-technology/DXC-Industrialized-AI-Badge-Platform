@@ -421,15 +421,15 @@ def send_password_reset_email():
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
 
-@app.route("/viewusertypeoptions", methods=['POST'])
+@app.route("/viewusertypeoptions", methods=['GET'])
 def get_user_type_options():
     return database.get_user_type_options()
 
-@app.route("/viewuserstatusoptions", methods=['POST'])
+@app.route("/viewuserstatusoptions", methods=['GET'])
 def get_user_status_options():
     return database.get_user_status_options()
 
-@app.route("/viewbadgetypeoptions", methods=['POST'])
+@app.route("/viewbadgetypeoptions", methods=['GET'])
 def get_badge_type_options():
     return database.get_badge_type_options()
 
