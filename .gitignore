@@ -2,5 +2,5 @@
 env/
 node_modules
 __pycache__
-eslintcache
+.eslintcache
 venv/
