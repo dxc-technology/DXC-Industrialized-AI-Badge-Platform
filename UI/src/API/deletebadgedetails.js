@@ -1,4 +1,4 @@
-const deletebadgedetailsResponse = async(badgeName) => {
+const deletebadgedetailsResponse = async(id) => {
     //DELETE request
     var url = process.env.REACT_APP_APILINK+'/deletebadgedetails';
     return await fetch(url, {

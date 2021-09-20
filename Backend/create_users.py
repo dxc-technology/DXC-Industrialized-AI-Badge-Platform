@@ -178,3 +178,39 @@ def update_user(userid, first_name, second_name, middle_name, organization_name)
     if update_user_id == "updated":
         return "User details successfully updated"
     return None
+
+
+def delete_users_by_admin(email, first_name, second_name, middle_name, organization_name, logged_in_admin_id, user_type,user_status):
+
+    if validate_email_address(email) == INVALID:
+        return INVALID
+    if validate_user_type(user_type) == INVALID:
+        return INVALID
+    if validate_user_type(user_type) == INVALID_USER_TYPE_MESSAGE:
+        return INVALID_USER_TYPE_MESSAGE
+    if validate_user_status(user_status) == INVALID:
+        return INVALID
+    if validate_user_status(user_status) == INVALID_USER_STATUS_MESSAGE:
+        return INVALID_USER_STATUS_MESSAGE
+    if validate_first_name(first_name) == INVALID:
+        return INVALID
+    if validate_second_name(second_name) == INVALID:
+        return INVALID
+   
+    if user_badge_mapping.validate_user_id_for_admin(logged_in_admin_id) == "User ID is not valid":
+        return "logged in admin user ID is not valid"
+    if user_badge_mapping.validate_user_id_for_admin(logged_in_admin_id) == "Requesting user is not an admin":
+        return "Requesting user is not an admin to update the user"
+    
+    valid_user_type = ["admin", "reviewer"]
+    if user_type in valid_user_type:
+        return "Cannot delete this user. Change to regular user"
+    valid_user_status = ["active"]
+    if user_status in valid_user_status:
+        return "Cannot delete this user. Change to inactive or blocked user"
+    database.delete_user_details(email, user_type, first_name, middle_name, second_name, organization_name,
+                                 user_status)
+    return "user details deleted"
+    
+
+    

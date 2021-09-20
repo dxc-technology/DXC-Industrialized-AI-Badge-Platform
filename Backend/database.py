@@ -1,10 +1,13 @@
 from datetime import datetime, timezone
 from logging import NullHandler
 import os
+from flask.helpers import make_response
+from flask.json import jsonify
 from pymongo import MongoClient, database
 from bson.json_util import dumps
 from dotenv import load_dotenv
 from bson import ObjectId
+from pymongo.message import query
 import create_badge
 import certifi
 
@@ -39,32 +42,32 @@ def get_user_details(email):
         user_doc = x
     return user_doc
 
-def delete_user_details(user_email):
+
+def delete_user_details(email):
+    user_doc = {}
     user_collection = myDB["users"]
-    query = {"email": user_email}
+    query = {"email":email}
     result = user_collection.find(query)
     for x in result:
-        if (x != None):
-            x = user_collection.delete_one(query)
-            database.session.comit()
-            print ("x:", type(x), "-- deleted count:", x.deleted_count)
+        user_doc = x
+        if (user_doc != "None"):
+            user_collection.delete_one(user_doc)
+            database.session.commit()
         else:
-            print('No user found with the sepicifed details')
-    return print("API call recieved:")
+            if (user_doc == "None"):
+                return "No user available to delete"
+    return "User deleted successfully"
 
 
-def delete_badge_details(badgeid):
+
+def delete_badge_details(id):
     badge_collection = myDB["Badges"]
-    query = {'_id': ObjectId(badgeid)}
-    badge_result = badge_collection.find(query)
-    for x in badge_result:
-        if (x != None):
-            x = badge_collection.delete_one(query)
-            database.session.comit()
-            print ("x:", type(x), "-- deleted count:", x.deleted_count)
-        else:
-            print('No badge found with the sepicifed details')
-    return print("API call recieved:")
+    query = {"_id": ObjectId(id)}
+    badge = badge.query.get(id)
+    database.session.delete(badge)
+    database.session.commit()
+
+    return badge_schema.jsonify(badge)
 
 
 def get_user_type(user_type):
