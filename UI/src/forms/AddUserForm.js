@@ -207,7 +207,8 @@ const AddUserForm = (props) => {
                                 "data-testid": "addUser_middleName",
                             }}
                             value={middleName}
-                            className={((middleName.length=='')&& (middleNameClick=='True')) ? 'emptyfield' : ''}
+                            //Commented the below line as part of the change - Middle name not required for creating user
+                            //className={((middleName.length=='')&& (middleNameClick=='True')) ? 'emptyfield' : ''}
                             onChange={handleMiddleNameChange}
                         />
                     </Grid>
