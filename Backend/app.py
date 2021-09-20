@@ -26,7 +26,7 @@ app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 
 @app.route("/")
 def home():
-    return "Welcome to Industrialized AI Starter Application!!"
+    return "Welcome to Industrialized AI Starter Application!"
 
 
 @app.route("/login", methods=['GET'])
@@ -86,7 +86,7 @@ def update_user_details():
                                              admin_id, user_type, user_status)
 
 
-@app.route("/createuser", methods=['GET'])
+@app.route("/createuser", methods=['POST'])
 def create_user_admin():
     if str(request.args.get('email')) == "None":
         new_email = ""

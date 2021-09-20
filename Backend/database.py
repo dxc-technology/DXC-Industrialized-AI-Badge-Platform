@@ -16,10 +16,6 @@ client = MongoClient(
 )
 myDB = client[os.getenv("DB_NAME")]
 
-
-
-
-
 def connect():
     if os.getenv("DB_NAME") in client.list_database_names():
         return "successfully connected"
