@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from bson import ObjectId
 import create_badge
 import certifi
+
 ENV_PATH = 'backend_variable.env'
 load_dotenv(dotenv_path=ENV_PATH)
 client = MongoClient(
@@ -14,7 +15,6 @@ client = MongoClient(
     os.getenv("DB_CONNECTION_STRING"),tlsCAFile=certifi.where()
 )
 myDB = client[os.getenv("DB_NAME")]
-
 
 def connect():
     if os.getenv("DB_NAME") in client.list_database_names():
@@ -25,7 +25,6 @@ def connect():
 def count_users():
     user_collection = myDB["Users"]
     return user_collection.count()
-
 
 def get_user_details(email):
     user_doc = {}
@@ -1028,3 +1027,28 @@ def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_req
         }, upsert=True
     )
     return "updated"
+
+def get_user_status_options():
+    user_status_collection = myDB["User_Status"]
+    # data = user_status_collection.find({}, {'_id': 0, 'userStatus': 1})
+    data = user_status_collection.distinct('userStatus')
+    user_status_doc = []
+    for status in data:
+        user_status_doc.append(status)
+    return user_status_doc
+
+def get_user_type_options():
+    user_type_collection = myDB["User_Type"]
+    data = user_type_collection.distinct('type')
+    user_type_doc = []
+    for type in data:
+        user_type_doc.append(type)
+    return user_type_doc
+
+def get_badge_type_options():
+    badge_type_collection = myDB["Badge_Type"]
+    data = badge_type_collection.distinct('badgeType')
+    badge_type_doc = []
+    for badge in data:
+        badge_type_doc.append(badge)
+    return badge_type_doc
