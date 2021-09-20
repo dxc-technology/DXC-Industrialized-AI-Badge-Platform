@@ -59,7 +59,6 @@ const ViewAssertionsForm = (props) => {
     function getFileName() {
         let d = new Date();
         let dformat = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}T${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}-`;
-
         console.log("getCurrentDate : ", dformat);
         return dformat + "assertions-export" + ".xlsx";
     }
@@ -81,14 +80,12 @@ const ViewAssertionsForm = (props) => {
                 const workBook = XLSX.utils.book_new()
                 XLSX.utils.book_append_sheet(workBook, workSheet, 'AssertionDetails')
                 let buf = XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' })
-
                 XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
                 XLSX.writeFile(workBook, getFileName())
             }
         });
 
     }
-
 
     const handleviewAssertions = async () => {
         if (userType == '5fc5567fcd831cc0c83774b8') {
@@ -99,7 +96,7 @@ const ViewAssertionsForm = (props) => {
                     setresponse(value.length);
                     const temp_rows = []
                     for (var i = 0; i < value.length; i++) {
-                        temp_rows.push(createData(i, value[i]._id.$oid, value[i].user_email_address[0].email, value[i].badge_details[0].name, value[i].issuedOn.$date, value[i].badge_status[0].badgeStatus));
+                        temp_rows.push(createData(i, value[i].reviewer.$oid, value[i].user_email_address[0].email, value[i].badge_details[0].name, value[i].issuedOn.$date, value[i].badge_status[0].badgeStatus));
 
                     }
 
