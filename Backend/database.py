@@ -47,7 +47,7 @@ def delete_user_details(email):
     user_doc = {}
     user_collection = myDB["users"]
     query = {"email":email}
-    result = user_collection.find(query)
+    result = user_collection.find_one(query)
     for x in result:
         user_doc = x
         if (user_doc != "None"):
@@ -60,14 +60,21 @@ def delete_user_details(email):
 
 
 
-def delete_badge_details(id):
+def delete_badge(badge_name):
+    badge_doc = {}
     badge_collection = myDB["Badges"]
-    query = {"_id": ObjectId(id)}
-    badge = badge.query.get(id)
-    database.session.delete(badge)
-    database.session.commit()
-
-    return badge_schema.jsonify(badge)
+    query = {'name': badge_name}
+    result = badge_collection.find_one(query)
+    for x in result:
+        badge_doc = x
+        if (badge_doc != "None"):
+            badge_collection.delete_one(badge_doc)
+            database.session.commit()
+        else:
+            if (badge_doc == "None"):
+                return "No badge available to delete"
+    return "Badge deleted successfully"
+    
 
 
 def get_user_type(user_type):

@@ -232,3 +232,10 @@ def modify_badge(badge_name, badge_description, link, badge_type, user_requestab
                 return "updated"
 
     return badge_input_status
+
+def delete_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer, evidence):
+    badge_input_status = validate_badge_values(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer, evidence)
+
+    if badge_input_status == "Valid entry":
+        database.delete_badge_details(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer, evidence)
+    return "Badge is deleted successfully"

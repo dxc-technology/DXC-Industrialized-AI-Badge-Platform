@@ -323,46 +323,55 @@ def delete_multiple_assertions_user_badge_details_by_user():
 def delete_user_details():
     req_body = request.get_json()
     if req_body['email'] == "None":
-        [email_id_list] = ""
+        email_id_list = ""
     else:
-        [email_id_list] = req_body['email']
+        email_id_list = req_body['email']
     if req_body['firstName'] == "None":
-        [firstName_list] = ""
+        firstName_list = ""
     else:
-        [firstName_list] = req_body['firstName']
+        firstName_list = req_body['firstName']
     if req_body['secondName'] == "None":
-        [secondName_list] = ""
+        secondName_list = ""
     else:
-        [secondName_list] = req_body['secondName']
+        secondName_list = req_body['secondName']
     if req_body['middleName'] == "None":
-        [middleName_list] = ""
+        middleName_list = ""
     else:
-        [middleName_list] = req_body['middleName']
+        middleName_list = req_body['middleName']
     if req_body['organizationName'] == "None":
-        [organizationName_list] = ""
+        organizationName_list = ""
     else:
-        [organizationName_list] = req_body['organizationName']
+        organizationName_list = req_body['organizationName']
     if req_body['adminId'] == "None":
-        [adminId_list] = ""
+        adminId_list = ""
     else:
-        [adminId_list] = req_body['adminId']
+        adminId_list = req_body['adminId']
     if req_body['userType'] == "None":
-        [userType_list] = ""
+        userType_list = ""
     else:
-        [userType_list] = req_body['userType']
+        userType_list = req_body['userType']
     if req_body['userStatus'] == "None":
-        [userStatus_list] = ""
+        userStatus_list = ""
     else:
-        [userStatus_list] = req_body['userStatus']
+        userStatus_list = req_body['userStatus']
     
-    return create_users.delete_users_by_admin([email_id_list], [firstName_list], [secondName_list], [middleName_list], [organizationName_list],
-                                             [adminId_list], [userType_list], [userStatus_list])
+    return create_users.delete_users_by_admin(email_id_list, firstName_list, secondName_list, middleName_list, organizationName_list,
+                                             adminId_list, userType_list, userStatus_list)
 
 
-@app.route("/deletebadgedetails/", methods=["DELETE"])
+@app.route("/deletebadgedetails", methods=["DELETE"])
 def delete_badge():
-    req_body = request.get_json()
-    return delete_user(req_body['email'])
+    badge_name = request.form.get("name")
+    badge_description = request.form.get("description")
+    link = request.form.get("link")
+    user_requestable = request.form.get("requestable")
+    badge_type = request.form.get("badgetype")
+    owner = request.form.get("owner")
+    reviewer = request.form.get("reviewer")
+    evidence = request.form.get("evidence")
+
+    return create_badge.delete_badge(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer, evidence)
+    
     
 
 @app.route("/updateuserbadgestatus", methods=['POST'])
