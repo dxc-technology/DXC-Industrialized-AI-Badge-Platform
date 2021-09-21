@@ -60,7 +60,7 @@ def delete_user_details(email):
 
 
 
-def delete_badge(badge_name):
+def delete_badge_details(badge_name):
     badge_doc = {}
     badge_collection = myDB["Badges"]
     query = {'name': badge_name}
