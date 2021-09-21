@@ -10,7 +10,10 @@ const deleteuserdetailsResponse = async(email) => {
                 'Content-Type':'application/json'
             }
         })
-        .then((response) => {return response.status})
+        .then((response) => {
+            console.log("response="+ typeof(response.status));
+            return response.status
+        })
         // .then((response) => response.json())
         //If response is in json then in success
         // .then((responseText) => {
