@@ -208,8 +208,7 @@ def delete_users_by_admin(email, first_name, second_name, middle_name, organizat
     valid_user_status = ["active"]
     if user_status in valid_user_status:
         return "Cannot delete this user. Change to inactive or blocked user"
-    database.delete_user_details(email, user_type, first_name, middle_name, second_name, organization_name,
-                                 user_status)
+    database.delete_user_details(email)
     return "user details deleted"
     
 

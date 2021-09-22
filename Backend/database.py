@@ -44,19 +44,14 @@ def get_user_details(email):
 
 
 def delete_user_details(email):
-    user_doc = {}
     user_collection = myDB["users"]
     query = {"email":email}
     result = user_collection.find_one(query)
-    for x in result:
-        user_doc = x
-        if (user_doc != "None"):
-            user_collection.delete_one(user_doc)
-            database.session.commit()
-        else:
-            if (user_doc == "None"):
-                return "No user available to delete"
-    return "User deleted successfully"
+    if (result != None):
+        user_collection.delete_one(query)
+    else:
+        return "No user available to delete"
+    return "user deleted successfully"
 
 
 
