@@ -12,6 +12,7 @@ import view_user_badge_details
 import create_users
 import user_badge_mapping
 import user_badge_deactivation
+import database
 import os
 import io
 from io import StringIO
@@ -26,7 +27,7 @@ app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 
 @app.route("/")
 def home():
-    return "Welcome to Industrialized AI Starter Application!!"
+    return "Welcome to Industrialized AI Starter Application!"
 
 
 @app.route("/login", methods=['GET'])
@@ -86,7 +87,7 @@ def update_user_details():
                                              admin_id, user_type, user_status)
 
 
-@app.route("/createuser", methods=['GET'])
+@app.route("/createuser", methods=['POST'])
 def create_user_admin():
     if str(request.args.get('email')) == "None":
         new_email = ""
@@ -475,3 +476,16 @@ def send_password_reset_email():
     req_body = request.get_json()
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
+
+@app.route("/viewusertypeoptions", methods=['GET'])
+def get_user_type_options():
+    return str(database.get_user_type_options())
+
+@app.route("/viewuserstatusoptions", methods=['GET'])
+def get_user_status_options():
+    return str(database.get_user_status_options())
+
+@app.route("/viewbadgetypeoptions", methods=['GET'])
+def get_badge_type_options():
+    return str(database.get_badge_type_options())
+
