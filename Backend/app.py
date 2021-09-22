@@ -358,6 +358,18 @@ def delete_user_details():
     return create_users.delete_users_by_admin(email_id_list, firstName_list, secondName_list, adminId_list, userType_list, userStatus_list,assertion_id_list,deleted_by_id)
 
 
+@app.route("/deletebadgedetails", methods=["DELETE"])
+def delete_badge():
+    req_body = request.get_json()
+    if req_body['name'] == "None":
+        name_list = ""
+    else:
+        name_list = req_body['name']
+    
+    return create_badge.delete_badge(name_list)
+
+
+
 @app.route("/updateuserbadgestatus", methods=['POST'])
 def update_user_badge_status():
     # req_body = request.get_json()

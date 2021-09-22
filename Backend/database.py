@@ -1063,3 +1063,14 @@ def delete_user_details(email):
     else:
         return "No user available to delete"
     return "user deleted successfully"
+
+def delete_badge_details(badge_name):
+    badge_collection = myDB["Badges"]
+    query = {'name': badge_name}
+    result = badge_collection.find_one(query)
+    if (result != None):
+        badge_collection.delete_one(query)
+    else:
+        return "No badge available to delete"
+    return "Badge deleted successfully"
+    
