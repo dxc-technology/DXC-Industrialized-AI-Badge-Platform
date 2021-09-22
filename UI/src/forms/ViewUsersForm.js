@@ -12,6 +12,10 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import AssertionDetailsForm from './AssertionDetailsForm';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 import UserDetailsForm from './UserDetailsForm';
 import AddUserForm from './AddUserForm';
 import Button from '@material-ui/core/Button';
@@ -120,6 +124,10 @@ const ViewUsersForm = (props) => {
             }
         });
     }
+<<<<<<< Updated upstream
+=======
+    
+>>>>>>> Stashed changes
 
 
 
@@ -190,6 +198,10 @@ const ViewUsersForm = (props) => {
                                             <IconButton data-testid={'viewUsers_editUserButton' + row.id} value={row.email} onClick={handleUserDetails}>
                                                 <EditSharpIcon />
                                             </IconButton>
+<<<<<<< Updated upstream
+=======
+                                            
+>>>>>>> Stashed changes
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -197,6 +209,10 @@ const ViewUsersForm = (props) => {
                         </Table>
                         <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
           </Button>
+<<<<<<< Updated upstream
+=======
+          
+>>>>>>> Stashed changes
                     </React.Fragment>
                 </div >
 
