@@ -346,8 +346,16 @@ def delete_user_details():
         userStatus_list = ""
     else:
         userStatus_list = req_body['userStatus']
-    
-    return create_users.delete_users_by_admin(email_id_list, firstName_list, secondName_list, adminId_list, userType_list, userStatus_list)
+    if req_body['assertionID'] == "None":
+        assertion_id_list = ""
+    else:
+        assertion_id_list = req_body['assertionID']
+    if req_body['deletedBy'] == "None":
+        deleted_by_id = ""
+    else:
+        deleted_by_id = req_body['deletedBy']
+
+    return create_users.delete_users_by_admin(email_id_list, firstName_list, secondName_list, adminId_list, userType_list, userStatus_list,assertion_id_list,deleted_by_id)
 
 
 @app.route("/updateuserbadgestatus", methods=['POST'])
