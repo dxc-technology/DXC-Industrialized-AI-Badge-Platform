@@ -319,6 +319,37 @@ def delete_multiple_assertions_user_badge_details_by_user():
     return user_badge_deactivation.deactivate_user_badge_list_self([assertion_id_list], deleted_by_id)
 
 
+@app.route("/deleteuserdetails", methods=['DELETE'])
+def delete_user_details():
+    req_body = request.get_json()
+    if req_body['email'] == "None":
+        email_id_list = ""
+    else:
+        email_id_list = req_body['email']
+    if req_body['firstName'] == "None":
+        firstName_list = ""
+    else:
+        firstName_list = req_body['firstName']
+    if req_body['secondName'] == "None":
+        secondName_list = ""
+    else:
+        secondName_list = req_body['secondName']
+    if req_body['adminId'] == "None":
+        adminId_list = ""
+    else:
+        adminId_list = req_body['adminId']
+    if req_body['userType'] == "None":
+        userType_list = ""
+    else:
+        userType_list = req_body['userType']
+    if req_body['userStatus'] == "None":
+        userStatus_list = ""
+    else:
+        userStatus_list = req_body['userStatus']
+    
+    return create_users.delete_users_by_admin(email_id_list, firstName_list, secondName_list, adminId_list, userType_list, userStatus_list)
+
+
 @app.route("/updateuserbadgestatus", methods=['POST'])
 def update_user_badge_status():
     # req_body = request.get_json()

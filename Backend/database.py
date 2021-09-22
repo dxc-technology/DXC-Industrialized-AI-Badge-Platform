@@ -1052,3 +1052,14 @@ def get_badge_type_options():
     for badge in data:
         badge_type_doc.append(badge)
     return badge_type_doc
+
+
+def delete_user_details(email):
+    user_collection = myDB["Users"]
+    query = {"email":email}
+    result = user_collection.find_one(query)
+    if (result != None):
+        user_collection.delete_one(query)
+    else:
+        return "No user available to delete"
+    return "user deleted successfully"
