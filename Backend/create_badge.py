@@ -237,22 +237,20 @@ def modify_badge(badge_name, badge_description, link, badge_type, user_requestab
 
     return badge_input_status
 
-def validate_badge_name(name):
-    if name.strip() == "" or name is None:
-        return INVALID
-    return VALID
 
 def delete_badge(name):
     def validate_user_Id(logged_in_admin_id):
         if user_badge_mapping.validate_user_id_for_admin(logged_in_admin_id) == "Requesting user is not an admin":
-            return "Requesting user is not an admin to update the user"
+            return INVALID
         return VALID
-    check_user = validate_user_Id(name)
-
+    def validate_badge_name(name):
+        if name.strip() == "" or name is None:
+            return INVALID
+        return VALID
     if validate_badge_name(name) == INVALID:
-        return INVALID
-    if (check_user == "Requesting user is not an admin to update the user"):
-        return "User does not have the permission to delete the Badge"
+        return "INVALID"
+    if validate_user_Id(name) == INVALID:
+        return "Requesting user is not an admin to update the user"
 
     status_okay=database.delete_badge_details(name)
     return status_okay
