@@ -46,6 +46,7 @@ import ReactPlayer from 'react-player';
 import getJIRAResponse from '../API/AddJIRARequestAPI';
 import Button from '@material-ui/core/Button';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Redirect } from 'react-router';
  
 const LandingForm = (props)=>
 {
@@ -89,11 +90,12 @@ const LandingForm = (props)=>
       setClickedItem('ViewProfileForm');
     }
 
-    const handleLogout =()=>{
+    const handleLogout =()=>{      
       sessionStorage.removeItem("Token");
       sessionStorage.removeItem("Email");
       localStorage.removeItem("Id");
       localStorage.removeItem("token");
+      setClickedItem('BacktoLoginForm');    
     }
 
 
@@ -328,6 +330,14 @@ const classes = useStyles();
 
 
 
+if (clickedItem=='BacktoLoginForm'){
+  return(
+  <div>
+       <Redirect to="/" />
+  </div>
+  );
+  }
+  else{
 
     return (
 
@@ -354,7 +364,7 @@ const classes = useStyles();
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Button onClick={handleLogout} size="large" color="inherit" endIcon={<ExitToAppIcon />} href="/">
+          <Button onClick={handleLogout} size="large" color="inherit" endIcon={<ExitToAppIcon />}  >
            Logout
           </Button>
         </Toolbar>
@@ -388,7 +398,7 @@ const classes = useStyles();
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType} userID={userID}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
-               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):
+               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):              
                (<div>
                  <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
@@ -410,6 +420,7 @@ const classes = useStyles();
             </input>
         </div>
     );
+                  }
 };
 
 export default LandingForm;
