@@ -1054,6 +1054,8 @@ def get_badge_type_options():
     return badge_type_doc
 
 # ---------------------------- MY BACKPACK DASHBOARD -----------------------------
+
+## COUNT
 def get_count_minor_badges_earned_by_userid(user_id):
     assertions_collection = myDB["Assertions"]
         
@@ -1206,3 +1208,54 @@ def get_count_total_badges_earned_by_userid(user_id):
     o = list(data)
     # json = dumps(o, indent=2)
     return o
+
+## ASSERTIONS BY BADGELEVEL   
+def get_assertions_with_user_id_and_badge_level(user_id, badge_level):
+    assertions_collection = myDB["Assertions"]
+    # query = {"user": user_id}
+    # data = assertions_collection.find(query)
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'user',
+                'foreignField': '_id',
+                'as': 'user_email_address'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badge_name'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {'user': ObjectId(user_id)},
+                    {"badge_status.badgeStatus": "approved"},
+                    {'badge_name.badgeLevel': badge_level}
+                ]
+            }
+        },
+        {
+            '$project': {"user_email_address._id": 1, "user_email_address.email": 1, "badge_name.name": 1,
+                         "badge_name.link": 1, "badge_name.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
+                         "_id": 1}
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
