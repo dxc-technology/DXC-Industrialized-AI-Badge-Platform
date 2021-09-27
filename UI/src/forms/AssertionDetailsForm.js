@@ -259,8 +259,10 @@ return(
                             onChange={handleBadgeStatusChange}
                             >
                             <MenuItem value={'5f776f556289f17659874f2e'}>Applied</MenuItem>
-                            <MenuItem value={'5f776ee06289f17659874f2a'}>Working</MenuItem>
+                            {/* <MenuItem value={'5f776ee06289f17659874f2a'}>Working</MenuItem> */}
+                            <MenuItem value={'61521ffc856eac5a3748dbfc'}>Under Review</MenuItem>
                             <MenuItem value={'5f776f336289f17659874f2b'}>Rework</MenuItem>
+                            <MenuItem value={'61521ff0856eac5a3748dbfb'}>Reapplied</MenuItem>
                             <MenuItem value={'5f776f416289f17659874f2c'}>Approved</MenuItem>
                             <MenuItem value={'5f776f4c6289f17659874f2d'}>Rejected</MenuItem>
                         </Select>
