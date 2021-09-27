@@ -1035,7 +1035,8 @@ def get_user_status_options():
     user_status_doc = []
     for status in data:
         user_status_doc.append(status)
-    return user_status_doc
+    json = dumps(user_status_doc, indent=2)
+    return json, {'content-type': 'application/json'}
 
 def get_user_type_options():
     user_type_collection = myDB["User_Type"]
@@ -1043,7 +1044,8 @@ def get_user_type_options():
     user_type_doc = []
     for type in data:
         user_type_doc.append(type)
-    return user_type_doc
+    json = dumps(user_type_doc, indent=2)
+    return json, {'content-type': 'application/json'}
 
 def get_badge_type_options():
     badge_type_collection = myDB["Badge_Type"]
@@ -1051,4 +1053,5 @@ def get_badge_type_options():
     badge_type_doc = []
     for badge in data:
         badge_type_doc.append(badge)
-    return badge_type_doc
+    json = dumps(badge_type_doc, indent=2)
+    return json, {'content-type': 'application/json'}
