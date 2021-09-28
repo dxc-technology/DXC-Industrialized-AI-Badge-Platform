@@ -1047,11 +1047,12 @@ def get_user_type_options():
     json = dumps(user_type_doc, indent=2)
     return json, {'content-type': 'application/json'}
 
+
 def get_badge_type_options():
     badge_type_collection = myDB["Badge_Type"]
-    data = badge_type_collection.distinct('badgeType')
     badge_type_doc = []
-    for badge in data:
+    for badge in badge_type_collection.find({}, {"_id": 0, "badgeType": 1}):
         badge_type_doc.append(badge)
     json = dumps(badge_type_doc, indent=2)
-    return json, {'content-type': 'application/json'}
+    return json
+
