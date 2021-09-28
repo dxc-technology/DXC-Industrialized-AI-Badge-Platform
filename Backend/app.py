@@ -458,6 +458,11 @@ def view_count_total_badges_earned_by_userid():
     user_id = str(request.args.get('user'))
     return my_backpack.view_count_total_badges_earned_by_userid(user_id)
 
+@app.route("/viewongoingassertionsbyuserid", methods=['POST'])
+def view_ongoing_assertions_by_user_id():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_ongoing_assertions_by_user_id(user_id)
+
 @app.route("/viewassertionsbyuseridandbadgelevel", methods=['POST'])
 def view_assertions_with_user_id_and_badge_level():
     user_id = str(request.args.get('user'))
