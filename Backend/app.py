@@ -423,7 +423,7 @@ def send_password_reset_email():
 
 @app.route("/viewusertypeoptions", methods=['GET'])
 def get_user_type_options():
-    return str(database.get_user_type_options())
+    return database.get_user_type_options()
 
 @app.route("/viewuserstatusoptions", methods=['GET'])
 def get_user_status_options():

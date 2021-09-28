@@ -2,7 +2,7 @@ const getViewUserTypeOptionsResponse = async() => {
     //GET request
     var url = process.env.REACT_APP_APILINK+'/viewusertypeoptions';
     return await fetch(url, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Accept':'application/json',
                 'Content-Type':'application/json'
@@ -15,7 +15,7 @@ const getViewUserTypeOptionsResponse = async() => {
             //Success
             // alert(JSON.stringify(responseJson));
             //console.log("in here")
-            console.log(responseText);
+            //console.log(responseText);
             return responseText;
         })
         //If response is not in json then in error

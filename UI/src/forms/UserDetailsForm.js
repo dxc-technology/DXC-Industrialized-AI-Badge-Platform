@@ -22,6 +22,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { InputLabel } from '@material-ui/core';
 import UpdateUserDetailsResponse from '../API/UpdateUserDetailsAPI';
+import getViewUserTypeOptionsResponse from '../API/ViewUserTypeOptionsAPI';
+import getViewUserStatusOptionsResponse from '../API/ViewUserStatusOptionsAPI';
 
 
 const UserDetailsForm = (props) => {
@@ -40,6 +42,8 @@ const UserDetailsForm = (props) => {
     const [saveFlag, setSaveFlag] = useState('False');
     const [result, setResult] = useState('');
     const [backButtonClicked,setBackButtonClicked] = useState('False');
+    const [userTypeOptions, setUserTypeOptions] = useState([]);
+    const [userStatusOptions, setUserStatusOptions] = useState([]);
 
 
     const useStyles = makeStyles((theme) => ({
@@ -102,8 +106,30 @@ const UserDetailsForm = (props) => {
         setBackButtonClicked('True');
     }
 
+    const handleviewUserTypeOptions= async() => {
+        var response1 = new Promise((resolve, reject) => {
+            resolve(getViewUserTypeOptionsResponse());
+        }).then(value => {
+            if (value != undefined) {              
+                setUserTypeOptions(value);                
+            }            
+        });
+    }
+
+    const handleviewUserStatusOptions= async() => {
+        var response1 = new Promise((resolve, reject) => {
+            resolve(getViewUserStatusOptionsResponse());
+        }).then(value => {
+            if (value != undefined) {              
+                setUserStatusOptions(value);                
+            }            
+        });
+    }
+
     useEffect(() => {
-        handleviewUserByEmail()
+        handleviewUserByEmail();
+        handleviewUserTypeOptions();
+        handleviewUserStatusOptions();
     }, []);
 
     const handleUserTypeChange = event => {
@@ -187,9 +213,13 @@ return(
                             value={userType}
                             onChange={handleUserTypeChange}
                             >
-                            <MenuItem value={'regular'}>Regular</MenuItem>
+                            {/* <MenuItem value={'regular'}>Regular</MenuItem>
                             <MenuItem value={'admin'}>Admin</MenuItem>
-                            <MenuItem value={'reviewer'}>Reviewer</MenuItem>
+                            <MenuItem value={'reviewer'}>Reviewer</MenuItem> */}
+
+                            {userTypeOptions.map((data) => (                             
+                            <MenuItem value={data.type}>{data.type}</MenuItem>                            
+                             ))}
                             
                         </Select> 
 
@@ -212,9 +242,14 @@ return(
                               value={userStatus}
                               onChange={handleUserStatusChange}
                             >
-                            <MenuItem value={'active'}>Active</MenuItem>
+                            {/* <MenuItem value={'active'}>Active</MenuItem>
                             <MenuItem value={'inactive'}>Inactive</MenuItem>
-                            <MenuItem value={'blocked'}>Blocked</MenuItem>                            
+                            <MenuItem value={'blocked'}>Blocked</MenuItem>      */}
+
+                             {userStatusOptions.map((data) => (                             
+                            <MenuItem value={data.userStatus}>{data.userStatus}</MenuItem>                            
+                             ))}
+
                         </Select> 
                     </Grid>                     
            
