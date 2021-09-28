@@ -458,5 +458,10 @@ def view_count_total_badges_earned_by_userid():
     user_id = str(request.args.get('user'))
     return my_backpack.view_count_total_badges_earned_by_userid(user_id)
 
+@app.route("/viewassertionsbyuseridandbadgelevel", methods=['POST'])
+def view_assertions_with_user_id_and_badge_level():
+    user_id = str(request.args.get('user'))
+    badge_level = str(request.args.get('badgelevel'))
+    return my_backpack.view_assertions_with_user_id_and_badge_level(user_id, badge_level)
 
 # ------------------ Reviewer Dashboard ------------------------------
