@@ -12,6 +12,7 @@ import create_users
 import user_badge_mapping
 import user_badge_deactivation
 import database
+import my_backpack
 import os
 import io
 from io import StringIO
@@ -421,6 +422,8 @@ def send_password_reset_email():
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
 
+# ------------------ Dynamic Dropdown ------------------------
+
 @app.route("/viewusertypeoptions", methods=['GET'])
 def get_user_type_options():
     return str(database.get_user_type_options())
@@ -433,3 +436,27 @@ def get_user_status_options():
 def get_badge_type_options():
     return str(database.get_badge_type_options())
 
+# ------------------ My Backpack ------------------------------
+
+@app.route("/viewcountminorbadgesbyuserid", methods=['POST'])
+def view_count_minor_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_count_minor_badges_earned_by_userid(user_id)
+
+@app.route("/viewcountmajorbadgesbyuserid", methods=['POST'])
+def view_count_major_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_count_major_badges_earned_by_userid(user_id)
+
+@app.route("/viewcountmasterbadgesbyuserid", methods=['POST'])
+def view_count_master_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_count_master_badges_earned_by_userid(user_id)
+
+@app.route("/viewcounttotalbadgesbyuserid", methods=['POST'])
+def view_count_total_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_count_total_badges_earned_by_userid(user_id)
+
+
+# ------------------ Reviewer Dashboard ------------------------------

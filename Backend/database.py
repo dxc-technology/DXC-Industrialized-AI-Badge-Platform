@@ -1091,8 +1091,8 @@ def get_count_minor_badges_earned_by_userid(user_id):
     ])
 
     o = list(data)
-    # json = dumps(o, indent=2)
-    return o
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
 
 def get_count_major_badges_earned_by_userid(user_id):
     assertions_collection = myDB["Assertions"]
@@ -1129,8 +1129,8 @@ def get_count_major_badges_earned_by_userid(user_id):
     ])
 
     o = list(data)
-    # json = dumps(o, indent=2)
-    return o
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
 
 
 def get_count_master_badges_earned_by_userid(user_id):
@@ -1168,8 +1168,8 @@ def get_count_master_badges_earned_by_userid(user_id):
     ])
 
     o = list(data)
-    # json = dumps(o, indent=2)
-    return o
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
 
 
 def get_count_total_badges_earned_by_userid(user_id):
@@ -1206,8 +1206,8 @@ def get_count_total_badges_earned_by_userid(user_id):
     ])
 
     o = list(data)
-    # json = dumps(o, indent=2)
-    return o
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
 
 ## ASSERTIONS BY BADGELEVEL   
 def get_assertions_with_user_id_and_badge_level(user_id, badge_level):
