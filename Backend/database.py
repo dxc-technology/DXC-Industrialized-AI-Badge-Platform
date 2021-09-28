@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import os
+from typing import no_type_check_decorator
 from pymongo import MongoClient
 from bson.json_util import dumps
 from dotenv import load_dotenv
@@ -1210,8 +1211,6 @@ def get_count_total_badges_earned_by_userid(user_id):
 ## ASSERTIONS BY BADGELEVEL   
 def get_assertions_with_user_id_and_badge_level(user_id, badge_level):
     assertions_collection = myDB["Assertions"]
-    # query = {"user": user_id}
-    # data = assertions_collection.find(query)
 
     data = assertions_collection.aggregate([
         {
@@ -1293,9 +1292,9 @@ def get_ongoing_assertions_by_user_id(user_id):
                     {"$or": 
                         [
                             {"badge_status_collection.badgeStatus": "applied"},
-                            # {"badge_status_collection.badgeStatus": "under review"},
-                            # {"badge_status_collection.badgeStatus": "rework"},
-                            # {"badge_status_collection.badgeStatus": "reapplied"}
+                            {"badge_status_collection.badgeStatus": "under review"},
+                            {"badge_status_collection.badgeStatus": "rework"},
+                            {"badge_status_collection.badgeStatus": "reapplied"}
                         ]
                     }
                 ]
@@ -1308,8 +1307,8 @@ def get_ongoing_assertions_by_user_id(user_id):
         }
     ])
 
-    o = list(data)
-    json = dumps(o, indent=2)
+    n = list(data)
+    json = dumps(n, indent=2)
     return json, {'content-type': 'application/json'}
 
 
