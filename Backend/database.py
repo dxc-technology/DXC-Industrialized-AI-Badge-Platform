@@ -1081,10 +1081,17 @@ def delete_badge_details(badge_name):
 
 def delete_user_badge_collection_details_for_assertion_id_admin(assertion_id):
     user_badge_details_collection = myDB["User_Badge_Details"]
-    query = {"assertionID":ObjectId(assertion_id)}
-    r = user_badge_details_collection.find_one(query)
+    badge_collection = myDB["Assertions"]
+    query = {"_id": ObjectId(assertion_id)}
+    query1 = {"assertionID":ObjectId(assertion_id)}
+    r = badge_collection.find_one(query)
     if (r !=None):
-        user_badge_details_collection.delete_one(query)
+        x = user_badge_details_collection.find_one(query1)
+        if (x !=None):
+            user_badge_details_collection.delete_one(query1)
+            badge_collection.delete_one(query)
+        else:
+            return "No assertion id available to delete"
     else:
         return "No assertion available to delete"
     return "Assertion deleted successfully"
