@@ -1,10 +1,10 @@
-const deleteuserdetailsResponse = async(email) => {
+const deleteuserbadgecollectionResponse = async(assertionID) => {
     //DELETE request
-    var url = process.env.REACT_APP_APILINK+'/deleteuserdetails';
+    var url = process.env.REACT_APP_APILINK+'/deleteuserbadgeslistbyadmin';
     return await fetch(url, {
             method: 'DELETE',
             //Request Type
-            body: JSON.stringify({email: email}),
+            body: JSON.stringify({assertionID: assertionID}),
             headers: {
                 'Accept':'application/json',
                 'Content-Type':'application/json'
@@ -29,4 +29,4 @@ const deleteuserdetailsResponse = async(email) => {
         });
 }
 
-export default deleteuserdetailsResponse;
+export default deleteuserbadgecollectionResponse;

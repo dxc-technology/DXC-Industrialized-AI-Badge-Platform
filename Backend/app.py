@@ -289,19 +289,19 @@ def delete_assertions_user_badge_details():
     return user_badge_mapping.deleted_user_badge_collection_for_assertion_id(assertion_id, deleted_by_id)
 
 
-@app.route("/deleteuserbadgeslistbyadmin", methods=['POST'])
+@app.route("/deleteuserbadgeslistbyadmin", methods=['DELETE'])
 def delete_multiple_assertions_user_badge_details():
     req_body = request.get_json()
     if req_body['assertionID'] == "None":
-        assertion_id = ""
+        assertion_id_list = ""
     else:
-        [assertion_id_list] = req_body['assertionID']
-    if req_body['deletedBy'] == "None":
-        deleted_by_id = ""
+        assertion_id_list = req_body['assertionID']
+    if req_body['adminId'] == "None":
+        adminId_list = ""
     else:
-        deleted_by_id = req_body['deletedBy']
+        adminId_list = req_body['adminId']
 
-    return user_badge_deactivation.deactivate_user_badge_list_admin([assertion_id_list], deleted_by_id)
+    return user_badge_deactivation.deactivate_user_badge_list_admin(assertion_id_list, adminId_list)
 
 
 @app.route("/deleteuserbadgesListByUser", methods=['POST'])
@@ -326,14 +326,7 @@ def delete_user_details():
         email_id_list = ""
     else:
         email_id_list = req_body['email']
-    if req_body['firstName'] == "None":
-        firstName_list = ""
-    else:
-        firstName_list = req_body['firstName']
-    if req_body['secondName'] == "None":
-        secondName_list = ""
-    else:
-        secondName_list = req_body['secondName']
+    
     if req_body['adminId'] == "None":
         adminId_list = ""
     else:
@@ -346,16 +339,8 @@ def delete_user_details():
         userStatus_list = ""
     else:
         userStatus_list = req_body['userStatus']
-    if req_body['assertionID'] == "None":
-        assertion_id_list = ""
-    else:
-        assertion_id_list = req_body['assertionID']
-    if req_body['deletedBy'] == "None":
-        deleted_by_id = ""
-    else:
-        deleted_by_id = req_body['deletedBy']
 
-    return create_users.delete_users_by_admin(email_id_list, firstName_list, secondName_list, adminId_list, userType_list, userStatus_list,assertion_id_list,deleted_by_id)
+    return create_users.delete_users_by_admin(email_id_list, adminId_list, userType_list, userStatus_list)
 
 
 @app.route("/deletebadgedetails", methods=["DELETE"])
@@ -365,8 +350,12 @@ def delete_badge():
         name_list = ""
     else:
         name_list = req_body['name']
+    if req_body['adminId'] == "None":
+        adminId_list = ""
+    else:
+        adminId_list = req_body['adminId']
     
-    return create_badge.delete_badge(name_list)
+    return create_badge.delete_badge(name_list,adminId_list)
 
 
 

@@ -812,7 +812,7 @@ def get_badge_and_user_details(user_id, badge_id):
     return json, {'content-type': 'application/json'}
 
 
-def delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_by_user_id):
+def delete_user_badge_collection_details_for_assertion_id(assertion_id,deleted_by_user_id):
     user_badge_details_collection = myDB["User_Badge_Details"]
     user_badge_details_collection.find_one_and_update(
         {"assertionID": ObjectId(assertion_id)},
@@ -1055,4 +1055,38 @@ def get_badge_type_options():
         badge_type_doc.append(badge)
     json = dumps(badge_type_doc, indent=2)
     return json
+
+
+def delete_user_details(email):
+    user_collection = myDB["Users"]
+    query = {"email":email}
+    result = user_collection.find_one(query)
+    if (result != None):
+        user_collection.delete_one(query)
+    else:
+        return "No user available to delete"
+    return "user deleted successfully"
+
+
+def delete_badge_details(badge_name):
+    badge_collection = myDB["Badges"]
+    query = {'name': badge_name}
+    result = badge_collection.find_one(query)
+    if (result != None):
+        badge_collection.delete_one(query)
+    else:
+        return "No badge available to delete"
+    return "Badge deleted successfully"
+
+
+def delete_user_badge_collection_details_for_assertion_id_admin(assertion_id):
+    user_badge_details_collection = myDB["User_Badge_Details"]
+    query = {"assertionID":ObjectId(assertion_id)}
+    r = user_badge_details_collection.find_one(query)
+    if (r !=None):
+        user_badge_details_collection.delete_one(query)
+    else:
+        return "No assertion available to delete"
+    return "Assertion deleted successfully"
+    
 
