@@ -12,19 +12,13 @@ const addNewAssertionResponse = async(userID,badgeID,badgeStatus,workLink,review
             }
             //Request Type
         })
-        .then((response) => {
-            // console.log("response="+ response.text()
-            // 
-        return response.status})
-        //If response is in json then in success
-        // .then((responseText) => {
-        //     //Success
-        //     // alert(JSON.stringify(responseJson));
-        //     //console.log("in here")
-        //     console.log(responseText);
-        //     return responseText;
-        // })
-        //If response is not in json then in error
+        // .then((response) => {
+        //     return response.status})
+        .then((response) => response.text())
+        .then((responseText) => {
+            //console.log(responseText);
+            return responseText;
+        })
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
