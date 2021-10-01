@@ -149,17 +149,17 @@ const ViewUsersForm = (props) => {
     
     
     
-        const handleDeleteUserDetails = async(email,firstName,secondName,userID,userType,userStatus,assertionID,deletedBy) =>{
+        const handleDeleteUserDetails = async(email,userID,userType,userStatus) =>{
             
             var response3 = new Promise((resolve, reject) => {
             // resolve(deleteuserdetailsResponse())
-          
+          alert(userID)
                     
-            resolve(deleteuserdetailsResponse(email,firstName,secondName,userID,userType,userStatus,assertionID,deletedBy)); 
+            resolve(deleteuserdetailsResponse(email,userID,userType,userStatus)); 
             
         }).then(value => {
 
-            alert(value.status);
+            alert(value);
             
 
             console.log(value)
@@ -241,7 +241,7 @@ const ViewUsersForm = (props) => {
                                             <IconButton data-testid={'viewUsers_editUserButton' + row.id} value={row.email} onClick={handleUserDetails}>
                                                 <EditSharpIcon />
                                             </IconButton>
-                                            <DeleteIcon data-testid={'viewUsers_deleteUserButton' +row.id}  onClick={() => handleDeleteUserDetails(row.email,row.firstName,row.lastName,row.id,row.userType,row.userStatus,row.id,row.email)}>
+                                            <DeleteIcon data-testid={'viewUsers_deleteUserButton' +row.id}  onClick={() => handleDeleteUserDetails(row.email,userID,row.userType,row.userStatus)}>
                                                <DeleteSharpIcon/> 
                                             </DeleteIcon>
                                             
