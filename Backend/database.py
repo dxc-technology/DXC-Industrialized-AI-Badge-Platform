@@ -1056,3 +1056,12 @@ def get_badge_type_options():
     json = dumps(badge_type_doc, indent=2)
     return json
 
+def verify_email_forgetpassword(email):
+    user_collection = myDB["Users"]
+    query = {"email":email}
+    x = user_collection.find_one(query)
+    if(x != None):
+        result = "User email id exists"
+    else:
+        result = "No email id found"
+    return result

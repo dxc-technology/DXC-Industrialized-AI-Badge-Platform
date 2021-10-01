@@ -179,10 +179,10 @@ def password_reset_email(email_address):
         return "email is empty"
     if validate_email_address(email_address) == INVALID:
         return "email is not correct"
-    user_doc = database.get_user_details(email_address)
-    if len(user_doc) > 0:
-        password = generate_strong_password()
-        email_content(email_address, "This is your new password: " + password)
-        password_reset(email_address, password)
-        return "Email sent successfully"
-    return "user does not exist"
+    user_doc = database.verify_email_forgetpassword(email_address)
+    #if len(user_doc) > 0:
+       # password = generate_strong_password()
+      #  email_content(email_address, "This is your new password: " + password)
+      #  password_reset(email_address, password)
+    return user_doc
+    #return "user does not exist"
