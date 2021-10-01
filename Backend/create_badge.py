@@ -11,6 +11,7 @@ import database
 import os.path
 import os, uuid, sys
 import user_badge_mapping
+import create_users
 
 
 # blob_service = BlockBlobService(account_name="aibadgeplatform",
@@ -46,6 +47,16 @@ def upload_file_to_azure(filename):
 
 # OWNER_LIST = []
 # REVIEWER_LIST = []
+
+def validate_badge_name(name):
+    if name.strip() == "" or name is None:
+        return INVALID
+    return VALID
+
+def validate_organization_name(organization_name):
+    if organization_name.strip() == "" or organization_name is None:
+        return INVALID
+    return VALID
 
 
 def validate_badge_input(badge_name, badge_description):
@@ -238,18 +249,11 @@ def modify_badge(badge_name, badge_description, link, badge_type, user_requestab
     return badge_input_status
 
 
-def delete_badge(name):
-    def validate_user_Id(logged_in_admin_id):
-        if user_badge_mapping.validate_user_id_for_admin(logged_in_admin_id) == "Requesting user is not an admin":
-            return INVALID
-        return VALID
-    def validate_badge_name(name):
-        if name.strip() == "" or name is None:
-            return INVALID
-        return VALID
+def delete_badge(name,logged_in_admin_id):
+
     if validate_badge_name(name) == INVALID:
         return "INVALID"
-    if validate_user_Id(name) == INVALID:
+    if user_badge_mapping.validate_user_id_for_admin(logged_in_admin_id) == "Requesting user is not an admin":
         return "Requesting user is not an admin to update the user"
 
     status_okay=database.delete_badge_details(name)

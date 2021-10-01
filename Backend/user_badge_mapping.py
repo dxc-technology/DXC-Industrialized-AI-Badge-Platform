@@ -2,6 +2,7 @@ import json
 from bson.objectid import ObjectId
 import database
 
+
 ADMIN_USER_TYPE_OID = "5f760d4325c1036d4d466560"
 REVIEWER_USER_TYPE_OID = "5fc5567fcd831cc0c83774b8"
 BADGE_STATUS_APPLIED = "5f776f556289f17659874f2e"
@@ -287,6 +288,27 @@ def deleted_user_badge_collection_for_assertion_id(assertion_id, deleted_by_user
         return "Record is already deleted"
 
     database.delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_by_user_id)
+
+
+
+
+def deleted_user_badge_collection_for_assertion_id_admin(assertion_id, deleted_by_user_id):
+    if validate_assertion_id(assertion_id) == "Assertion ID is not valid":
+        return "Assertion ID is not valid"
+    if validate_assertion_id(assertion_id) == "Assertion ID not Present in User collection DB":
+        return "Assertion ID not Present in User collection DB"
+    if validate_user_id_for_admin(deleted_by_user_id) == "User ID is not valid":
+        return "User ID is not valid"
+    if validate_user_id_for_admin(deleted_by_user_id) == "User ID not Present in User collection DB":
+        return "User ID not Present in User collection DB"
+    if validate_user_id_for_admin(deleted_by_user_id) == "Requesting user is not an admin":
+        return "Requesting user is not an admin"
+    user_badge_json_val = database.get_all_user_badge_details_by_assertion_id(assertion_id)
+    user_badge_json_dict = json.loads(user_badge_json_val[0])
+    if user_badge_json_dict[0]['deletedOn'] is not None and user_badge_json_dict[0]['deletedOn'] != "":
+        return "Record is already deleted"
+
+    database.delete_user_badge_collection_details_for_assertion_id_admin(assertion_id)
 
 
 def deleted_user_badge_collection_for_assertion_id_by_user(assertion_id, deleted_by_user_id):

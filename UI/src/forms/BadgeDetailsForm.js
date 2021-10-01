@@ -29,6 +29,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import addNewAssertionResponse from '../API/AddNewAssertionAPI';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
+import getViewBadgeTypeOptionsResponse from '../API/ViewBadgeTypeOptionsAPI';
 
 
 
@@ -59,6 +60,7 @@ const BadgeDetailsForm = (props) => {
   const [workLink, setWorkLink]=useState('');
   const [assigneeEmail, setAssigneeEmail] = useState('');
   const [assigneeID, setAssigneeID] = useState('');
+  const [BadgeTypeOptions,setBadgeTypeOptions] = useState([]);
 
   const useStyles = makeStyles((theme) => ({
     paper: {
@@ -213,8 +215,25 @@ const BadgeDetailsForm = (props) => {
 
   }
 
+  const handleviewBadgeTypeOptions= async() => {
+    var response1 = new Promise((resolve, reject) => {
+        resolve(getViewBadgeTypeOptionsResponse());
+    }).then(value => {
+        if (value != undefined) {
+            //console.log('value' + value);
+            setBadgeTypeOptions(value);
+            //alert('value' + value);
+            // //{value.map(UserTypeOptions => {UserTypeOptions})}
+            // //alert(BadgeTypeOptions);
+            // console.log(BadgeTypeOptions);
+        }
+        
+    });
+}
+
   useEffect(() => {
-    handleviewBadgeByName()
+    handleviewBadgeByName();
+    handleviewBadgeTypeOptions();
   }, []);
 
   
@@ -324,10 +343,13 @@ return (
                                 "data-testid": "badgeDetails_badgeType",
                             }}
                             value={badgeType}
-                            onChange={handleBadgeTypeChange}
-                            >
-                            <MenuItem value={'Open Badge'}>Open Badge</MenuItem>
-                            <MenuItem value={'Community Badge'}>Community Badge</MenuItem>
+                            onChange={handleBadgeTypeChange}                          
+                            >                          
+
+                            {BadgeTypeOptions.map((data) => (                             
+                            <MenuItem value={data.badgeType}>{data.badgeType}</MenuItem>
+                            //<MenuItem value={'Community Badge'}>Community Badge</MenuItem>
+                             ))}
                         </Select>
             {/* <TextField
               variant="outlined"
@@ -360,6 +382,7 @@ return (
                             value={evidenceRequired}
                             onChange={handleEvidenceRequiredChange}
                             >
+                              
                             <MenuItem value={'True'}>True</MenuItem>
                             <MenuItem value={'False'}>False</MenuItem>
                         </Select>

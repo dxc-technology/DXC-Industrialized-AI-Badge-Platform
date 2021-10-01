@@ -812,7 +812,7 @@ def get_badge_and_user_details(user_id, badge_id):
     return json, {'content-type': 'application/json'}
 
 
-def delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_by_user_id):
+def delete_user_badge_collection_details_for_assertion_id(assertion_id,deleted_by_user_id):
     user_badge_details_collection = myDB["User_Badge_Details"]
     user_badge_details_collection.find_one_and_update(
         {"assertionID": ObjectId(assertion_id)},
@@ -1030,28 +1030,31 @@ def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_req
 
 def get_user_status_options():
     user_status_collection = myDB["User_Status"]
-    # data = user_status_collection.find({}, {'_id': 0, 'userStatus': 1})
-    data = user_status_collection.distinct('userStatus')
+    data = user_status_collection.find({}, {'_id': 0, 'userStatus': 1})
+    # data = user_status_collection.distinct('userStatus')
     user_status_doc = []
     for status in data:
         user_status_doc.append(status)
-    return user_status_doc
+    json = dumps(user_status_doc, indent=2)
+    return json
 
 def get_user_type_options():
     user_type_collection = myDB["User_Type"]
-    data = user_type_collection.distinct('type')
+    data = user_type_collection.find({}, {"_id": 0, "type": 1})
     user_type_doc = []
     for type in data:
         user_type_doc.append(type)
-    return user_type_doc
+    json = dumps(user_type_doc, indent=2)
+    return json
+
 
 def get_badge_type_options():
     badge_type_collection = myDB["Badge_Type"]
-    data = badge_type_collection.distinct('badgeType')
     badge_type_doc = []
-    for badge in data:
+    for badge in badge_type_collection.find({}, {"_id": 0, "badgeType": 1}):
         badge_type_doc.append(badge)
-    return badge_type_doc
+    json = dumps(badge_type_doc, indent=2)
+    return json
 
 
 def delete_user_details(email):
@@ -1064,6 +1067,7 @@ def delete_user_details(email):
         return "No user available to delete"
     return "user deleted successfully"
 
+
 def delete_badge_details(badge_name):
     badge_collection = myDB["Badges"]
     query = {'name': badge_name}
@@ -1073,4 +1077,23 @@ def delete_badge_details(badge_name):
     else:
         return "No badge available to delete"
     return "Badge deleted successfully"
+
+
+def delete_user_badge_collection_details_for_assertion_id_admin(assertion_id):
+    user_badge_details_collection = myDB["User_Badge_Details"]
+    badge_collection = myDB["Assertions"]
+    query = {"_id": ObjectId(assertion_id)}
+    query1 = {"assertionID":ObjectId(assertion_id)}
+    r = badge_collection.find_one(query)
+    if (r !=None):
+        x = user_badge_details_collection.find_one(query1)
+        if (x !=None):
+            user_badge_details_collection.delete_one(query1)
+            badge_collection.delete_one(query)
+        else:
+            return "No assertion id available to delete"
+    else:
+        return "No assertion available to delete"
+    return "Assertion deleted successfully"
     
+
