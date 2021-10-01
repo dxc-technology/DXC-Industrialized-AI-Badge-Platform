@@ -12,16 +12,15 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import AssertionDetailsForm from './AssertionDetailsForm';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
+import deleteuserdetailsResponse from '../API/deleteuserdetailAPI';
 import UserDetailsForm from './UserDetailsForm';
 import AddUserForm from './AddUserForm';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteSharpIcon from '@material-ui/icons/DeleteSharp';
 import XLSX from 'xlsx'
 
 const ViewUsersForm = (props) => {
@@ -30,9 +29,17 @@ const ViewUsersForm = (props) => {
     const [response, setresponse] = useState('0');
     const [userDetailClick, setUserDetailClick] = useState('false');
     const [clickedUser, setClickedUser] = useState('');
+    const [email, setEmail] = useState('');
     const [addUserButtonClick, setAddUserButtonClick] = useState('false');
     const [userID, setUserID] = useState(props.userID)
-
+    const [userType, setuserType] = useState('')
+   
+    const [result, setResult] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [secondName, setsecondName] = useState('');
+    const [deletedBy, setDeletedBy] = useState('');
+    const [userStatus, setUserStatus] = useState('');
+    
     function createData(id, mongoId, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName) {
         return { id, mongoId, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName };
     }
@@ -45,8 +52,10 @@ const ViewUsersForm = (props) => {
     // //   const [passwordClick,setPasswordClick] = useState('False');
 
     const handleUserDetails = event => {
+        
         setUserDetailClick('true');
         setClickedUser(event.currentTarget.value);
+        
     }
 
     const useStyles = makeStyles((theme) => ({
@@ -85,8 +94,10 @@ const ViewUsersForm = (props) => {
         //})
 
         var response1 = new Promise((resolve, reject) => {
+            
             resolve(ViewUsersResponse());
         }).then(value => {
+            console.log(value)
             if (value != undefined) {
                 const filterData = []
 
@@ -113,6 +124,7 @@ const ViewUsersForm = (props) => {
         var response1 = new Promise((resolve, reject) => {
             resolve(ViewUsersResponse());
         }).then(value => {
+            console.log(value)
             if (value != undefined) {
                 setresponse(value.length);
                 const temp_rows = []
@@ -124,11 +136,42 @@ const ViewUsersForm = (props) => {
             }
         });
     }
-<<<<<<< Updated upstream
-=======
+    // const handleDeleteClick = (contactId) => {
+    //     const newContacts = [...rows];
     
->>>>>>> Stashed changes
+    //     const index = rows.findIndex((row) => row.id === contactId);
+    
+    //     newContacts.splice(index, 1);
+    
+    //     setrows(newContacts);
+    //   };
 
+    
+    
+    
+        const handleDeleteUserDetails = async(email,firstName,secondName,userID,userType,userStatus,assertionID,deletedBy) =>{
+            
+            var response3 = new Promise((resolve, reject) => {
+            // resolve(deleteuserdetailsResponse())
+          
+                    
+            resolve(deleteuserdetailsResponse(email,firstName,secondName,userID,userType,userStatus,assertionID,deletedBy)); 
+            
+        }).then(value => {
+
+            alert(value.status);
+            
+
+            console.log(value)
+            
+            if (value==200){   
+
+                setResult(value);
+            }
+        });
+
+
+    }
 
 
 
@@ -198,10 +241,10 @@ const ViewUsersForm = (props) => {
                                             <IconButton data-testid={'viewUsers_editUserButton' + row.id} value={row.email} onClick={handleUserDetails}>
                                                 <EditSharpIcon />
                                             </IconButton>
-<<<<<<< Updated upstream
-=======
+                                            <DeleteIcon data-testid={'viewUsers_deleteUserButton' +row.id}  onClick={() => handleDeleteUserDetails(row.email,row.firstName,row.lastName,row.id,row.userType,row.userStatus,row.id,row.email)}>
+                                               <DeleteSharpIcon/> 
+                                            </DeleteIcon>
                                             
->>>>>>> Stashed changes
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -209,10 +252,7 @@ const ViewUsersForm = (props) => {
                         </Table>
                         <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
           </Button>
-<<<<<<< Updated upstream
-=======
           
->>>>>>> Stashed changes
                     </React.Fragment>
                 </div >
 

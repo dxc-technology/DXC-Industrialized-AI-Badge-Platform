@@ -14,6 +14,9 @@ import XLSX from 'xlsx'
 import Button from '@material-ui/core/Button';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 /*import { DataGrid } from '@material-ui/data-grid'*/
+import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteSharpIcon from '@material-ui/icons/DeleteSharp';
+import deletebadgedetailsResponse from '../API/deletebadgedetails';
 
 const ViewBadgeForm = (props) => {
 
@@ -24,6 +27,8 @@ const ViewBadgeForm = (props) => {
     const [badgeDetailsClick, setBadgeDetailsClick] = useState('false');
     const [clickedBadge, setClickedBadge] = useState('');
     const [clickType, setClickType] = useState('');
+    const [result, setResult] = useState('');
+    //const [badgeName, setBadgeName] = useState('0');
 
 
     function createData(id, mongoID, name, description, count, lastIssued, icon) {
@@ -143,6 +148,22 @@ const ViewBadgeForm = (props) => {
         });
 
     }
+    const handleDeleteBadgeDetails=async(badgeName)  =>{
+        
+        var response3 = new Promise((resolve, reject) => {
+             
+            resolve(deletebadgedetailsResponse(badgeName)); 
+            
+        }).then(value => {
+            
+            console.log(value);                 
+            setResult(value);
+            
+        });
+
+
+    };
+
 
 
 
@@ -189,6 +210,8 @@ const ViewBadgeForm = (props) => {
                                             <IconButton data-testId={'viewBadge_editBadgeButton' + row.id} value={row.name} onClick={handleAdminEditBadgeDetails}>
                                                 <EditSharpIcon />
                                             </IconButton>
+                                            <DeleteIcon data-testid={'viewUsers_deleteBadgeButton' + row.id}  onClick={() => handleDeleteBadgeDetails(row.name) }>
+                                               </DeleteIcon>
                                         </TableCell>
                                         :
                                         <TableCell align="right">

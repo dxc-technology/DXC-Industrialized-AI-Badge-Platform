@@ -1,28 +1,35 @@
-const deleteuserdetailsResponse = async(email) => {
+const deleteuserdetailsResponse = async(email,firstName,secondName,userID,userType,userStatus,assertionID,deletedBy) => {
     //DELETE request
     var url = process.env.REACT_APP_APILINK+'/deleteuserdetails';
     return await fetch(url, {
             method: 'DELETE',
             //Request Type
-            body: JSON.stringify({email: email}),
+            body: JSON.stringify({email: email,
+                firstName:firstName,
+                secondName:secondName,
+                adminId :userID,
+                userType: userType,
+                userStatus:userStatus,
+            
+                assertionID:assertionID,
+                deletedBy:deletedBy               
+                
+            }),
             headers: {
                 'Accept':'application/json',
                 'Content-Type':'application/json'
             }
         })
-        .then((response) => {
-            console.log("response="+ typeof(response.status));
-            return response.status
+        .then((response) => response.text()) 
+        // If response is in json then in success
+        .then((responseText) => {
+            //Success
+            // alert(JSON.stringify(responseJson));
+            //console.log("in here")
+            console.log(responseText);
+            return responseText;
         })
-        // .then((response) => response.json())
-        //If response is in json then in success
-        // .then((responseText) => {
-        //     //Success
-        //     console.log(responseText);
-        //     //console.log("in here")
-        //     return responseText;
-        // })
-        //If response is not in json then in error
+       
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));

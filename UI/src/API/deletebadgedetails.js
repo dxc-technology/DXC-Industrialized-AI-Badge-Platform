@@ -10,18 +10,15 @@ const deletebadgedetailsResponse = async(badgeName) => {
                 'Content-Type':'application/json'
             }
         })
-        .then((response) => {
-            console.log("response="+ typeof(response.status));
-            return response.status
+        .then((response) => response.text()) 
+        // If response is in json then in success
+        .then((responseText) => {
+            //Success
+            // alert(JSON.stringify(responseJson));
+            //console.log("in here")
+            console.log(responseText);
+            return responseText;
         })
-        //If response is in json then in success
-        // .then((responseText) => {
-        //     //Success
-        //     // alert(JSON.stringify(responseJson));
-        //     //console.log("in here")
-        //     console.log(responseText);
-        //     return responseText;
-        // })
         //If response is not in json then in error
         .catch((error) => {
             //Error
