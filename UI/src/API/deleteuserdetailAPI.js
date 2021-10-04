@@ -1,18 +1,13 @@
-const deleteuserdetailsResponse = async(email,firstName,secondName,userID,userType,userStatus,assertionID,deletedBy) => {
+const deleteuserdetailsResponse = async(email,userID,userType,userStatus) => {
     //DELETE request
     var url = process.env.REACT_APP_APILINK+'/deleteuserdetails';
     return await fetch(url, {
             method: 'DELETE',
             //Request Type
             body: JSON.stringify({email: email,
-                firstName:firstName,
-                secondName:secondName,
                 adminId :userID,
                 userType: userType,
-                userStatus:userStatus,
-            
-                assertionID:assertionID,
-                deletedBy:deletedBy               
+                userStatus:userStatus,          
                 
             }),
             headers: {

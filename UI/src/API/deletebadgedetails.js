@@ -1,10 +1,12 @@
-const deletebadgedetailsResponse = async(badgeName) => {
+const deletebadgedetailsResponse = async(badgeName,userID) => {
     //DELETE request
     var url = process.env.REACT_APP_APILINK+'/deletebadgedetails';
     return await fetch(url, {
             method: 'DELETE',
             //Request Type
-            body: JSON.stringify({name: badgeName}),
+            body: JSON.stringify({name: badgeName,
+                adminId:userID,
+            }),
             headers: {
                 'Accept':'application/json',
                 'Content-Type':'application/json'

@@ -12,9 +12,8 @@ import BadgeDetailsForm from './BadgeDetailsForm';
 import IconButton from '@material-ui/core/IconButton';
 import XLSX from 'xlsx'
 import Button from '@material-ui/core/Button';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-/*import { DataGrid } from '@material-ui/data-grid'*/
-import DeleteIcon from '@material-ui/icons/Delete';
+
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import DeleteSharpIcon from '@material-ui/icons/DeleteSharp';
 import deletebadgedetailsResponse from '../API/deletebadgedetails';
 
@@ -28,7 +27,7 @@ const ViewBadgeForm = (props) => {
     const [clickedBadge, setClickedBadge] = useState('');
     const [clickType, setClickType] = useState('');
     const [result, setResult] = useState('');
-    //const [badgeName, setBadgeName] = useState('0');
+  
 
 
     function createData(id, mongoID, name, description, count, lastIssued, icon) {
@@ -68,35 +67,19 @@ const ViewBadgeForm = (props) => {
 
         },
         titleItemRight: {
-            marginTop: theme.spacing(3),
-            float: "right",
+            marginTop: theme.spacing(2),
+            float:'right',
+            right:14
+           
+            // top:20,
+            
 
         }
     }));
 
 
     const classes = useStyles();
-    //--added--
-    //function flatten(array) {
-    //    var result = [];
-
-    //    Array.from(array).forEach(function iter(o) {
-    //        var temp = {},
-    //            keys = Object.keys(o);
-
-    //        if (keys.length > 1) {
-    //            keys.forEach(function (k) {
-    //                if (k !== 'children') {
-    //                    temp[k] = o[k];
-    //                }
-    //            });
-    //            temp.type = 'url' in o ? 'bookmark' : 'folder';
-    //            result.push(temp);
-    //        }
-    //        Array.isArray(o.children) && o.children.forEach(iter);
-    //    });
-    //    return result;
-    //}
+    
     function getFileName() {
         let d = new Date();
         let dformat = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}T${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}-`;
@@ -148,16 +131,18 @@ const ViewBadgeForm = (props) => {
         });
 
     }
-    const handleDeleteBadgeDetails=async(badgeName)  =>{
+    const handleDeleteBadgeDetails=async(badgeName,userID)  =>{
         
         var response3 = new Promise((resolve, reject) => {
              
-            resolve(deletebadgedetailsResponse(badgeName)); 
+            resolve(deletebadgedetailsResponse(badgeName,userID)); 
             
         }).then(value => {
             
             console.log(value);                 
             setResult(value);
+            // window.location.reload(false);
+           
             
         });
 
@@ -180,7 +165,12 @@ const ViewBadgeForm = (props) => {
                 <input data-testid='viewBadge_RowCount' hidden value={response} readOnly />
 
                 <React.Fragment>
-                    {/* <Title>Recent Orders</Title> */}
+                   
+                    <IconButton data-testId={'exportBadge_exportBadgeButton'} size="medium"  className={classes.titleItemRight}  onClick={handleexportData} >
+  
+                    <CloudDownloadIcon/>
+                    </IconButton>
+
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -210,8 +200,9 @@ const ViewBadgeForm = (props) => {
                                             <IconButton data-testId={'viewBadge_editBadgeButton' + row.id} value={row.name} onClick={handleAdminEditBadgeDetails}>
                                                 <EditSharpIcon />
                                             </IconButton>
-                                            <DeleteIcon data-testid={'viewUsers_deleteBadgeButton' + row.id}  onClick={() => handleDeleteBadgeDetails(row.name) }>
-                                               </DeleteIcon>
+                                            <IconButton data-testid={'viewUsers_deleteBadgeButton' + row.id}  onClick={() => handleDeleteBadgeDetails(row.name,userID) }>
+                                               <DeleteSharpIcon/>
+                                              </ IconButton>
                                         </TableCell>
                                         :
                                         <TableCell align="right">
@@ -224,9 +215,10 @@ const ViewBadgeForm = (props) => {
 
                         </TableBody>
                     </Table>
+                    <label>{result}</label>
+                <input type="text" hidden data-testid='deleteBadge_Result' value={result} />
 
-                    <Button data-testId={'exportBadge_exportBadgeButton'} variant="contained" onClick={handleexportData} size="small" color="primary" className={classes.titleItemRight} startIcon={<ArrowDownwardIcon />}> Export to Excel
-      </Button>
+                   
 
 
                     {/* <div className={classes.seeMore}>

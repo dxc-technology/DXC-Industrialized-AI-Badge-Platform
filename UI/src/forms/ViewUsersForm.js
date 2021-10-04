@@ -21,6 +21,8 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import DeleteIcon from '@material-ui/icons/Delete';
 import DeleteSharpIcon from '@material-ui/icons/DeleteSharp';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import { Redirect } from 'react-router';
 import XLSX from 'xlsx'
 
 const ViewUsersForm = (props) => {
@@ -31,14 +33,12 @@ const ViewUsersForm = (props) => {
     const [clickedUser, setClickedUser] = useState('');
     const [email, setEmail] = useState('');
     const [addUserButtonClick, setAddUserButtonClick] = useState('false');
-    const [userID, setUserID] = useState(props.userID)
-    const [userType, setuserType] = useState('')
-   
+    const [userID, setUserID] = useState(props.userID)   
     const [result, setResult] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [secondName, setsecondName] = useState('');
-    const [deletedBy, setDeletedBy] = useState('');
-    const [userStatus, setUserStatus] = useState('');
+    const [selectedItem,setselectedItem]=useState('')
+
+    const [deleteButtonClicked,setdeleteButtonClicked]=useState("false")
+  
     
     function createData(id, mongoId, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName) {
         return { id, mongoId, email, userType, userStatus, createdDate, lastModified, firstName, lastName, middleName, organizationName };
@@ -63,8 +63,9 @@ const ViewUsersForm = (props) => {
             marginTop: theme.spacing(3),
         },
         exportbtnRight: {
-            marginTop: theme.spacing(3),
-            float: "right",
+            marginTop: theme.spacing(2),
+            float:'right',
+            right:14,
 
         }
     }));
@@ -153,37 +154,37 @@ const ViewUsersForm = (props) => {
             
             var response3 = new Promise((resolve, reject) => {
             // resolve(deleteuserdetailsResponse())
-          alert(userID)
+         // alert(userID)
                     
             resolve(deleteuserdetailsResponse(email,userID,userType,userStatus)); 
             
-        }).then(value => {
-
-            alert(value);
             
-
-            console.log(value)
+        }).then(value => { 
             
-            if (value==200){   
-
-                setResult(value);
-            }
+            setResult(value);  
+            
+            setselectedItem('ViewUsersForm')
+               
         });
 
-
     }
+   
 
 
 
     useEffect(() => {
-        handleviewUsers()
+        handleviewUsers();
+       
+
+        
     }, []);
 
     if (addUserButtonClick =='true') { return (<div><AddUserForm userID={userID}/></div>);}
     else{
       if (userDetailClick == 'true') { return (<div><UserDetailsForm email={clickedUser} userID={userID}/></div>); }
       else {
-
+        // if (deleteButtonClicked=='true'){return(<div><Redirect to="/userform" /></div>);}
+        //  else{
         return (
           <div>
                     <input data-testid='viewUsers_RowCount' hidden value={response} />
@@ -203,7 +204,10 @@ const ViewUsersForm = (props) => {
                 </Button>
                         </Box>
 
-
+                    <IconButton data-testId={'exportUser_exportUserButton'} size="medium"  className={classes.exportbtnRight} onClick={handleexportData} >
+  
+                    <CloudDownloadIcon/>
+                    </IconButton>
                         <br></br>
                         <Table size="small">
                             <TableHead>
@@ -241,24 +245,27 @@ const ViewUsersForm = (props) => {
                                             <IconButton data-testid={'viewUsers_editUserButton' + row.id} value={row.email} onClick={handleUserDetails}>
                                                 <EditSharpIcon />
                                             </IconButton>
-                                            <DeleteIcon data-testid={'viewUsers_deleteUserButton' +row.id}  onClick={() => handleDeleteUserDetails(row.email,userID,row.userType,row.userStatus)}>
+                                            <IconButton data-testid={'viewUsers_deleteUserButton' +row.id}  onClick={() => handleDeleteUserDetails(row.email,userID,row.userType,row.userStatus)}>
                                                <DeleteSharpIcon/> 
-                                            </DeleteIcon>
+                                            </IconButton>
                                             
                                         </TableCell>
                                     </TableRow>
+                                    
                                 ))}
                             </TableBody>
                         </Table>
-                        <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
-          </Button>
-          
+                        <label>{result}</label>
+                <input type="text" hidden data-testid='deleteUser_Result' value={result} />
+
+                       
                     </React.Fragment>
                 </div >
 
             );
-        }
-    }
+        // }
+     }
+}
 };
 
 export default ViewUsersForm;
