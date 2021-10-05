@@ -15,7 +15,7 @@ import getViewAssertionsForReviewersResponse from '../API/ViewAssertionForReview
 import XLSX from 'xlsx'
 import Button from '@material-ui/core/Button';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 const ViewAssertionsForm = (props) => {
 
 
@@ -50,7 +50,8 @@ const ViewAssertionsForm = (props) => {
         exportbtnRight: {
             marginTop: theme.spacing(2),
             float:'right',
-            right:14,
+            right:8,
+            bottom:10
 
 
         }
@@ -185,11 +186,9 @@ const ViewAssertionsForm = (props) => {
 
                 <React.Fragment>
                     {/* <Title>Recent Orders</Title> */}
-                    <IconButton data-testId={'exportAssertion_exportAssertionButton'} size="medium"  className={classes.exportbtnRight} onClick={handleexportData} >
-  
-                    <CloudDownloadIcon/>
-                    </IconButton>
-
+                    <Button data-testId={'exportAssertion_exportAssertionButton'} variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export
+                    </Button>
+                    <br></br>
                     <Table size="small">
                         <TableHead>
                             <TableRow>

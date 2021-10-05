@@ -65,7 +65,9 @@ const ViewUsersForm = (props) => {
         exportbtnRight: {
             marginTop: theme.spacing(2),
             float:'right',
-            right:14,
+            right:8,
+            bottom:50
+
 
         }
     }));
@@ -137,25 +139,11 @@ const ViewUsersForm = (props) => {
             }
         });
     }
-    // const handleDeleteClick = (contactId) => {
-    //     const newContacts = [...rows];
-    
-    //     const index = rows.findIndex((row) => row.id === contactId);
-    
-    //     newContacts.splice(index, 1);
-    
-    //     setrows(newContacts);
-    //   };
-
-    
-    
-    
-        const handleDeleteUserDetails = async(email,userID,userType,userStatus) =>{
+   
+    const handleDeleteUserDetails = async(email,userID,userType,userStatus) =>{
             
             var response3 = new Promise((resolve, reject) => {
-            // resolve(deleteuserdetailsResponse())
-         // alert(userID)
-                    
+                             
             resolve(deleteuserdetailsResponse(email,userID,userType,userStatus)); 
             
             
@@ -163,30 +151,30 @@ const ViewUsersForm = (props) => {
             
             setResult(value);  
             
-            setselectedItem('ViewUsersForm')
+            setdeleteButtonClicked('true')
                
         });
 
     }
-   
-
 
 
     useEffect(() => {
-        handleviewUsers();
-       
-
-        
+        handleviewUsers();        
     }, []);
+
 
     if (addUserButtonClick =='true') { return (<div><AddUserForm userID={userID}/></div>);}
     else{
       if (userDetailClick == 'true') { return (<div><UserDetailsForm email={clickedUser} userID={userID}/></div>); }
       else {
-        // if (deleteButtonClicked=='true'){return(<div><Redirect to="/userform" /></div>);}
-        //  else{
-        return (
-          <div>
+
+        if (deleteButtonClicked=='true'){return(<div><ViewUsersForm  userID={userID}/>
+        
+                <label>{result}</label>
+                <input type="text" hidden data-testid='deleteUser_Result' value={result} /></div>);}
+                 else{
+                    return (
+                    <div>
                     <input data-testid='viewUsers_RowCount' hidden value={response} />
 
                     <React.Fragment>
@@ -199,15 +187,18 @@ const ViewUsersForm = (props) => {
                                 startIcon={<PersonAddIcon />}
                                 data-testid="viewUsers_addUserButton"
                                 onClick={handleAddUserButton}
-                            >
-                                Add New User
-                </Button>
+                            >Add New User
+                            </Button>
                         </Box>
 
-                    <IconButton data-testId={'exportUser_exportUserButton'} size="medium"  className={classes.exportbtnRight} onClick={handleexportData} >
-  
+                    {/* <IconButton data-testId={'exportUser_exportUserButton'} size="large" color="primary" className={classes.exportbtnRight} onClick={handleexportData} >
+
                     <CloudDownloadIcon/>
-                    </IconButton>
+                    </IconButton> */}
+                    
+                    <Button data-testId={'exportUser_exportUserButton'} variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export
+                    </Button>
+                    
                         <br></br>
                         <Table size="small">
                             <TableHead>
@@ -263,7 +254,7 @@ const ViewUsersForm = (props) => {
                 </div >
 
             );
-        // }
+        }
      }
 }
 };

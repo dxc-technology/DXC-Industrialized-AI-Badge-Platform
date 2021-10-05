@@ -12,6 +12,7 @@ import BadgeDetailsForm from './BadgeDetailsForm';
 import IconButton from '@material-ui/core/IconButton';
 import XLSX from 'xlsx'
 import Button from '@material-ui/core/Button';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import DeleteSharpIcon from '@material-ui/icons/DeleteSharp';
@@ -27,7 +28,7 @@ const ViewBadgeForm = (props) => {
     const [clickedBadge, setClickedBadge] = useState('');
     const [clickType, setClickType] = useState('');
     const [result, setResult] = useState('');
-  
+    const [deleteButtonClicked,setdeleteButtonClicked]=useState("false")
 
 
     function createData(id, mongoID, name, description, count, lastIssued, icon) {
@@ -66,12 +67,11 @@ const ViewBadgeForm = (props) => {
             marginTop: theme.spacing(3),
 
         },
-        titleItemRight: {
+        exportbtnRight: {
             marginTop: theme.spacing(2),
             float:'right',
-            right:14
-           
-            // top:20,
+            right:8,           
+            bottom:10
             
 
         }
@@ -139,9 +139,9 @@ const ViewBadgeForm = (props) => {
             
         }).then(value => {
             
-            console.log(value);                 
+                         
             setResult(value);
-            // window.location.reload(false);
+            setdeleteButtonClicked('true')
            
             
         });
@@ -158,19 +158,20 @@ const ViewBadgeForm = (props) => {
 
     if (badgeDetailsClick == 'true') { return (<div><BadgeDetailsForm userType={userType} clickType={clickType} badgeName={clickedBadge} userID={userID} /></div>); }
     else {
-
-        return (
-
-            <div>
+        if (deleteButtonClicked=='true'){return(<div><ViewBadgeForm userType={userType} userID={userID} badgeName={clickedBadge}/>
+        
+            <label>{result}</label>
+            <input type="text" hidden data-testid='deleteBadge_Result' value={result} /></div>);}
+            else{
+                return (
+                <div>
                 <input data-testid='viewBadge_RowCount' hidden value={response} readOnly />
 
                 <React.Fragment>
                    
-                    <IconButton data-testId={'exportBadge_exportBadgeButton'} size="medium"  className={classes.titleItemRight}  onClick={handleexportData} >
-  
-                    <CloudDownloadIcon/>
-                    </IconButton>
-
+                <Button data-testId={'exportBadge_exportBadgeButton'} variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export
+                    </Button>
+                    <br></br>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -201,8 +202,10 @@ const ViewBadgeForm = (props) => {
                                                 <EditSharpIcon />
                                             </IconButton>
                                             <IconButton data-testid={'viewUsers_deleteBadgeButton' + row.id}  onClick={() => handleDeleteBadgeDetails(row.name,userID) }>
-                                               <DeleteSharpIcon/>
-                                              </ IconButton>
+                                            {/* <IconButton data-testid={'viewUsers_deleteBadgeButton' + row.id}  onClick={() => { if (window.confirm('Are you sure you wish to delete this badge?')) this.onCancel(row) }  }> */}
+                                            
+                                                <DeleteSharpIcon/>
+                                            </ IconButton>
                                         </TableCell>
                                         :
                                         <TableCell align="right">
@@ -215,22 +218,14 @@ const ViewBadgeForm = (props) => {
 
                         </TableBody>
                     </Table>
-                    <label>{result}</label>
-                <input type="text" hidden data-testid='deleteBadge_Result' value={result} />
-
                    
 
-
-                    {/* <div className={classes.seeMore}>
-          <Link color="primary" href="#" onClick={preventDefault}>
-            See more orders
-        </Link>
-        </div> */}
                 </React.Fragment>
             </div>
 
         );
     }
+}
 };
 
 export default ViewBadgeForm;
