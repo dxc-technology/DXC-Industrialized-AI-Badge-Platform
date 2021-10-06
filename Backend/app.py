@@ -436,3 +436,18 @@ def get_user_status_options():
 def get_badge_type_options():
     return database.get_badge_type_options()
 
+@app.route("/createnewaistarterassetions", methods=['POST'])
+def create_new_assertions_from_ai_starter():
+    req_body = request.get_json()
+    user_email = req_body['userEmail']
+    badge_name = req_body['badgeName']
+    badge_status_id = req_body['badgeStatus']
+    evidence_link = req_body['evidenceLink']
+    reviewer_id = req_body['adminID']
+    comments = req_body['comments']
+    conv_user_id=str(database.get_user_Id(user_email))
+    conv_badge_id=str(database.get_badge_Id(badge_name))
+    
+    return user_badge_mapping.add_badge_to_user(conv_user_id, conv_badge_id, badge_status_id, evidence_link, reviewer_id,
+                                                comments)     
+

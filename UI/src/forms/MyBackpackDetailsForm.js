@@ -9,6 +9,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import getAssertionDetailByIdResponse from '../API/AssertionDetailsByIdAPI'
 import formatDate from '../scripts/functions';
+import formatDateTime from '../scripts/formatDateTime';
 import CardMembershipOutlinedIcon from '@material-ui/icons/CardMembershipOutlined';
 import MyBackpackForm from './MyBackpackForm';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
@@ -26,6 +27,7 @@ const MyBackpackDetailsForm = (props) => {
     const [badgeReviewer, setBadgeReviewer] = useState('');
     const [badgeComments, setBadgeComments] = useState('');
     const [badgeIssuedOn, setBadgeIssuedOn] = useState('');
+    const [badgeIssuedBy, setBadgeIssuedBy] = useState('');
     const [publicLink, setPublicLink] = useState('');
     const [badgeIcon, setBadgeIcon] = useState('');
     // const [saveFlag, setSaveFlag] = useState('False');
@@ -105,7 +107,8 @@ const MyBackpackDetailsForm = (props) => {
                 setAssertionId(value[0].assertionID.$oid);
                 setBadgeName(value[0].badge_details[0].name);
                 setBadgeRecipient(value[0].user_details[0].email);
-                setBadgeIssuedOn(formatDate(value[0].issuedOn.$date));
+                setBadgeIssuedOn(formatDateTime(value[0].issuedOn.$date));
+                setBadgeIssuedBy(value[0].issuer_details[0].email);
                 setBadgeComments(value[0].comments);
                 setBadgeReviewer(value[0].reviewer_details[0].email);
                 setEvidencelink(value[0].workLink);
@@ -234,7 +237,21 @@ return(
                             inputProps={{
                                 "data-testid": "backpackDetails_badgeIssuedOn",
                             }}
-                            value={badgeIssuedOn}
+                            value={badgeIssuedOn + ' EST'}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            id="backpackDetails_badgeIssuedBy"
+                            label="Issued By"
+                            name="issuedBy"
+                            inputProps={{
+                                "data-testid": "backpackDetails_badgeIssuedBy",
+                            }}
+                            value={badgeIssuedBy}
                         />
                     </Grid>
 
