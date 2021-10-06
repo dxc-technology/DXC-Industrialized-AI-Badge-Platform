@@ -418,11 +418,8 @@ def modify_existing_badge():
 @app.route("/sendpasswordresetemail", methods=['POST'])
 def send_password_reset_email():
     req_body = request.get_json()
-    if req_body['email'] == "None":
-        email_id_list = ""
-    else:
-        email_id_list = req_body['email']
-    return registration.password_reset_email(email_id_list)
+    email_address = req_body['email']
+    return registration.password_reset_email(email_address)
 
 @app.route("/viewusertypeoptions", methods=['GET'])
 def get_user_type_options():
