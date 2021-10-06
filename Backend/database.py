@@ -36,6 +36,22 @@ def get_user_details(email):
         user_doc = x
     return user_doc
 
+def get_user_Id(email):
+    user_doc = {}
+    user_collection = myDB["Users"]
+    data = user_collection.find({"email":email},{"_id":1})
+    #my_doc = list(data)
+    for x in data:
+        user_doc = x["_id"]
+    return user_doc
+
+def get_badge_Id(badge_name):
+    badge_doc = {}
+    badge_collection = myDB["Badges"]
+    data = badge_collection.find({"name":badge_name},{"_id":1})
+    for x in data:
+        badge_doc = x["_id"]
+    return badge_doc
 
 def get_user_type(user_type):
     user_type_doc = {}

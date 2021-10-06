@@ -163,10 +163,10 @@ const BadgeDetailsForm = (props) => {
     var response3 = new Promise((resolve, reject) => {
       resolve(addNewAssertionResponse(userID,badgeId,'',workLink,'',''));
     }).then(value => {   
-      if (value == 200) {
-        setrequestBadgeResult('Request for Badge is successfully submitted');
-      }
-
+      // if (value == 200) {
+      //   setrequestBadgeResult('Request for Badge is successfully submitted');
+      // }
+      setrequestBadgeResult(value);
 
     });
     setRequestBadgeButtonClicked(false);
