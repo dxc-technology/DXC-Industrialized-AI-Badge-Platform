@@ -174,15 +174,15 @@ def email_content(email_address, body):
         print(e)
 
 
-def password_reset_email(email_address):
-    if email_address == "":
+def password_reset_email(email):
+    if email == "":
         return "email is empty"
-    if validate_email_address(email_address) == INVALID:
+    if validate_email_address(email) == INVALID:
         return "email is not correct"
-    user_doc = database.get_user_details(email_address)
+    user_doc = database.get_user_details(email)
     if len(user_doc) > 0:
         password = generate_strong_password()
-        email_content(email_address, "This is your new password: " + password)
-        password_reset(email_address, password)
+        email_content(email, "This is your new password: " + password)
+        password_reset(email, password)
         return "Email sent successfully"
     return "user does not exist"
