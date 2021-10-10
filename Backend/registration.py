@@ -158,7 +158,7 @@ def email_content(email_address, body):
     receiver_email = email_address
 
     msg = MIMEMultipart()
-    msg['Subject'] = 'AI Industrial Badger - Password Reset'
+    msg['Subject'] = 'Industrial Badger - Password Reset'
     msg['From'] = sender_email
     msg['To'] = receiver_email
     msg_text = MIMEText('<b>%s</b>' % body, 'html')
