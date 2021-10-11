@@ -159,7 +159,7 @@ def password_reset_user(email_address, password, confirm_password):
     if password is None or password.strip() == "":
         return "password is empty"
     if confirm_password is None or confirm_password.strip() == "":
-        return "password is empty"
+        return "Confirm password is empty"
     user_doc = database.get_user_details(email_address)
     if len(user_doc) > 0:
         hashed_password = verify_hashed_password(password)
