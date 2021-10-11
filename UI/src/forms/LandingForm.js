@@ -129,12 +129,12 @@ const LandingForm = (props)=>
 
     const mainListItems = (
         <div>
-          <ListItem button data-testid="LandingForm_DashboardButton" onClick={handleDashboardButtonClick}>
+          {/* <ListItem button data-testid="LandingForm_DashboardButton" onClick={handleDashboardButtonClick}>
             <ListItemIcon>
             <BootstrapTooltip title ="Dashboard"><DashboardIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
-          </ListItem>
+          </ListItem> */}
           <ListItem button data-testid="LandingForm_viewMyBackpackButton" onClick={handleMyBackpackButtonClick}>
             <ListItemIcon>
             <BootstrapTooltip title ="My Backpack"><LocalMallIcon /></BootstrapTooltip>
@@ -326,7 +326,7 @@ const classes = useStyles();
   useEffect(() => {
     handleviewUserByEmail();
   
-}, []);
+}, [userID]);
 
 
 
@@ -400,10 +400,12 @@ if (clickedItem=='BacktoLoginForm'){
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
                (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):              
                (<div>
-                 <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />
+                 {/* <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop /> */}
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
                    <source src={logo} type="video/mp4"></source>
                    </video> */}
+                   {handleMyBackpackButtonClick}
+                   <MyBackpackForm userID={userID}/>
                  </div>))))))}
               </Paper>
             </Grid>

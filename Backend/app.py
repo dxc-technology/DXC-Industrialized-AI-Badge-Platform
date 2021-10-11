@@ -21,7 +21,7 @@ from os import path
 app = Flask(__name__)
 cors = CORS(app)
 
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif','.jpeg']
 
 
 @app.route("/")
@@ -160,30 +160,19 @@ def view_user_with_email():
     return view_users.view_user_details_by_name(req_body['email'])
 
 
-@app.route("/addbadge", methods=['GET', 'POST'])
+@app.route("/addbadge", methods=['POST'])
 def add_new_badge():
-    #Comemnted by muthu for image upload request by Tina
-    # badge_name = request.form.get("name")
-    # badge_description = request.form.get("description")
-    # link = request.form.get("link")
-    # user_requestable = request.form.get("requestable")
-    # badge_type = request.form.get("badgetype")
-    # owner = request.form.get("owner")
-    # reviewer = request.form.get("reviewer")
-    # #icon = request.files['icon']
-    # evidence = request.form.get("evidence")
-    # #icon.save(icon.filename)
-    # icon = request.form.get("icon")
+    
 
-    badge_name = str(request.args.get('name'))
-    badge_description = str(request.args.get('description'))
-    link = str(request.args.get('link'))
-    user_requestable = str(request.args.get('requestable'))
-    badge_type = str(request.args.get('badgetype'))
-    owner = str(request.args.get('owner'))
-    reviewer = str(request.args.get('reviewer'))
-    icon = str(request.args.get('icon'))
-    evidence = str(request.args.get('evidence'))
+    badge_name = request.form.get("name")
+    badge_description = request.form.get("description")
+    link = request.form.get("link")
+    user_requestable = request.form.get("requestable")
+    badge_type = request.form.get("badgetype")
+    owner = request.form.get("owner")
+    reviewer = request.form.get("reviewer")
+    icon = request.files.get('icon')
+    evidence = request.form.get("evidence")
 
     return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
                                   badge_type, owner, reviewer, icon, evidence)

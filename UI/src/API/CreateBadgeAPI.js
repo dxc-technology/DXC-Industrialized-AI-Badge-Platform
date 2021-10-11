@@ -1,10 +1,21 @@
 const getCreateBadgeResponse = async (badge_name, badge_description, link, user_requestable, badge_type, owner, reviewer, icon, evidence) => {
     //GET request
-    var url = process.env.REACT_APP_APILINK+'/addbadge?name=' + badge_name + '&description=' + badge_description + '&link=' + link
-        + '&requestable=' + user_requestable + '&badgetype=' + badge_type + '&owner=' + owner + '&reviewer=' + reviewer + '&icon=' + icon + '&evidence=' + evidence;
+    var data = new FormData();
+    data.append("name", badge_name);
+    data.append("description", badge_description);
+    data.append("link", link);
+    data.append("requestable", user_requestable);
+    data.append("badgetype", badge_type);
+    data.append("owner", owner);
+    data.append("reviewer", reviewer);
+    data.append("evidence", evidence);
+    data.append("icon", icon);
+    console.log(data)
+    var url = process.env.REACT_APP_APILINK+'/addbadge';
     return await fetch(url, {
-        method: 'GET',
+        method: 'POST',
         //Request Type
+        body: data
     })
         .then((response) => response.text())
         //If response is in json then in success

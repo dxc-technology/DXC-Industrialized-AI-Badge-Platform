@@ -10,6 +10,9 @@ from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, C
 import database
 import os.path
 import os, uuid, sys
+import string, random, requests
+from werkzeug.utils import secure_filename
+from azure.storage.blob import BlobClient
 
 # blob_service = BlockBlobService(account_name="aibadgeplatform",
 # account_key="wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==")
@@ -32,16 +35,33 @@ def upload_file_to_azure(filename):
         return ref
     return "Please enter a valid file name"
 
-    # download_file_path = os.path.join("./", str.replace(badge_name ,'.png', badge_name))
+    download_file_path = os.path.join("./", str.replace(badge_name ,'.png', badge_name))
 
-    # with open(download_file_path, "wb") as download_file:
-    #     download_file.write(blob_client.download_blob().readall())
+    with open(download_file_path, "wb") as download_file:
+        download_file.write(blob_client.download_blob().readall())
 
-    # return "Please enter a valid file name"
+    return "Please enter a valid file name"
+
+   
 
 
-# OWNER_LIST = []
-# REVIEWER_LIST = []
+#Random file name generator fr Blob image storage
+def id_generator(size=32, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+#Blob storage connection details 
+account = "aibadgeplatform"
+key = "wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ=="
+container ="iconimages"
+# blob_service = BlobClient(account_name="aibadgeplatform", account_key="wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==")
+
+#Blob image strage function
+def upload_file_to_blob(file,badge_name):
+    
+    blob = BlobClient.from_connection_string(conn_str="DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net", container_name="iconimages", blob_name= badge_name)
+    blob.upload_blob(file)
+    ref =  'http://'+ account + '.blob.core.windows.net/' + container + '/' + badge_name
+    return ref
 
 
 def validate_badge_input(badge_name, badge_description):
@@ -54,7 +74,6 @@ def validate_badge_input(badge_name, badge_description):
     if database.get_badge_details(badge_name) == "Badge name not found":
         return "Valid"
     return "Error in finding the Badge"
-
 
 def validate_badge_owner(owner_email_address):
     if owner_email_address == "" or owner_email_address is None:
@@ -157,27 +176,31 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
     badge_type_status = badge_type_validation(badge_type)
     owner_email_result = split_owner_emails(owner)
     reviewer_email_result = split_reviewer_emails(reviewer)
-   
-
+    
     if badge_input_status == "Valid":
         if user_requestable_status == user_requestable:
             if badge_type_status == badge_type:
                 if owner_email_result == "valid owner":
                     if reviewer_email_result == "valid reviewer":
                         if user_evidence_status == evidence:
-                            #icon_url = upload_file_to_azure(icon)
-                            #if icon_url != "Please enter a valid file name":
-                                database.insert_new_badge(badge_name, badge_description, link, user_requestable,
-                                                          badge_type, owner.split(","), reviewer.split(","), icon,
-                                                          evidence)
+                            icon_url = upload_file_to_blob(icon,badge_name)
+                        
+                            if icon_url != None:
+                                # if icon_url != "Please enter a valid file name":
+                                database.insert_new_badge(badge_name, badge_description, link, user_requestable,badge_type, owner.split(","), reviewer.split(","), icon_url,evidence)
                                 return "New badge added successfully"
-                            #return "Please enter a valid file name"
+                            else:
+                                return "Badge Name already exists"
+                                
+                            # return "Please enter a valid file name"
+                        
                         return user_evidence_status
                     return reviewer_email_result
                 return owner_email_result
             return badge_type_status
         return user_requestable_status
     return badge_input_status
+
 
 
 def validate_badge_values(badge_name, badge_description, link, badge_type, user_requestable, owner, reviewer,
