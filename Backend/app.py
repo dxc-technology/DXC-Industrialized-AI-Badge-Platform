@@ -219,7 +219,7 @@ def password_reset():
     email_address = req_body['email']
     password = req_body['password']
     confirm_password = req_body['confirm_password']
-    return registration.password_reset(email_address, password, confirm_password)
+    return registration.password_reset_user(email_address, password, confirm_password)
 
 
 @app.route("/viewallassertions", methods=['POST'])

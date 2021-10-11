@@ -151,6 +151,22 @@ def password_reset(email_address, password):
     return "user does not exist"
 
 
+def password_reset_user(email_address, password, confirm_password):
+    if email_address == "":
+        return "email is empty"
+    if validate_email_address(email_address) == INVALID:
+        return "email is not correct"
+    if password is None or password.strip() == "":
+        return "password is empty"
+    if confirm_password is None or confirm_password.strip() == "":
+        return "password is empty"
+    user_doc = database.get_user_details(email_address)
+    if len(user_doc) > 0:
+        hashed_password = verify_hashed_password(password)
+        database.update_user_password(email_address, hashed_password)
+        return "Password reset is complete"
+    return "user does not exist"
+
 def email_content(email_address, body):
     env_path = 'backend_variable.env'
     load_dotenv(dotenv_path=env_path)
