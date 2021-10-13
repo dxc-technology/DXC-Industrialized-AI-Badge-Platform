@@ -3,12 +3,14 @@ import os
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 from argon2 import PasswordHasher
+from argon2.exceptions import HashingError, VerificationError, VerifyMismatchError, InvalidHash
 import database
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import random
 import array
+from bson.objectid import ObjectId
 
 VALID = r"valid"
 INVALID = r"invalid"
@@ -151,21 +153,28 @@ def password_reset(email_address, password):
     return "user does not exist"
 
 
-def password_reset_user(email_address, password, confirm_password):
-    if email_address == "":
+def password_reset_user(email, password, confirm_password):
+    password_hash = PasswordHasher()
+    if email == "":
         return "email is empty"
-    if validate_email_address(email_address) == INVALID:
-        return "email is not correct"
     if password is None or password.strip() == "":
-        return "password is empty"
+        return "password is empty"     
+    if validate_email_address(email) == INVALID:
+        return "email is not correct"
     if confirm_password is None or confirm_password.strip() == "":
         return "Confirm password is empty"
-    user_doc = database.get_user_details(email_address)
+    user_doc = database.get_user_details(email)
     if len(user_doc) > 0:
-        hashed_password = verify_hashed_password(password)
-        database.update_user_password(email_address, hashed_password)
-        return "Password reset is complete"
+        try:
+            isMatch = password_hash.verify(user_doc['password'], password)
+            if(isMatch):
+                hashed_password = hash_password(confirm_password)
+                database.update_user_password(email, hashed_password)
+                return "Password reset is complete"
+        except (InvalidHash, HashingError, VerificationError, VerifyMismatchError):
+            return "Current passwords do not match"
     return "user does not exist"
+
 
 def email_content(email_address, body):
     env_path = 'backend_variable.env'
