@@ -1,3 +1,4 @@
+from email.mime import text
 import re
 import os
 from datetime import datetime, timezone
@@ -187,7 +188,11 @@ def email_content(email_address, body):
     msg['From'] = sender_email
     msg['To'] = receiver_email
     msg_text = MIMEText('<b>%s</b>' % body, 'html')
+    text = ' \
+        Go ahead and reset the password using the given link: http://localhost:3000/ResetPasswordForm.js'
+    msg_text1 = MIMEText(text, "plain")
     msg.attach(msg_text)
+    msg.attach(msg_text1)
 
     try:
         with smtplib.SMTP('smtp.office365.com', 587) as smtpObj:
