@@ -154,7 +154,7 @@ def password_reset(email_address, password):
     return "user does not exist"
 
 
-def password_reset_user(email, password, confirm_password):
+def password_reset_user(email, password, new_password):
     password_hash = PasswordHasher()
     if email == "":
         return "email is empty"
@@ -162,14 +162,14 @@ def password_reset_user(email, password, confirm_password):
         return "password is empty"     
     if validate_email_address(email) == INVALID:
         return "email is not correct"
-    if confirm_password is None or confirm_password.strip() == "":
+    if new_password is None or new_password.strip() == "":
         return "Confirm password is empty"
     user_doc = database.get_user_details(email)
     if len(user_doc) > 0:
         try:
             isMatch = password_hash.verify(user_doc['password'], password)
             if(isMatch):
-                hashed_password = hash_password(confirm_password)
+                hashed_password = hash_password(new_password)
                 database.update_user_password(email, hashed_password)
                 return "Password reset is complete"
         except (InvalidHash, HashingError, VerificationError, VerifyMismatchError):
