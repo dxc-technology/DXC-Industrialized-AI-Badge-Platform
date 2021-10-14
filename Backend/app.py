@@ -439,6 +439,7 @@ def get_badge_type_options():
 
 # ------------------ My Backpack ------------------------------
 
+## Count
 @app.route("/viewcountminorbadgesbyuserid", methods=['POST'])
 def view_count_minor_badges_earned_by_userid():
     user_id = str(request.args.get('user'))
@@ -459,6 +460,7 @@ def view_count_total_badges_earned_by_userid():
     user_id = str(request.args.get('user'))
     return my_backpack.view_count_total_badges_earned_by_userid(user_id)
 
+## List
 @app.route("/viewongoingassertionsbyuserid", methods=['POST'])
 def view_ongoing_assertions_by_user_id():
     user_id = str(request.args.get('user'))
@@ -471,6 +473,7 @@ def view_assertions_with_user_id_and_badge_level():
     return my_backpack.view_assertions_with_user_id_and_badge_level(user_id, badge_level)
 
 # ------------------ Reviewer Dashboard ------------------------------
+## Count
 @app.route("/viewcountassignedassertionsbyreviewer", methods=['POST'])
 def view_count_assigned_assertions_by_reviewer():
     user_id = str(request.args.get('reviewer'))
@@ -484,5 +487,10 @@ def view_count_unassigned_assertions_for_review():
 def view_count_issued_badges_by_reviewer():
     user_id = str(request.args.get('reviewer'))
     return reviewer_dashboard.view_count_issued_badges_by_reviewer(user_id)
+
+@app.route("/viewcountauthorizedbadgestoreview", methods=['POST'])
+def view_count_authorized_badges_to_review():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_count_authorized_badges_to_review(user_id)
 
 

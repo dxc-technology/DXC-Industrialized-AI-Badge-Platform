@@ -1446,6 +1446,141 @@ def get_count_issued_badges_by_reviewer(user_id):
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
+## TABLES - PENDING  
+def get_assigned_assertions_by_reviewer(user_id):
+    assertions_collection = myDB["Assertions"]
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'user',
+                'foreignField': '_id',
+                'as': 'assertion_owner'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'isAssignedReviewer',
+                'foreignField': '_id',
+                'as': 'assigned_reviewer'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {"badges_collection.badgeLevel" : "minor"},
+                    {'isAssignedReviewer': ObjectId(user_id)},
+                    {"$or": 
+                        [
+                            {"badge_status_collection.badgeStatus": "applied"},
+                            {"badge_status_collection.badgeStatus": "under review"},
+                            {"badge_status_collection.badgeStatus": "rework"},
+                            {"badge_status_collection.badgeStatus": "reapplied"}
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            '$project': {"users_collection._id": 1, "assertion_owner.email": 1, "badges_collection.name": 1,
+                         "badges_collection.link": 1, "badge_status_collection.badgeStatus": 1, "issuedOn": 1, 
+                         "assigned_reviewer.email": 1,
+                         "_id": 1}
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+def get_unassigned_assertions_by_eligible_reviewer(user_id):
+    assertions_collection = myDB["Assertions"]
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'user',
+                'foreignField': '_id',
+                'as': 'assertion_owner'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'isAssignedReviewer',
+                'foreignField': '_id',
+                'as': 'assigned_reviewer'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {"badges_collection.badgeLevel" : "minor"},
+                    {"badges_collection.reviewers": ObjectId(user_id)},
+                    # {"$expr":{"$in":[ObjectId(user_id),"badges_collection.reviewer"]}},
+                    {"$or": 
+                        [
+                            {"badge_status_collection.badgeStatus": "applied"},
+                            {"badge_status_collection.badgeStatus": "under review"},
+                            {"badge_status_collection.badgeStatus": "rework"},
+                            {"badge_status_collection.badgeStatus": "reapplied"}
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            '$project': {"users_collection._id": 1, "assertion_owner.email": 1, "badges_collection.name": 1,
+                         "badges_collection.link": 1, "badge_status_collection.badgeStatus": 1, "issuedOn": 1, 
+                         "assigned_reviewer.email": 1, "badges_collection.reviewers":1,
+                         "_id": 1}
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+
+
+
+
+
 ## UNASSIGN AND ASSIGN TO SELF
 UNDER_REVIEW_BADGE_STATUS = "61521ffc856eac5a3748dbfc"
 
