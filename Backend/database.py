@@ -1316,7 +1316,7 @@ def get_ongoing_assertions_by_user_id(user_id):
 
 # --------------------------- REVIEWER DASHBOARD -----------------------------
 
-## COUNT OF UNASSIGNED AND ASSIGNED BADGES
+## COUNT 
 def get_count_assigned_assertions_by_reviewer(user_id):
     assertions_collection = myDB["Assertions"]
         
@@ -1408,8 +1408,45 @@ def get_count_unassigned_assertions_for_review():
     return json, {'content-type': 'application/json'}
 
 
+def get_count_issued_badges_by_reviewer(user_id):
+    assertions_collection = myDB["Assertions"]
+        
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {"badges_collection.badgeLevel" : "minor"},
+                    {'isAssignedReviewer': ObjectId(user_id)},
+                    {"badge_status_collection.badgeStatus": "approved"}
+                ]
+            }
+        },
+        {
+            '$count': "issued_badges_by_reviewer"
+        }
+    ])
 
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
 
+## UNASSIGN AND ASSIGN TO SELF
 UNDER_REVIEW_BADGE_STATUS = "61521ffc856eac5a3748dbfc"
 
 def get_prev_badge_status(assertion_id):

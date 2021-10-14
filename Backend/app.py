@@ -480,5 +480,9 @@ def view_count_assigned_assertions_by_reviewer():
 def view_count_unassigned_assertions_for_review():
     return reviewer_dashboard.view_count_unassigned_assertions_for_review()
 
+@app.route("/viewcountissuedbadgesbyreviewer", methods=['POST'])
+def view_count_issued_badges_by_reviewer():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_count_issued_badges_by_reviewer(user_id)
 
 
