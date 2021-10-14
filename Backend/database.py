@@ -1313,3 +1313,140 @@ def get_ongoing_assertions_by_user_id(user_id):
 
 
 # ---------------------------- END MY BACKPACK -----------------------------
+
+# --------------------------- REVIEWER DASHBOARD -----------------------------
+
+## COUNT OF UNASSIGNED AND ASSIGNED BADGES
+def get_count_assigned_assertions_by_reviewer(user_id):
+    assertions_collection = myDB["Assertions"]
+        
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {'isAssignedReviewer': ObjectId(user_id)},
+                    {"$or": 
+                        [
+                            {"badge_status_collection.badgeStatus": "applied"},
+                            {"badge_status_collection.badgeStatus": "under review"},
+                            {"badge_status_collection.badgeStatus": "rework"},
+                            {"badge_status_collection.badgeStatus": "reapplied"}
+                        ]
+                    },
+                    {"badges_collection.badgeLevel" : "minor"}
+                ]
+            }
+        },
+        {
+            '$count': "reviewer_assigned_assertions"
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+def get_count_unassigned_assertions_for_review():
+    assertions_collection = myDB["Assertions"]
+        
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {"badges_collection.badgeLevel" : "minor"},
+                    {'isAssignedReviewer': None},
+                    {"$or": 
+                        [
+                            {"badge_status_collection.badgeStatus": "applied"},
+                            {"badge_status_collection.badgeStatus": "under review"},
+                            {"badge_status_collection.badgeStatus": "rework"},
+                            {"badge_status_collection.badgeStatus": "reapplied"}
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            '$count': "unassigned_assertions_for_review"
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+
+
+
+UNDER_REVIEW_BADGE_STATUS = "61521ffc856eac5a3748dbfc"
+
+def get_prev_badge_status(assertion_id):
+    assertions_collection = myDB["Assertions"]
+    
+    query = {'_id': ObjectId(assertion_id)}
+    output = {'badgeStatus': 1, '_id': True}
+
+    data = assertions_collection.find_one(query, output)
+    return data.get("badgeStatus")
+
+
+def assign_to_self(assertion_id, reviewer_id):
+    assertions_collection = myDB["Assertions"]
+    assertions_collection.update(
+        {'_id': ObjectId(assertion_id)},
+        {
+            '$set': 
+                {
+                    'isAssignedReviewer': ObjectId(reviewer_id),
+                    'badgeStatus': ObjectId(UNDER_REVIEW_BADGE_STATUS)
+                }
+        }
+    )
+    return "assigned to self"
+
+def unassign_to_self(assertion_id, reviewer_id):   
+    assertions_collection = myDB["Assertions"]
+    assertions_collection.update(
+        {'_id': ObjectId(assertion_id)},
+        {
+            '$set': 
+                {
+                    'isAssignedReviewer': None,
+                    # 'badgeStatus': ObjectId(APPLIED_BADGE_STATUS)
+                }
+        }
+    ) 
+    return "unassigned to self"
+    

@@ -13,6 +13,7 @@ import user_badge_mapping
 import user_badge_deactivation
 import database
 import my_backpack
+import reviewer_dashboard
 import os
 import io
 from io import StringIO
@@ -458,7 +459,7 @@ def view_count_total_badges_earned_by_userid():
     user_id = str(request.args.get('user'))
     return my_backpack.view_count_total_badges_earned_by_userid(user_id)
 
-@app.route("/viewongoingassertionsbyuserid", methods=['GET'])
+@app.route("/viewongoingassertionsbyuserid", methods=['POST'])
 def view_ongoing_assertions_by_user_id():
     user_id = str(request.args.get('user'))
     return my_backpack.view_ongoing_assertions_by_user_id(user_id)
@@ -470,3 +471,14 @@ def view_assertions_with_user_id_and_badge_level():
     return my_backpack.view_assertions_with_user_id_and_badge_level(user_id, badge_level)
 
 # ------------------ Reviewer Dashboard ------------------------------
+@app.route("/viewcountassignedassertionsbyreviewer", methods=['POST'])
+def view_count_assigned_assertions_by_reviewer():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_count_assigned_assertions_by_reviewer(user_id)
+
+@app.route("/viewcountunassignedassertionsforreview", methods=['POST'])
+def view_count_unassigned_assertions_for_review():
+    return reviewer_dashboard.view_count_unassigned_assertions_for_review()
+
+
+
