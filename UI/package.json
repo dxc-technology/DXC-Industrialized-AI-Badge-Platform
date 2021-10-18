@@ -13,11 +13,13 @@
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
     "react": "^17.0.1",
+    "react-card-component": "0.0.1-beta.5.9.3",
     "react-dom": "^17.0.1",
     "react-player": "^2.8.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "validator": "^13.6.0",
     "web-vitals": "^0.2.4",
     "xlsx": "^0.17.2"
   },

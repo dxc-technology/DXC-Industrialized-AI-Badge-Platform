@@ -14,8 +14,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { mergeClasses } from '@material-ui/styles';
+// import { passwordValidator } from './Validators';
 
-
+import validator from 'validator'
 const RegistrationForm = () => {
 
   const [firstName, setFirstName] = useState('');
@@ -31,8 +33,20 @@ const RegistrationForm = () => {
   const [emailClick,setEmailClick] = useState('False');
   const [passClick,setPassClick] = useState('False');
   const [confPassClick,setConfPassClick] = useState('False');
+  // const isPasswordValid = passwordValidator.validate(password)
+  // const renderErrors = (errors)=>errors
+  // .map(error=>renderError(error))
 
+  // const renderError=(errorMessage)=>< span className={classes.formError}>
+  // <span> {errorMessage}</span>
+  // </span>;
+  // const errors=['Pasword must have atleast one uppercase,one lowerCase and mix of Number and Characters',
+  //   'Password must be atleast 8 characters long'
+  // ];
 
+  const [errorMessage, setErrorMessage] = useState('')
+  
+  
 
 
   const handleFirstNameChange = event => {
@@ -52,6 +66,19 @@ const RegistrationForm = () => {
   };
   const handlePasswordChange = event => {
     setPassword(event.target.value);
+    const validate = (value) => {
+  
+      if (validator.isStrongPassword(value, {
+        minLength: 8, minLowercase: 1,
+        minUppercase: 1, minNumbers: 1, minSymbols: 1
+      })) {
+        setErrorMessage('Is Strong Password')
+        
+      } else {
+        setErrorMessage('Is Not Strong Password')
+      }
+    }
+   
   };
   const handleConfirmPasswordChange = event => {
     setConfirmPassword(event.target.value);
@@ -76,6 +103,12 @@ const RegistrationForm = () => {
     submit: {
       margin: theme.spacing(3, 0, 2),
     },
+    formError:{
+      margin:theme.spacing(2),
+      fontSize:"medium",
+      // display: block;
+      color:"red",
+    }
   }));
 
   const classes = useStyles();
@@ -224,6 +257,7 @@ const RegistrationForm = () => {
                   value={password}
                   onChange={handlePasswordChange}
                 />
+                {/* {!isPasswordValid?renderErrors(errors):null} */}
               </Grid>
               <Grid item xs={12}>
                 <TextField
