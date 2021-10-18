@@ -493,4 +493,36 @@ def view_count_authorized_badges_to_review():
     user_id = str(request.args.get('reviewer'))
     return reviewer_dashboard.view_count_authorized_badges_to_review(user_id)
 
+## List
+@app.route("/viewauthorizedbadgestoreview", methods=['POST'])
+def view_authorized_badges_to_review():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_authorized_badges_to_review(user_id)
 
+@app.route("/viewassignedassertionsbyreviewer", methods=['POST'])
+def view_assigned_assertions_by_reviewer():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_assigned_assertions_by_reviewer(user_id)
+
+@app.route("/viewunassignedassertionsbyeligiblereviewer", methods=['POST'])
+def view_unassigned_assertions_by_eligible_reviewer():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_unassigned_assertions_by_eligible_reviewer(user_id)
+
+@app.route("/viewissuedbadgesbyreviewer", methods=['POST'])
+def view_issued_badges_by_reviewer():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_issued_badges_by_reviewer(user_id)
+
+## Button
+@app.route("/assigntoselfforreview", methods=['POST'])
+def assign_to_self_for_review():
+    assertion_id = str(request.args.get('assertion'))
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.assign_to_self_for_review(assertion_id, user_id)
+
+@app.route("/unassignselfforreview", methods=['POST'])
+def unassign_self_for_review():   
+    assertion_id = str(request.args.get('assertion'))
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.unassign_self_for_review(assertion_id, user_id)
