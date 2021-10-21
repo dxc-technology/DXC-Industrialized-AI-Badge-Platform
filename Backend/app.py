@@ -527,7 +527,7 @@ def view_issued_badges_by_reviewer():
     return reviewer_dashboard.view_issued_badges_by_reviewer(user_id)
 
 ## Button
-@app.route("/queen", methods=['POST'])
+@app.route("/assigntoselfforreview", methods=['POST'])
 def assign_to_self_for_review():
     assertion_id = str(request.args.get('assertion'))
     user_id = str(request.args.get('reviewer'))
