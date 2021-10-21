@@ -180,7 +180,7 @@ def password_reset_user(email, password, new_password):
 def email_content(email_address, body):
     env_path = 'backend_variable.env'
     load_dotenv(dotenv_path=env_path)
-    sender_email = "panoply.dxc@outlook.com"
+    sender_email = "No-replyBadge@cscportal.onmicrosoft.com"
     receiver_email = email_address
 
     msg = MIMEMultipart()
