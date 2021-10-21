@@ -33,6 +33,8 @@ import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import CreateBadgeForm from './CreateBadgeForm';
 import logo from '../assets/Tables-charts-graphs.mp4';
+import assign from '../assets/Assign.png';
+import assignment_priority from '../assets/assignment-priority.png'
 import PersonIcon from '@material-ui/icons/Person';
 import ViewBadgeForm from './ViewBadgeForm';
 import ViewAssertionsForm from './ViewAssertionsForm';
@@ -43,11 +45,18 @@ import MyBackpackForm from './MyBackpackForm';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 import ReactPlayer from 'react-player';
 // import $ from 'jquery'; 
+import Card from '@material-ui/core/Card';
+
 import getJIRAResponse from '../API/AddJIRARequestAPI';
+// import getReviewerDashboard from '../API/CountAssignedAssertionsAPI';
 import Button from '@material-ui/core/Button';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Redirect } from 'react-router';
- 
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import { CardActionArea } from '@material-ui/core';
+
 const LandingForm = (props)=>
 {
     const [clickedItem,setClickedItem] = useState('');
@@ -400,10 +409,34 @@ if (clickedItem=='BacktoLoginForm'){
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
                (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):              
                (<div>
-                 <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />
-                 {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
-                   <source src={logo} type="video/mp4"></source>
-                   </video> */}
+                 <div>
+                 <Card style={{ width: '10rem' }}>
+                   <CardActionArea>
+                   <CardMedia component="img" height="280" image={assign} alt="green iguana" />
+                    <CardContent>
+                    <Typography variant="outlined" color="text.secondary">
+                      Assigned Assertions to Review        
+                    </Typography>
+                    </CardContent>
+                    </CardActionArea>
+                 </Card> 
+                 </div>
+                 <div>
+                    <Card style={{ width: '10rem' }}>
+                    <CardActionArea>
+                    <CardMedia component="img" height="140" image={assignment_priority} alt="green iguana" />
+                    <CardContent>
+                    <Typography variant="outlined" color="text.secondary">
+                      Unassigned Assertions for Review        
+                    </Typography>
+                    </CardContent>
+                    </CardActionArea>
+                 </Card> 
+                 </div>
+                  {/* <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop /> 
+                 <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
+                   <source src={logo} type="video/mp4"></source> 
+                    </video>  */}
                  </div>))))))}
               </Paper>
             </Grid>
