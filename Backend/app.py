@@ -466,11 +466,21 @@ def view_ongoing_assertions_by_user_id():
     user_id = str(request.args.get('user'))
     return my_backpack.view_ongoing_assertions_by_user_id(user_id)
 
-@app.route("/viewassertionsbyuseridandbadgelevel", methods=['POST'])
-def view_assertions_with_user_id_and_badge_level():
+@app.route("/viewminorbadgesearnedbyuserid", methods=['POST'])
+def view_minor_badges_earned_by_userid():
     user_id = str(request.args.get('user'))
-    badge_level = str(request.args.get('badgelevel'))
-    return my_backpack.view_assertions_with_user_id_and_badge_level(user_id, badge_level)
+    return my_backpack.view_minor_badges_earned_by_userid(user_id)
+    
+@app.route("/viewmajorbadgesearnedbyuserid", methods=['POST'])
+def view_major_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_major_badges_earned_by_userid(user_id)
+    
+@app.route("/viewmasterbadgesearnedbyuserid", methods=['POST'])
+def view_master_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_master_badges_earned_by_userid(user_id)
+
 
 # ------------------ Reviewer Dashboard ------------------------------
 ## Count
@@ -496,6 +506,8 @@ def view_count_authorized_badges_to_review():
 ## List
 @app.route("/viewauthorizedbadgestoreview", methods=['POST'])
 def view_authorized_badges_to_review():
+    # req_body = request.get_json()
+    # user_id = req_body['reviewer']
     user_id = str(request.args.get('reviewer'))
     return reviewer_dashboard.view_authorized_badges_to_review(user_id)
 
@@ -515,7 +527,7 @@ def view_issued_badges_by_reviewer():
     return reviewer_dashboard.view_issued_badges_by_reviewer(user_id)
 
 ## Button
-@app.route("/assigntoselfforreview", methods=['POST'])
+@app.route("/queen", methods=['POST'])
 def assign_to_self_for_review():
     assertion_id = str(request.args.get('assertion'))
     user_id = str(request.args.get('reviewer'))
