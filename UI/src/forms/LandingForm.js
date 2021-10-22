@@ -38,6 +38,7 @@ import assignment_priority from '../assets/assignment-priority.png'
 import PersonIcon from '@material-ui/icons/Person';
 import ViewBadgeForm from './ViewBadgeForm';
 import ViewAssertionsForm from './ViewAssertionsForm';
+import ReviewerDashboardForm from './ReviewerDashboard';
 import ViewProfileForm from './ViewProfileForm';
 import ViewUsersForm from './ViewUsersForm';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -48,7 +49,7 @@ import ReactPlayer from 'react-player';
 import Card from '@material-ui/core/Card';
 
 import getJIRAResponse from '../API/AddJIRARequestAPI';
-// import getReviewerDashboard from '../API/CountAssignedAssertionsAPI';
+import getReviewerDashboard from '../API/CountAssignedAssertionsAPI';
 import Button from '@material-ui/core/Button';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Redirect } from 'react-router';
@@ -56,6 +57,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { CardActionArea } from '@material-ui/core';
+import ReviewerDashboard from './ReviewerDashboard';
 
 const LandingForm = (props)=>
 {
@@ -69,6 +71,7 @@ const LandingForm = (props)=>
     const [userType,setUserType] = useState(token);
     const [email,setEmail] = useState(em);
     const [userID,setuserID] = useState('');
+    const [response,setResponse]=useState('');
 
     const handleCreateBadgeButtonClick =()=>{
         setClickedItem('CreateBadgeForm');
@@ -77,6 +80,9 @@ const LandingForm = (props)=>
     const handleDashboardButtonClick =()=>{
         setClickedItem('');
     }
+    const handleReviewerDashboardButtonClick =()=>{
+      setClickedItem('ReviewerDashboardForm');
+  }
 
     const handleMyBackpackButtonClick =() =>
     {
@@ -99,6 +105,14 @@ const LandingForm = (props)=>
       setClickedItem('ViewProfileForm');
     }
 
+    const countAssignedBadges=async(userID)=>{
+      var response1 = new Promise((resolve, reject) => {
+        resolve(getReviewerDashboard());
+    }).then(value => {
+      if (value != undefined) {
+        setResponse(value)      }
+    });
+  }
     const handleLogout =()=>{      
       sessionStorage.removeItem("Token");
       sessionStorage.removeItem("Email");
@@ -207,6 +221,14 @@ const LandingForm = (props)=>
 
       const reviewerListItems = (
         <div data-testid="reviewerSection">
+
+          <ListItem button data-testid="LandingForm_Reviewer_DashboardButton" onClick={handleReviewerDashboardButtonClick}>
+            <ListItemIcon>
+            <BootstrapTooltip title ="Reviewer Dashboard"><DashboardIcon /></BootstrapTooltip>
+            </ListItemIcon>
+            <ListItemText primary="Reviewer Dashboard" />
+          </ListItem>
+
           <ListSubheader inset>Reviewer Tasks</ListSubheader>
           <ListItem button data-testid="LandingForm_reviewerAssertionsButton" onClick={handleViewAssertionsButtonClick}>
             <ListItemIcon>
@@ -407,36 +429,40 @@ if (clickedItem=='BacktoLoginForm'){
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType} userID={userID}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
-               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):              
+               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />): 
+              //  (clickedItem=='ReviewerDashboardForm'? (<ReviewerDashboardForm  userID={userID} />):             
                (<div>
                  <div>
+                 <input data-testid='Assignedbadges_RowCount' hidden value={response} />
                  <Card style={{ width: '10rem' }}>
-                   <CardActionArea>
-                   <CardMedia component="img" height="280" image={assign} alt="green iguana" />
-                    <CardContent>
-                    <Typography variant="outlined" color="text.secondary">
-                      Assigned Assertions to Review        
-                    </Typography>
-                    </CardContent>
-                    </CardActionArea>
-                 </Card> 
-                 </div>
-                 <div>
-                    <Card style={{ width: '10rem' }}>
-                    <CardActionArea>
-                    <CardMedia component="img" height="140" image={assignment_priority} alt="green iguana" />
-                    <CardContent>
-                    <Typography variant="outlined" color="text.secondary">
-                      Unassigned Assertions for Review        
-                    </Typography>
-                    </CardContent>
-                    </CardActionArea>
-                 </Card> 
-                 </div>
-                  {/* <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop /> 
-                 <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
+                  <CardActionArea>
+                  <CardMedia  component="img" height="280" image={assign} alt="green iguana" />
+                  
+                  <CardContent actions={countAssignedBadges(userID)}>   <Typography variant="outlined" color="text.secondary">
+                  Assigned Assertions to Review        
+                  </Typography>
+                  </CardContent>
+                  
+                  </CardActionArea>
+                  </Card> 
+ </div>
+<div>
+   <Card style={{ width: '10rem' }}>
+   <CardActionArea>
+   <CardMedia component="img" height="140" image={assignment_priority} alt="green iguana" />
+   <CardContent>
+   <Typography variant="outlined" color="text.secondary">
+     Unassigned Assertions for Review        
+   </Typography>
+   </CardContent>
+   </CardActionArea>
+</Card> 
+</div>
+                
+                {/* <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />  */}
+                 {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
                    <source src={logo} type="video/mp4"></source> 
-                    </video>  */}
+                    </video>   */}
                  </div>))))))}
               </Paper>
             </Grid>
