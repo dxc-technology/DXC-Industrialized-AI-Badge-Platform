@@ -321,8 +321,6 @@ const classes = useStyles();
 
 }
 
-
-
   useEffect(() => {
     handleviewUserByEmail();
   
