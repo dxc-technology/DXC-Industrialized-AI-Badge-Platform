@@ -1208,56 +1208,7 @@ def get_count_total_badges_earned_by_userid(user_id):
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
-## ASSERTIONS BY BADGELEVEL   
-def get_assertions_with_user_id_and_badge_level(user_id, badge_level):
-    assertions_collection = myDB["Assertions"]
-
-    data = assertions_collection.aggregate([
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'user',
-                'foreignField': '_id',
-                'as': 'users_collection'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badges',
-                'localField': 'badge',
-                'foreignField': '_id',
-                'as': 'badges_collection'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badge_Status',
-                'localField': 'badgeStatus',
-                'foreignField': '_id',
-                'as': 'badge_status_collection'
-            }
-        },
-        {
-            '$match': {
-                "$and": [
-                    {'user': ObjectId(user_id)},
-                    {"badge_status_collection.badgeStatus": "approved"},
-                    {'badges_collection.badgeLevel': badge_level}
-                ]
-            }
-        },
-        {
-            '$project': {"users_collection._id": 1, "users_collection.email": 1, "badges_collection.name": 1,
-                         "badges_collection.link": 1, "badges_collection.icon": 1, "badge_status_collection.badgeStatus": 1, "issuedOn": 1,
-                         "_id": 1}
-        }
-    ])
-
-    o = list(data)
-    json = dumps(o, indent=2)
-    return json, {'content-type': 'application/json'}
-
-## ONGOING ASSERTIONS
+## LIST   
 def get_ongoing_assertions_by_user_id(user_id):
     assertions_collection = myDB["Assertions"]
     data = assertions_collection.aggregate([
@@ -1311,6 +1262,149 @@ def get_ongoing_assertions_by_user_id(user_id):
     json = dumps(n, indent=2)
     return json, {'content-type': 'application/json'}
 
+def get_minor_badges_earned_by_userid(user_id):
+    assertions_collection = myDB["Assertions"]
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'user',
+                'foreignField': '_id',
+                'as': 'users_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {'user': ObjectId(user_id)},
+                    {"badge_status_collection.badgeStatus": "approved"},
+                    {'badges_collection.badgeLevel': "minor"}
+                ]
+            }
+        },
+        {
+            '$project': {"users_collection._id": 1, "users_collection.email": 1, "badges_collection.name": 1,
+                         "badges_collection.link": 1, "badges_collection.icon": 1, "badge_status_collection.badgeStatus": 1, "issuedOn": 1,
+                         "_id": 1}
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+def get_major_badges_earned_by_userid(user_id):
+    assertions_collection = myDB["Assertions"]
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'user',
+                'foreignField': '_id',
+                'as': 'users_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {'user': ObjectId(user_id)},
+                    {"badge_status_collection.badgeStatus": "approved"},
+                    {'badges_collection.badgeLevel': "major"}
+                ]
+            }
+        },
+        {
+            '$project': {"users_collection._id": 1, "users_collection.email": 1, "badges_collection.name": 1,
+                         "badges_collection.link": 1, "badges_collection.icon": 1, "badge_status_collection.badgeStatus": 1, "issuedOn": 1,
+                         "_id": 1}
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+def get_master_badges_earned_by_userid(user_id):
+    assertions_collection = myDB["Assertions"]
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'user',
+                'foreignField': '_id',
+                'as': 'users_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {'user': ObjectId(user_id)},
+                    {"badge_status_collection.badgeStatus": "approved"},
+                    {'badges_collection.badgeLevel': "master"}
+                ]
+            }
+        },
+        {
+            '$project': {"users_collection._id": 1, "users_collection.email": 1, "badges_collection.name": 1,
+                         "badges_collection.link": 1, "badges_collection.icon": 1, "badge_status_collection.badgeStatus": 1, "issuedOn": 1,
+                         "_id": 1}
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
 
 # ---------------------------- END MY BACKPACK -----------------------------
 
@@ -1446,7 +1540,62 @@ def get_count_issued_badges_by_reviewer(user_id):
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
-## TABLES - PENDING  
+def get_count_authorized_badges_to_review(user_id):
+    assertions_collection = myDB["Badges"]
+        
+    data = assertions_collection.aggregate([
+        {
+            '$match': {
+                "$and": [
+                    {"badgeLevel" : "minor"},
+                    {'reviewers': ObjectId(user_id)}
+                ]
+            }
+        },
+        {
+            '$count': "authorized_badges_by_reviewer"
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+
+## TABLES 
+
+# done
+def get_authorized_badges_to_review(user_id):
+    assertions_collection = myDB["Badges"]
+        
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Badge_Group',
+                'localField': 'badgeGroup',
+                'foreignField': '_id',
+                'as': 'badge_group'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {"badgeLevel" : "minor"},
+                    {'reviewers': ObjectId(user_id)}
+                ]
+            }
+        },
+        {
+            '$project': {"name": 1, "badge_group.badgeGroup": 1,"_id": 1}
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+
+# done  
 def get_assigned_assertions_by_reviewer(user_id):
     assertions_collection = myDB["Assertions"]
 
@@ -1511,6 +1660,7 @@ def get_assigned_assertions_by_reviewer(user_id):
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
+#done
 def get_unassigned_assertions_by_eligible_reviewer(user_id):
     assertions_collection = myDB["Assertions"]
 
@@ -1551,8 +1701,8 @@ def get_unassigned_assertions_by_eligible_reviewer(user_id):
             '$match': {
                 "$and": [
                     {"badges_collection.badgeLevel" : "minor"},
+                    {'isAssignedReviewer': None},
                     {"badges_collection.reviewers": ObjectId(user_id)},
-                    # {"$expr":{"$in":[ObjectId(user_id),"badges_collection.reviewer"]}},
                     {"$or": 
                         [
                             {"badge_status_collection.badgeStatus": "applied"},
@@ -1576,39 +1726,80 @@ def get_unassigned_assertions_by_eligible_reviewer(user_id):
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
+# done
+def get_issued_badges_by_reviewer(user_id):
+    assertions_collection = myDB["Assertions"]
+        
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badge',
+                'foreignField': '_id',
+                'as': 'badges_collection'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status_collection'
+            }
+        },
+        {
+            '$match': {
+                "$and": [
+                    {"badges_collection.badgeLevel" : "minor"},
+                    {'isAssignedReviewer': ObjectId(user_id)},
+                    {"badge_status_collection.badgeStatus": "approved"}
+                ]
+            }
+        },
+        {
+            '$project': {"users_collection._id": 1, "assertion_owner.email": 1, "badges_collection.name": 1,
+                         "badges_collection.link": 1, "badge_status_collection.badgeStatus": 1, "issuedOn": 1, 
+                         "assigned_reviewer.email": 1,
+                         "_id": 1}
+        }
+    ])
 
-
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
 
 
 
 ## UNASSIGN AND ASSIGN TO SELF
+APPLIED_BADGE_STATUS = "5f776f556289f17659874f2e"
 UNDER_REVIEW_BADGE_STATUS = "61521ffc856eac5a3748dbfc"
 
-def get_prev_badge_status(assertion_id):
-    assertions_collection = myDB["Assertions"]
+# def get_prev_badge_status(assertion_id):
+#     assertions_collection = myDB["Assertions"]
     
-    query = {'_id': ObjectId(assertion_id)}
-    output = {'badgeStatus': 1, '_id': True}
+#     query = {'_id': ObjectId(assertion_id)}
+#     output = {'badgeStatus': 1, '_id': True}
 
-    data = assertions_collection.find_one(query, output)
-    return data.get("badgeStatus")
+#     data = assertions_collection.find_one(query, output)
+#     return data.get("badgeStatus")
 
-
-def assign_to_self(assertion_id, reviewer_id):
+#done
+def assign_to_self_for_review(assertion_id, user_id):
     assertions_collection = myDB["Assertions"]
     assertions_collection.update(
         {'_id': ObjectId(assertion_id)},
         {
             '$set': 
                 {
-                    'isAssignedReviewer': ObjectId(reviewer_id),
+                    'isAssignedReviewer': ObjectId(user_id),
                     'badgeStatus': ObjectId(UNDER_REVIEW_BADGE_STATUS)
                 }
         }
     )
     return "assigned to self"
 
-def unassign_to_self(assertion_id, reviewer_id):   
+#done
+def unassign_self_for_review(assertion_id, user_id):   
     assertions_collection = myDB["Assertions"]
     assertions_collection.update(
         {'_id': ObjectId(assertion_id)},
@@ -1616,7 +1807,7 @@ def unassign_to_self(assertion_id, reviewer_id):
             '$set': 
                 {
                     'isAssignedReviewer': None,
-                    # 'badgeStatus': ObjectId(APPLIED_BADGE_STATUS)
+                    'badgeStatus': ObjectId(APPLIED_BADGE_STATUS)
                 }
         }
     ) 
