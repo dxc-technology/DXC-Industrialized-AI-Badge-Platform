@@ -33,17 +33,6 @@ const RegistrationForm = () => {
   const [emailClick,setEmailClick] = useState('False');
   const [passClick,setPassClick] = useState('False');
   const [confPassClick,setConfPassClick] = useState('False');
-  // const isPasswordValid = passwordValidator.validate(password)
-  // const renderErrors = (errors)=>errors
-  // .map(error=>renderError(error))
-
-  // const renderError=(errorMessage)=>< span className={classes.formError}>
-  // <span> {errorMessage}</span>
-  // </span>;
-  // const errors=['Pasword must have atleast one uppercase,one lowerCase and mix of Number and Characters',
-  //   'Password must be atleast 8 characters long'
-  // ];
-
   const [errorMessage, setErrorMessage] = useState('')
   
   
@@ -63,21 +52,24 @@ const RegistrationForm = () => {
   };
   const handleEmailChange = event => {
     setEmail(event.target.value);
+    console.log(event.target.value)
   };
-  const handlePasswordChange = event => {
-    setPassword(event.target.value);
-    const validate = (value) => {
-  
+  // const handlePasswordChange = event => {
+    
+  const handlePasswordChange=(value) => {
+    console.log(value)
+      setPassword(value);
       if (validator.isStrongPassword(value, {
         minLength: 8, minLowercase: 1,
         minUppercase: 1, minNumbers: 1, minSymbols: 1
       })) {
         setErrorMessage('Is Strong Password')
+        // setPassword(target.value);
         
       } else {
-        setErrorMessage('Is Not Strong Password')
-      }
-    }
+        
+        setErrorMessage("Password should have atlest one special character,number,uppercase and 8 character long")
+      }  
    
   };
   const handleConfirmPasswordChange = event => {
@@ -241,13 +233,14 @@ const RegistrationForm = () => {
                 />
               </Grid>
               <Grid item xs={12}>
+                
                 <TextField
                   variant="outlined"
                   required
                   fullWidth
                   name="password"
                   label="Password"
-                  type="password"
+                  
                   className={((password.length=='')&& (passClick=='True')) ? 'emptyfield' : ''}
                   id="password"
                   // autoComplete="current-password"
@@ -255,9 +248,12 @@ const RegistrationForm = () => {
                     "data-testid": "password",
                   }}
                   value={password}
-                  onChange={handlePasswordChange}
-                />
-                {/* {!isPasswordValid?renderErrors(errors):null} */}
+                  onChange={(e)=>handlePasswordChange(e.target.value)}
+                /> <span style={{
+                  fontWeight: 'bold',
+                  color: 'red',
+                }}>{errorMessage}</span>
+                
               </Grid>
               <Grid item xs={12}>
                 <TextField
