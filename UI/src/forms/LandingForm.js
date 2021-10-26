@@ -1,4 +1,9 @@
 import React, { useDebugValue, useState, useEffect} from 'react';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -38,7 +43,7 @@ import assignment_priority from '../assets/assignment-priority.png'
 import PersonIcon from '@material-ui/icons/Person';
 import ViewBadgeForm from './ViewBadgeForm';
 import ViewAssertionsForm from './ViewAssertionsForm';
-import ReviewerDashboardForm from './ReviewerDashboard';
+
 import ViewProfileForm from './ViewProfileForm';
 import ViewUsersForm from './ViewUsersForm';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -47,6 +52,7 @@ import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 import ReactPlayer from 'react-player';
 // import $ from 'jquery'; 
 import Card from '@material-ui/core/Card';
+import "../scripts/DashboardDesign.css"
 
 import getJIRAResponse from '../API/AddJIRARequestAPI';
 import getReviewerDashboard from '../API/CountAssignedAssertionsAPI';
@@ -57,7 +63,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { CardActionArea } from '@material-ui/core';
-import ReviewerDashboard from './ReviewerDashboard';
+
 
 const LandingForm = (props)=>
 {
@@ -71,7 +77,8 @@ const LandingForm = (props)=>
     const [userType,setUserType] = useState(token);
     const [email,setEmail] = useState(em);
     const [userID,setuserID] = useState('');
-    const [response,setResponse]=useState('');
+    const [usernum,setusernum] = useState(props.userID);
+    const [BadgeCount,setBadgeCount]=useState('');
 
     const handleCreateBadgeButtonClick =()=>{
         setClickedItem('CreateBadgeForm');
@@ -80,10 +87,7 @@ const LandingForm = (props)=>
     const handleDashboardButtonClick =()=>{
         setClickedItem('');
     }
-    const handleReviewerDashboardButtonClick =()=>{
-      setClickedItem('ReviewerDashboardForm');
-  }
-
+  
     const handleMyBackpackButtonClick =() =>
     {
       setClickedItem('MyBackpackForm');
@@ -104,15 +108,51 @@ const LandingForm = (props)=>
     const handleUpdateProfileButtonClick =()=> {
       setClickedItem('ViewProfileForm');
     }
-
-    const countAssignedBadges=async(userID)=>{
+// // // // // Reviewer Dashboard
+    const handlecountAssignedBadges=async()=>{
       var response1 = new Promise((resolve, reject) => {
-        resolve(getReviewerDashboard());
+        resolve(getReviewerDashboard(usernum));
     }).then(value => {
       if (value != undefined) {
-        setResponse(value)      }
+        console.log(value)
+        setBadgeCount(value)      }
     });
   }
+  useEffect(() => {
+    handlecountAssignedBadges();
+    // handleviewUserByEmail();
+}, []);
+
+//   const handleviewAssertionById = async () => {
+
+//     var response1 = new Promise((resolve, reject) => {
+//         resolve(getAssertionDetailByIdResponse(assertionId));
+//     }).then(value => {
+//         if (value != undefined) {
+//             setAssertionId(value[0].assertionID.$oid);
+//             setBadgeName(value[0].badge_details[0].name);
+//             setBadgeRecipient(value[0].user_details[0].email);
+//             if(value[0].issuedOn!=null)
+//                 setBadgeIssuedOn(formatDate(value[0].issuedOn.$date));
+//             setBadgeComments(value[0].comments);
+           
+//             if(value[0].reviewer_details!='')
+//                 setBadgeReviewer(value[0].reviewer_details[0].email);
+//             setEvidencelink(value[0].workLink);
+//             setBadgeStatus(value[0].badge_status[0]._id.$oid);
+//             setModifiedDate(formatDate(value[0].modified.$date));
+//             setPublicLink(value[0].publicLink);
+//             setIcon(value[0].badge_details[0].icon);
+//         }
+
+
+//     });
+
+// }
+
+
+
+
     const handleLogout =()=>{      
       sessionStorage.removeItem("Token");
       sessionStorage.removeItem("Email");
@@ -222,12 +262,12 @@ const LandingForm = (props)=>
       const reviewerListItems = (
         <div data-testid="reviewerSection">
 
-          <ListItem button data-testid="LandingForm_Reviewer_DashboardButton" onClick={handleReviewerDashboardButtonClick}>
+          {/* <ListItem button data-testid="LandingForm_Reviewer_DashboardButton" onClick={handleReviewerDashboardButtonClick}>
             <ListItemIcon>
             <BootstrapTooltip title ="Reviewer Dashboard"><DashboardIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Reviewer Dashboard" />
-          </ListItem>
+          </ListItem> */}
 
           <ListSubheader inset>Reviewer Tasks</ListSubheader>
           <ListItem button data-testid="LandingForm_reviewerAssertionsButton" onClick={handleViewAssertionsButtonClick}>
@@ -325,6 +365,7 @@ const useStyles = makeStyles((theme) => ({
     height:510,
     width: 755
   },
+  
 }));
 
 const classes = useStyles();
@@ -432,32 +473,50 @@ if (clickedItem=='BacktoLoginForm'){
                (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />): 
               //  (clickedItem=='ReviewerDashboardForm'? (<ReviewerDashboardForm  userID={userID} />):             
                (<div>
-                 <div>
-                 <input data-testid='Assignedbadges_RowCount' hidden value={response} />
-                 <Card style={{ width: '10rem' }}>
-                  <CardActionArea>
-                  <CardMedia  component="img" height="280" image={assign} alt="green iguana" />
+                 
+                 {/* <input data-testid='Assignedbadges_RowCount' hidden value={response} /> */}
+                 <div className="badges">
+                <div className="assignedItem" >
+                    <span className="title" id="badgeAssigned"
+                            inputProps={{
+                                "data-testid": "badgeAssigned",
+                            }}value={BadgeCount} onChange={handlecountAssignedBadges}>Assigned Badges</span>
+                    </div>
+                    
+                    
                   
-                  <CardContent actions={countAssignedBadges(userID)}>   <Typography variant="outlined" color="text.secondary">
-                  Assigned Assertions to Review        
-                  </Typography>
-                  </CardContent>
-                  
-                  </CardActionArea>
-                  </Card> 
- </div>
-<div>
-   <Card style={{ width: '10rem' }}>
-   <CardActionArea>
-   <CardMedia component="img" height="140" image={assignment_priority} alt="green iguana" />
-   <CardContent>
-   <Typography variant="outlined" color="text.secondary">
-     Unassigned Assertions for Review        
-   </Typography>
-   </CardContent>
-   </CardActionArea>
-</Card> 
-</div>
+                    <div className="assignedItem">
+                    <span className="title">Ussigned Badges</span>
+                    </div>
+                   
+                    <div className="assignedItem">
+                    <span className="title">Issued  Badges</span>
+                    </div>
+                    </div>
+                    <div>
+                    {/* <input data-testid='viewAssertions_RowCount' hidden value={response} /> */}
+
+                    <React.Fragment>
+                    {/* <Title>Recent Orders</Title> */}
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell></TableCell>
+                                <TableCell data-testid='viewAssertions_badgeName'>User</TableCell>
+                                <TableCell>Badge</TableCell>
+                                <TableCell>Issued On</TableCell>
+                                <TableCell>Status</TableCell>
+                                <TableCell align="right">Options</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        </Table>
+                        </React.Fragment>
+                        </div>
+                        
+                      {/* <div className="featuredMoneyContainer">
+                        <span className="featuredMoney">$2,415</span> */}
+        
+
                 
                 {/* <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />  */}
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
