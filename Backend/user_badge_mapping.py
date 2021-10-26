@@ -36,6 +36,12 @@ def add_badge_to_user(user_id, badge_id, badge_status_id, work_link, admin_revie
     if validate_badge_status_id(badge_status_id) == "Badge Status ID not Present in Badge status collection":
         return "Badge Status ID not Present in DB"
 
+    if validate_user_id_for_admin(admin_reviewer_id) == "User ID is not valid":
+        return "Requesting admin is not a valid user"
+
+    if validate_user_id_for_admin(admin_reviewer_id) == "User ID not Present in User collection DB":
+        return "Requesting admin is not Present in User collection DB"
+
     if validate_user_id_for_admin(admin_reviewer_id) == "Requesting user is not an admin":
         return "Requesting user is not an admin to map the badge to the user"
 
@@ -47,7 +53,7 @@ def add_badge_to_user(user_id, badge_id, badge_status_id, work_link, admin_revie
     added_assertion_id = database.add_assertion(user_id, badge_id, badge_status_id)
     if database.add_user_badge_mapping(user_id, badge_id, badge_status_id, work_link, added_assertion_id,
                                        badge_public_link, comments):
-        return "badge is added"
+        return "Badge has been addded successfully"
     return "Badge is not added"
 
 

@@ -5,16 +5,16 @@ from bson.json_util import dumps
 from dotenv import load_dotenv
 from bson import ObjectId
 import create_badge
+import certifi
 
 ENV_PATH = 'backend_variable.env'
 load_dotenv(dotenv_path=ENV_PATH)
 client = MongoClient(
     # 'mongodb+srv://dbuser:admin123@badger.1phkn.azure.mongodb.net/Badger_dev?retryWrites=true&w=majority'
     # 'mongodb+srv://dbuser:admin123@panoplycluster0.ssmov.mongodb.net/Panoply?retryWrites=true&w=majority'
-    os.getenv("DB_CONNECTION_STRING")
+    os.getenv("DB_CONNECTION_STRING"),tlsCAFile=certifi.where()
 )
 myDB = client[os.getenv("DB_NAME")]
-
 
 def connect():
     if os.getenv("DB_NAME") in client.list_database_names():
@@ -26,7 +26,6 @@ def count_users():
     user_collection = myDB["Users"]
     return user_collection.count()
 
-
 def get_user_details(email):
     user_doc = {}
 
@@ -37,6 +36,22 @@ def get_user_details(email):
         user_doc = x
     return user_doc
 
+def get_user_Id(email):
+    user_doc = {}
+    user_collection = myDB["Users"]
+    data = user_collection.find({"email":email},{"_id":1})
+    #my_doc = list(data)
+    for x in data:
+        user_doc = x["_id"]
+    return user_doc
+
+def get_badge_Id(badge_name):
+    badge_doc = {}
+    badge_collection = myDB["Badges"]
+    data = badge_collection.find({"name":badge_name},{"_id":1})
+    for x in data:
+        badge_doc = x["_id"]
+    return badge_doc
 
 def get_user_type(user_type):
     user_type_doc = {}
@@ -1031,9 +1046,6 @@ def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_req
     )
     return "updated"
 
-
-# ------------------------------- NOTIFICATIONS ---------------------------
-
 def get_notifications_for_user(user_id):
     user_notifications_collection = myDB["Notifications_User"]
     data = user_notifications_collection.aggregate([
@@ -1158,4 +1170,33 @@ def count_reviewer_notifications(reviewer_id):
         } 
     )
     return reviewer_notifications_collection.count()
+=======
+def get_user_status_options():
+    user_status_collection = myDB["User_Status"]
+    data = user_status_collection.find({}, {'_id': 0, 'userStatus': 1})
+    # data = user_status_collection.distinct('userStatus')
+    user_status_doc = []
+    for status in data:
+        user_status_doc.append(status)
+    json = dumps(user_status_doc, indent=2)
+    return json
+
+def get_user_type_options():
+    user_type_collection = myDB["User_Type"]
+    data = user_type_collection.find({}, {"_id": 0, "type": 1})
+    user_type_doc = []
+    for type in data:
+        user_type_doc.append(type)
+    json = dumps(user_type_doc, indent=2)
+    return json
+
+
+def get_badge_type_options():
+    badge_type_collection = myDB["Badge_Type"]
+    badge_type_doc = []
+    for badge in badge_type_collection.find({}, {"_id": 0, "badgeType": 1}):
+        badge_type_doc.append(badge)
+    json = dumps(badge_type_doc, indent=2)
+    return json
+
 

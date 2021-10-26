@@ -12,6 +12,7 @@ import view_notifications
 import create_users
 import user_badge_mapping
 import user_badge_deactivation
+import database
 import os
 import io
 from io import StringIO
@@ -26,7 +27,7 @@ app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 
 @app.route("/")
 def home():
-    return "Welcome to Industrialized AI Starter Application!!"
+    return "Welcome to Industrialized AI Starter Application!"
 
 
 @app.route("/login", methods=['GET'])
@@ -86,7 +87,7 @@ def update_user_details():
                                              admin_id, user_type, user_status)
 
 
-@app.route("/createuser", methods=['GET'])
+@app.route("/createuser", methods=['POST'])
 def create_user_admin():
     if str(request.args.get('email')) == "None":
         new_email = ""
@@ -129,7 +130,7 @@ def create_user_admin():
 @app.route("/modifyusers", methods=['POST'])
 def modify_users():
     req_body = request.get_json()
-    userid = req_body['email']
+    userid = req_body['userId']
     first_name = req_body['firstName']
     second_name = req_body['secondName']
     middle_name = req_body['middleName']
@@ -162,19 +163,31 @@ def view_user_with_email():
 
 @app.route("/addbadge", methods=['GET', 'POST'])
 def add_new_badge():
-    badge_name = request.form.get("name")
-    badge_description = request.form.get("description")
-    link = request.form.get("link")
-    user_requestable = request.form.get("requestable")
-    badge_type = request.form.get("badgetype")
-    owner = request.form.get("owner")
-    reviewer = request.form.get("reviewer")
-    icon = request.files['icon']
-    evidence = request.form.get("evidence")
-    icon.save(icon.filename)
+    #Comemnted by muthu for image upload request by Tina
+    # badge_name = request.form.get("name")
+    # badge_description = request.form.get("description")
+    # link = request.form.get("link")
+    # user_requestable = request.form.get("requestable")
+    # badge_type = request.form.get("badgetype")
+    # owner = request.form.get("owner")
+    # reviewer = request.form.get("reviewer")
+    # #icon = request.files['icon']
+    # evidence = request.form.get("evidence")
+    # #icon.save(icon.filename)
+    # icon = request.form.get("icon")
+
+    badge_name = str(request.args.get('name'))
+    badge_description = str(request.args.get('description'))
+    link = str(request.args.get('link'))
+    user_requestable = str(request.args.get('requestable'))
+    badge_type = str(request.args.get('badgetype'))
+    owner = str(request.args.get('owner'))
+    reviewer = str(request.args.get('reviewer'))
+    icon = str(request.args.get('icon'))
+    evidence = str(request.args.get('evidence'))
 
     return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
-                                  badge_type, owner, reviewer, icon.filename, evidence)
+                                  badge_type, owner, reviewer, icon, evidence)
     # image_bytes = Image.open(io.BytesIO(icon.read()))
     # image_bytes = Image.open(icon.stream)
     # icon = request.form["icon"]
@@ -409,9 +422,6 @@ def send_password_reset_email():
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
 
-
-
-
 @app.route("/viewnotificationsbylogonid", methods=['POST'])
 def view_all_notifications_by_logon_id():
     req_body = request.get_json()
@@ -430,3 +440,31 @@ def view_notification_count_by_logon_id():
 # def view_user_with_email():
 #     req_body = request.get_json()
 #     return view_users.view_user_details_by_name(req_body['email'])
+=======
+@app.route("/viewusertypeoptions", methods=['GET'])
+def get_user_type_options():
+    return database.get_user_type_options()
+
+@app.route("/viewuserstatusoptions", methods=['GET'])
+def get_user_status_options():
+    return database.get_user_status_options()
+
+@app.route("/viewbadgetypeoptions", methods=['GET'])
+def get_badge_type_options():
+    return database.get_badge_type_options()
+
+@app.route("/createnewaistarterassetions", methods=['POST'])
+def create_new_assertions_from_ai_starter():
+    req_body = request.get_json()
+    user_email = req_body['userEmail']
+    badge_name = req_body['badgeName']
+    badge_status_id = req_body['badgeStatus']
+    evidence_link = req_body['evidenceLink']
+    reviewer_id = req_body['adminID']
+    comments = req_body['comments']
+    conv_user_id=str(database.get_user_Id(user_email))
+    conv_badge_id=str(database.get_badge_Id(badge_name))
+    
+    return user_badge_mapping.add_badge_to_user(conv_user_id, conv_badge_id, badge_status_id, evidence_link, reviewer_id,
+                                                comments)     
+
