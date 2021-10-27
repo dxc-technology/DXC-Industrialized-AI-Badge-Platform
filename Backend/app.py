@@ -440,7 +440,7 @@ def view_notification_count_by_logon_id():
 # def view_user_with_email():
 #     req_body = request.get_json()
 #     return view_users.view_user_details_by_name(req_body['email'])
-=======
+
 @app.route("/viewusertypeoptions", methods=['GET'])
 def get_user_type_options():
     return database.get_user_type_options()
