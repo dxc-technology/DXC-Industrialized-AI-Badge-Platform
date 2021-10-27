@@ -1170,7 +1170,7 @@ def count_reviewer_notifications(reviewer_id):
         } 
     )
     return reviewer_notifications_collection.count()
-=======
+
 def get_user_status_options():
     user_status_collection = myDB["User_Status"]
     data = user_status_collection.find({}, {'_id': 0, 'userStatus': 1})
