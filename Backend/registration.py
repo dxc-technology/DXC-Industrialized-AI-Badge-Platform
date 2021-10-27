@@ -189,7 +189,7 @@ def email_content(email_address, body):
     msg['To'] = receiver_email
     msg_text = MIMEText('<b>%s</b>' % body, 'html')
     text = ' \
-        Go ahead and reset the password using the given link: http://localhost:3000/ResetPasswordForm.js'
+        Go ahead and reset the password using the given link: http://localhost:3000/passwordchange'
     msg_text1 = MIMEText(text, "plain")
     msg.attach(msg_text)
     msg.attach(msg_text1)
