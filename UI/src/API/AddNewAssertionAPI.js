@@ -4,7 +4,7 @@ const addNewAssertionResponse = async(userID,badgeID,badgeStatus,workLink,review
     return await fetch(url, {
             method: 'POST',
             //body: {"name":badgeName}
-            body: JSON.stringify({userID: userID,badgeID:badgeID,badgeStatus:'5f776f556289f17659874f2e',workLink:workLink,reviewer:'5fa9d9eff897b5482159b6a7',comments:''}),
+            body: JSON.stringify({userID: userID,badgeID:badgeID,badgeStatus:'5f776f556289f17659874f2e',workLink:workLink,reviewer:'614a4946e59455f33d9c3b1a',comments:''}),
 
             headers: {
                 'Accept':'application/json',

@@ -258,7 +258,7 @@ const BadgeDetailsForm = (props) => {
   
 if (backbuttonClicked=='True'){
 return (
-  <div><ViewBadgeForm userType={userType} /> </div>
+  <div><ViewBadgeForm userType={userType} userID={userID}/> </div>
 );
 }
 else{
