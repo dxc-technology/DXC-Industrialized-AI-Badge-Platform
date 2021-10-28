@@ -433,6 +433,83 @@ def get_all_assertions():
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
+def view_all_assertions_by_reviewer_id(reviewer_id):
+    assertions_collection = myDB["User_Badge_Details"]
+    # query = {"user": user_id}
+    # data = assertions_collection.find(query)
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'userID',
+                'foreignField': '_id',
+                'as': 'user_email_address'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Assertions',
+                'localField': 'assertionID',
+                'foreignField': '_id',
+                'as': 'assertion_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'issuer',
+                'foreignField': '_id',
+                'as': 'issuer_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'reviewer',
+                'foreignField': '_id',
+                'as': 'reviewer_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badgeID',
+                'foreignField': '_id',
+                'as': 'badge_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status'
+            }
+        },
+        {
+            '$match': {
+                "$or": [
+                    {'reviewer': ObjectId(reviewer_id)},
+                    {"$and": [{"reviewer": None}, {"badge_details.reviewers": ObjectId(reviewer_id)}]}
+                ]
+            }
+        },
+        {
+
+            '$project': {"assertion_details._id": 1, "user_email_address._id": 1, "user_email_address.email": 1,
+                         "badge_details.name": 1,
+                         "badge_details.link": 1, "badge_details.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
+                         "_id": 0, "reviewer": 1}
+
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+
 
 def get_assertions_with_user_id_and_badge_id(user_id, badge_id):
     assertion_collection = myDB["Assertions"]
@@ -515,8 +592,6 @@ def get_assertions_with_user_id(user_id):
             '$project': {"user_email_address._id": 1, "user_email_address.email": 1, "badge_name.name": 1,
                          "badge_name.link": 1, "badge_name.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
                          "_id": 1}
-
-                         
         }
     ])
 
@@ -525,81 +600,6 @@ def get_assertions_with_user_id(user_id):
     return json, {'content-type': 'application/json'}
 
 
-def view_all_assertions_by_reviewer_id(reviewer_id):
-    assertions_collection = myDB["User_Badge_Details"]
-    # query = {"user": user_id}
-    # data = assertions_collection.find(query)
-
-    data = assertions_collection.aggregate([
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'userID',
-                'foreignField': '_id',
-                'as': 'user_email_address'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Assertions',
-                'localField': 'assertionID',
-                'foreignField': '_id',
-                'as': 'assertion_details'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'issuer',
-                'foreignField': '_id',
-                'as': 'issuer_details'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'reviewer',
-                'foreignField': '_id',
-                'as': 'reviewer_details'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badges',
-                'localField': 'badgeID',
-                'foreignField': '_id',
-                'as': 'badge_details'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badge_Status',
-                'localField': 'badgeStatus',
-                'foreignField': '_id',
-                'as': 'badge_status'
-            }
-        },
-        {
-            '$match': {
-                "$or": [
-                    {'reviewer': ObjectId(reviewer_id)},
-                    {"$and": [{"reviewer": None}, {"badge_details.reviewers": ObjectId(reviewer_id)}]}
-                ]
-            }
-        },
-        {
-
-            '$project': {"assertion_details._id": 1, "user_email_address._id": 1, "user_email_address.email": 1,
-                         "badge_details.name": 1,
-                         "badge_details.link": 1, "badge_details.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
-                         "_id": 0, "reviewer": 1}
-
-        }
-    ])
-
-    o = list(data)
-    json = dumps(o, indent=2)
-    return json, {'content-type': 'application/json'}
 
 
 def get_assertions_with_badge_id(badge_id):
@@ -1014,7 +1014,7 @@ def add_user_badge_mapping(user_id, badge_id, badge_status_id, work_link, assert
                          "badgeID": ObjectId(badge_id), "assertionID": ObjectId(assertion_id),
                          "created": datetime.now(timezone.utc), "modified": datetime.now(timezone.utc),
                          "badgeStatus": ObjectId(badge_status_id), "workLink": work_link,
-                         # "reviewer": ObjectId(admin_reviewer_id),
+                         "reviewer": None,
                          "comments": comments, "issuer": None, "issuedOn": None, "deletedOn": None, "deletedBy": None
                          }
 
@@ -1046,131 +1046,6 @@ def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_req
     )
     return "updated"
 
-def get_notifications_for_user(user_id):
-    user_notifications_collection = myDB["Notifications_User"]
-    data = user_notifications_collection.aggregate([
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'userID',
-                'foreignField': '_id',
-                'as': 'user_email_address'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'reviewerID',
-                'foreignField': '_id',
-                'as': 'reviewer_email_address'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badges',
-                'localField': 'badge',
-                'foreignField': '_id',
-                'as': 'badge_name'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badge_Status',
-                'localField': 'newBadgeStatus',
-                'foreignField': '_id',
-                'as': 'badge_status'
-            }
-        },
-        {
-            '$match': {
-                'userID': ObjectId(user_id)
-            }
-        },
-        {
-            '$project': {"_id": 1, "logDate": 1, "comments": 1, "user_email_address.email": 1, "reviewer_email_address.email": 1, "badge_name.name": 1,
-                         "badge_status.badgeStatus": 1}
-        }
-    ])
-    return list(data)
-    # o = list(data)
-    # json = dumps(o, indent=2)
-    # return json, {'content-type': 'application/json'}
-
-def get_notifications_for_reviewer(reviewer_id):
-    reviewer_notifications_collection = myDB["Notifications_Reviewer"]
-    data = reviewer_notifications_collection.aggregate([
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'userID',
-                'foreignField': '_id',
-                'as': 'user_email_address'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'reviewerID',
-                'foreignField': '_id',
-                'as': 'reviewer_email_address'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badges',
-                'localField': 'badge',
-                'foreignField': '_id',
-                'as': 'badge_name'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badge_Status',
-                'localField': 'newBadgeStatus',
-                'foreignField': '_id',
-                'as': 'badge_status'
-            }
-        },
-        {
-            '$match': {
-                'reviewerID': ObjectId(reviewer_id)
-            }
-        },
-        {
-            '$project': {"_id": 1, "logDate": 1, "comments": 1, "user_email_address.email": 1, "reviewer_email_address.email": 1, "badge_name.name": 1,
-                         "badge_status.badgeStatus": 1}
-        }
-    ])
-    return list(data)
-    # o = list(data)
-    # json = dumps(o, indent=2)
-    # return json, {'content-type': 'application/json'}
-
-def get_logon_notifications(user_logon_id):
-    o = get_notifications_for_user(user_logon_id)
-    r = get_notifications_for_reviewer(user_logon_id)
-    merge = o + r
-    json = dumps(merge, indent=2)
-    return json, {'content-type': 'application/json'}
-
-
-def count_user_notifications(user_id):
-    user_notifications_collection = myDB["Notifications_User"].find(
-        {
-            'userID': ObjectId(user_id)
-        } 
-    )
-    return user_notifications_collection.count()
-
-
-def count_reviewer_notifications(reviewer_id):
-    reviewer_notifications_collection = myDB["Notifications_Reviewer"].find(
-        {
-            'reviewerID': ObjectId(reviewer_id)
-        } 
-    )
-    return reviewer_notifications_collection.count()
-
 def get_user_status_options():
     user_status_collection = myDB["User_Status"]
     data = user_status_collection.find({}, {'_id': 0, 'userStatus': 1})
@@ -1198,5 +1073,4 @@ def get_badge_type_options():
         badge_type_doc.append(badge)
     json = dumps(badge_type_doc, indent=2)
     return json
-
 
