@@ -229,7 +229,7 @@ const ViewAssertionsForm = (props) => {
                   User
                 </TableCell>
                 <TableCell>Badge</TableCell>
-                <TableCell>Issued On</TableCell>
+                <TableCell>Last Modified</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell align="right">Options</TableCell>
               </TableRow>
