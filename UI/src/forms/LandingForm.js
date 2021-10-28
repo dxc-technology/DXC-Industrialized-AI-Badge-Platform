@@ -56,6 +56,8 @@ import "../scripts/DashboardDesign.css"
 
 import getJIRAResponse from '../API/AddJIRARequestAPI';
 import getReviewerDashboardAssignedAssertionsCountResponse from '../API/ReviewerDashboardAssignedAssertionsCountAPI';
+import getReviewerDashboardIssuedBadgesCountResponse from '../API/ReviewerDashboardIssuedBadgesCountAPI';
+import getReviewerDashboardUnassignedAssertionsCountResponse from '../API/ReviewerDashboardUnassignedAssertionsAPI'
 import Button from '@material-ui/core/Button';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Redirect } from 'react-router';
@@ -78,7 +80,9 @@ const LandingForm = (props)=>
     const [email,setEmail] = useState(em);
     const [userID,setuserID] = useState('');
  
-    const [BadgeCount,setBadgeCount]=useState('');
+    const [assignedBadgeCount,setAssignedBadgeCount]=useState('');
+    const [unassignedBadgeCount,setUnassignedBadgeCount]=useState('');
+    const [issuedBadgeCount,setIssuedBadgeCount]=useState('');
 
     const handleCreateBadgeButtonClick =()=>{
         setClickedItem('CreateBadgeForm');
@@ -109,23 +113,70 @@ const LandingForm = (props)=>
       setClickedItem('ViewProfileForm');
     }
 // // // // // Reviewer Dashboard
-    const handlecountAssignedBadges=async()=>{
-           alert({userID})
-      var response2 = new Promise((resolve, reject) => {
-        
-        resolve(getReviewerDashboardAssignedAssertionsCountResponse({userID}));
+    const handlecountAssignedBadges=()=>{
+      var response1 = new Promise((resolve, reject) => {
+        resolve(UserDetailByEmailResponse(email));
     }).then(value => {
-   
-      console.log(value)
-      if (value != undefined) {
-        console.log(value)
-        setBadgeCount(value)      }
+        if (value != undefined) {
+          
+          var response2 = new Promise((resolve, reject) => {
+          resolve(getReviewerDashboardAssignedAssertionsCountResponse(value[0]._id.$oid));
+          }).then(value1 =>{
+          
+          // console.log(value1[0].reviewer_assigned_assertions)
+          setAssignedBadgeCount(value1[0].reviewer_assigned_assertions);  
+          
+        }
+        
+      )
+    }
     });
+     
   }
-  useEffect(() => {
-    handlecountAssignedBadges();
-    // handleviewUserByEmail();
-}, []);
+  const handlecountUnassignedBadges=()=>{
+    var response1 = new Promise((resolve, reject) => {
+      resolve(UserDetailByEmailResponse(email));
+  }).then(value => {
+      if (value != undefined) {
+        
+        var response2 = new Promise((resolve, reject) => {
+        resolve(getReviewerDashboardUnassignedAssertionsCountResponse(value[0]._id.$oid));
+        }).then(value1 =>{
+        
+        // console.log(value1[0].reviewer_assigned_assertions)
+        setUnassignedBadgeCount(value1[0].unassigned_assertions_for_review);  
+        
+      }
+      
+    )
+  }
+  });
+}
+  const handlecountIssuedBadges=()=>{
+    var response1 = new Promise((resolve, reject) => {
+      resolve(UserDetailByEmailResponse(email));
+  }).then(value => {
+      if (value != undefined) {
+        
+        var response2 = new Promise((resolve, reject) => {
+          
+        resolve(getReviewerDashboardIssuedBadgesCountResponse(value[0]._id.$oid));
+        }).then(value1 =>{
+        
+        // console.log(value1[0].reviewer_assigned_assertions)
+        setIssuedBadgeCount(value1[0].issued_badges_by_reviewer);  
+        
+      }
+      
+    )
+  }
+  });
+   
+}
+//   useEffect(() => {
+//     handlecountAssignedBadges();
+//     // handleviewUserByEmail();
+// }, []);
 // const handleviewUserByEmail = async () => {
         
 //   var response1 = new Promise((resolve, reject) => {
@@ -393,6 +444,9 @@ const classes = useStyles();
 }
   useEffect(() => {
     handleviewUserByEmail();
+    handlecountAssignedBadges();
+    handlecountIssuedBadges();
+    handlecountUnassignedBadges();
   
 }, []);
 
@@ -474,18 +528,19 @@ if (clickedItem=='BacktoLoginForm'){
                 <div className="assignedItem" id="badgeAssigned"
                             inputProps={{
                                 "data-testid": "badgeAssigned",
-                            }}  value={BadgeCount}>
-                    <span className="title" >2 Assigned Badges</span>
+                            }}  >
+                             
+                    <span className="title" > {assignedBadgeCount} Assigned Badges</span>
                     </div>
                     
                     
                   
                     <div className="assignedItem">
-                    <span className="title">0 Ussigned Badges</span>
+                    <span className="title">{unassignedBadgeCount} Ussigned Badges</span>
                     </div>
                    
                     <div className="assignedItem">
-                    <span className="title">4 Issued  Badges</span>
+                    <span className="title">{issuedBadgeCount} Issued  Badges</span>
                     </div>
                     </div>
                     <div>
