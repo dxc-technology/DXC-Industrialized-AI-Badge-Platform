@@ -16,6 +16,10 @@
   }
   
   .title{
-      font-size: 20px;
+      font-size: 50px;
   }
-  
+  .titleText{
+    font-size: 18px;
+    text-align:right;
+  }
+   

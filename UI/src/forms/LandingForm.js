@@ -55,6 +55,8 @@ import Card from '@material-ui/core/Card';
 import "../scripts/DashboardDesign.css"
 
 import getJIRAResponse from '../API/AddJIRARequestAPI';
+import formatDate from '../scripts/functions';
+import getReviewerDashboardAssignedAssertionsListResponse from '../API/ReviewerDashboardAssignedAssertionsListAPI';
 import getReviewerDashboardAssignedAssertionsCountResponse from '../API/ReviewerDashboardAssignedAssertionsCountAPI';
 import getReviewerDashboardIssuedBadgesCountResponse from '../API/ReviewerDashboardIssuedBadgesCountAPI';
 import getReviewerDashboardUnassignedAssertionsCountResponse from '../API/ReviewerDashboardUnassignedAssertionsAPI'
@@ -72,13 +74,21 @@ const LandingForm = (props)=>
     const [clickedItem,setClickedItem] = useState('');
     const windowWidth = window.screen.width;
     const drawerWidth = 220;
-    // const [userType,setUserType] = useState(props.userType);
-    // const [email,setEmail] = useState(props.email);
     const token = sessionStorage.getItem("Token");
     const em = sessionStorage.getItem("Email");
     const [userType,setUserType] = useState(token);
     const [email,setEmail] = useState(em);
     const [userID,setuserID] = useState('');
+
+    const [userName,setUserName]=useState('');
+    const [badgeName,setBadgeName] = useState('');
+    const [link,setLink] = useState('');
+    const [badgestatus,setBadgestatus] = useState('');
+    const [lastUpdated,setLastUpdated] = useState('');
+    const [response,setresponse]=useState('');
+    const [rows,setrows]=useState([]);
+  
+
  
     const [assignedBadgeCount,setAssignedBadgeCount]=useState('');
     const [unassignedBadgeCount,setUnassignedBadgeCount]=useState('');
@@ -113,17 +123,20 @@ const LandingForm = (props)=>
       setClickedItem('ViewProfileForm');
     }
 // // // // // Reviewer Dashboard
+function createData(userName,badgeName, link, badgeStatus,lastUpdated) {
+  return { userName,badgeName, link, badgeStatus,lastUpdated };
+}
     const handlecountAssignedBadges=()=>{
       var response1 = new Promise((resolve, reject) => {
         resolve(UserDetailByEmailResponse(email));
     }).then(value => {
         if (value != undefined) {
-          
+          console.log(value)
           var response2 = new Promise((resolve, reject) => {
           resolve(getReviewerDashboardAssignedAssertionsCountResponse(value[0]._id.$oid));
           }).then(value1 =>{
           
-          // console.log(value1[0].reviewer_assigned_assertions)
+         
           setAssignedBadgeCount(value1[0].reviewer_assigned_assertions);  
           
         }
@@ -163,7 +176,6 @@ const LandingForm = (props)=>
         resolve(getReviewerDashboardIssuedBadgesCountResponse(value[0]._id.$oid));
         }).then(value1 =>{
         
-        // console.log(value1[0].reviewer_assigned_assertions)
         setIssuedBadgeCount(value1[0].issued_badges_by_reviewer);  
         
       }
@@ -173,30 +185,34 @@ const LandingForm = (props)=>
   });
    
 }
-//   useEffect(() => {
-//     handlecountAssignedBadges();
-//     // handleviewUserByEmail();
-// }, []);
-// const handleviewUserByEmail = async () => {
-        
-//   var response1 = new Promise((resolve, reject) => {
-//       resolve(UserDetailByEmailResponse(email));
-//   }).then(value => {
-//       if (value != undefined) {
-//           setUserType(value[0].user_type_details[0].type);
-//           setUserStatus(value[0].user_status_details[0].userStatus);
-//           // _id.$oid
-//           setCreated(formatDate(value[0].created.$date));
-//           setLastupdated(formatDate(value[0].modified.$date));
-//           setName(value[0].firstName);
-         
-        
+
+  const handleViewAssignedAssertionsByUserid = async () => {
+
+    var response =new Promise((resolve,reject)=>{
+      resolve(UserDetailByEmailResponse(email));
+  }).then(value =>{
+    if(value!=undefined){
+      var response1=new Promise((resolve,reject)=>{
+        resolve(getReviewerDashboardAssignedAssertionsListResponse(value[0]._id.$oid));
+      }).then(value=>{
+        if (value != undefined) {
+            setresponse(value.length);
+            // console.log(response);
+
+            const temp_rows = []
+            for (var i = 0; i < value.length; i++) {
+                console.log(value[i])
+                temp_rows.push(createData(value[i].assertion_owner[0].email, value[i].badges_collection[0].name, value[i].badges_collection[0].link, value[i].badge_status_collection[0].badgeStatus, value[i].issuedOn.$date));
+            }
+            console.log(temp_rows)
+            setrows(temp_rows);
+          }
+        });
+
+      }
+  });
+}
     
-//       }
-
-//   });
-
-
 
     const handleLogout =()=>{      
       sessionStorage.removeItem("Token");
@@ -410,11 +426,7 @@ const useStyles = makeStyles((theme) => ({
     height:510,
     width: 755
   },
-  tableRow:{
-    color:'blue',
-    border:50
-  
-  },
+
   
 }));
 
@@ -447,7 +459,7 @@ const classes = useStyles();
     handlecountAssignedBadges();
     handlecountIssuedBadges();
     handlecountUnassignedBadges();
-  
+    handleViewAssignedAssertionsByUserid();
 }, []);
 
 
@@ -530,27 +542,39 @@ if (clickedItem=='BacktoLoginForm'){
                                 "data-testid": "badgeAssigned",
                             }}  >
                              
-                    <span className="title" > {assignedBadgeCount} Assigned Badges</span>
+                    <span className="title" > {assignedBadgeCount} </span>
+                    <span className ="titleText">Assigned Assertions for Review</span>
                     </div>
                     
                     
                   
                     <div className="assignedItem">
-                    <span className="title">{unassignedBadgeCount} Ussigned Badges</span>
+                    <span className="title">{unassignedBadgeCount} </span>
+                    <span className ="titleText">Ussigned Assertions for Review</span>
                     </div>
                    
                     <div className="assignedItem">
-                    <span className="title">{issuedBadgeCount} Issued  Badges</span>
+                    <span className="title">{issuedBadgeCount} </span>
+                    <span className ="titleText">Issued  Badges</span>
                     </div>
                     </div>
+                    <br/>
                     <div>
-                    {/* <input data-testid='viewAssertions_RowCount' hidden value={response} /> */}
+                      Assigned Assertions
+                      </div>
+                        <br/>
+                        <div>
+                    <input data-testid='viewAssertions_RowCount' hidden value={response} />
 
                     <React.Fragment>
                     {/* <Title>Recent Orders</Title> */}
-                    <Table size="large">
-                        <TableHead >
-                            <TableRow className={classes.tableRow}>
+                    <Table size="large" style={{ border: 'solid 1px lightblue' }}>
+                        <TableHead  style={{backgroundColor: 'lightblue',
+                  fontSize: 'bold'}}  >
+                        {/* style={{backgroundColor: 'blue',
+                  fontSize: 'bold'}}  */}
+                            <TableRow className="tableheader" >
+                        
                                 
                                 <TableCell >User</TableCell>
                                 <TableCell>Badge</TableCell>
@@ -561,15 +585,17 @@ if (clickedItem=='BacktoLoginForm'){
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            
-                                <TableRow data-testid={'viewBadge_BadgeID' }>
-                                    {/* <TableCell >{row.mongoID}</TableCell> */}
+                          {rows.map((row) => (
+                                <TableRow data-testid={'viewAssertions_RowID' + row.id} key={row.id} >
+
+                                  {/* <TableCell></TableCell> */}
+                                   
                                     
-                                    <TableCell >nbalakrishn@dxc.com</TableCell>
-                                    <TableCell >AI mentor</TableCell>
-                                    <TableCell >test.com</TableCell>
-                                    <TableCell >Unassigned</TableCell>
-                                    <TableCell >Dec 11,2021</TableCell>
+                                    <TableCell >{row.userName}</TableCell>
+                                    <TableCell >{row.badgeName}</TableCell>
+                                    <TableCell >{row.link}</TableCell>
+                                    <TableCell >{row.badgeStatus}</TableCell>
+                                    <TableCell >{formatDate(row.lastUpdated)}</TableCell>
                                    
                                     <TableCell align="right">
                                             <Button  data-testId={'viewBadge_viewBadgeButton' } variant="contained" color ="primary">
@@ -577,37 +603,8 @@ if (clickedItem=='BacktoLoginForm'){
                                             
                                             </Button>
                                             </TableCell>
-                                            </TableRow> 
-                                         <TableRow> 
-                                            <TableCell >muthu@dxc.com</TableCell>
-                                    <TableCell >AI Master</TableCell>
-                                    <TableCell >test.com</TableCell>
-                                    <TableCell >Assigned</TableCell>
-                                    <TableCell >Dec 11,2021</TableCell>
-                                   
-                                    <TableCell align="right">
-                                            <Button  data-testId={'viewBadge_viewBadgeButton' } variant="contained" color ="primary">
-                                              Approve
-                                            
-                                            </Button>
-                                            </TableCell>
-                                            </TableRow>
-                                            <TableRow data-testid={'viewBadge_BadgeID' }>
-                                    {/* <TableCell >{row.mongoID}</TableCell> */}
-                                    
-                                    <TableCell >Srikanth@dxc.com</TableCell>
-                                    <TableCell >AI  </TableCell>
-                                    <TableCell >test.com</TableCell>
-                                    <TableCell >Assigned</TableCell>
-                                    <TableCell >Dec 11,2021</TableCell>
-                                   
-                                    <TableCell align="right">
-                                            <Button  data-testId={'viewBadge_viewBadgeButton' } variant="contained" color ="primary">
-                                              Rework
-                                            
-                                            </Button>
-                                            </TableCell>
-                                            </TableRow>
+                                            </TableRow>  
+                                             ))}                                       
                                             </TableBody>
                         </Table>
                         </React.Fragment>
