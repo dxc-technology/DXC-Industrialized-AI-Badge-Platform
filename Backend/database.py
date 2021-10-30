@@ -1406,6 +1406,38 @@ def get_master_badges_earned_by_userid(user_id):
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
+REAPPLIED_BADGE_STATUS = "61521ff0856eac5a3748dbfb"
+
+## ACTION
+def resubmit_application(assertion_id):
+    modified_time_utc = datetime.now(timezone.utc)
+    user_badge__details_collection = myDB["User_Badge_Details"]
+    assertions_collection = myDB["Assertions"]
+
+    user_badge__details_collection.find_one_and_update(
+            {
+                "assertionID": ObjectId(assertion_id)
+            },
+            {
+                "$set": {
+                    "modified": modified_time_utc, 
+                    "badgeStatus": ObjectId(REAPPLIED_BADGE_STATUS)
+                }
+            }, upsert=True
+        )
+
+    assertions_collection.find_one_and_update(
+        {"_id": ObjectId(assertion_id)},
+        {
+            "$set": {
+
+                "badgeStatus": ObjectId(REAPPLIED_BADGE_STATUS)
+
+            }
+        }, upsert=True
+    )
+    return get_all_user_badge_details_by_assertion_id(assertion_id)
+
 # ---------------------------- END MY BACKPACK -----------------------------
 
 # --------------------------- REVIEWER DASHBOARD -----------------------------

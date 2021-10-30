@@ -481,6 +481,14 @@ def view_master_badges_earned_by_userid():
     user_id = str(request.args.get('user'))
     return my_backpack.view_master_badges_earned_by_userid(user_id)
 
+## Button
+@app.route("/resubmitapplication", methods=['POST'])
+def resubmit_application():
+    assertion_id = str(request.args.get('assertion'))
+    return my_backpack.resubmit_application(assertion_id)
+
+
+
 
 # ------------------ Reviewer Dashboard ------------------------------
 ## Count
