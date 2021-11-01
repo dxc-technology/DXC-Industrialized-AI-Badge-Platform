@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
+from pymongo import database
 import login
 import registration
 import view_badge
@@ -422,6 +423,19 @@ def send_password_reset_email():
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
 
+# # -----------------------UNIT TESTING ---------------------------------
+# @app.route("/testmajor", methods=["POST"])
+# def major():
+#     user_id=str(request.args.get('userid'))
+#     badge = str(request.args.get('badge'))
+#     return str(database.auto_add_major_badge(user_id, badge))
+
+# @app.route("/testmaster", methods=["POST"])
+# def master():
+#     user_id=str(request.args.get('userid'))
+#     badge = str(request.args.get('badge'))
+#     return str(database.auto_add_master_badge(user_id, badge))
+
 @app.route("/viewnotificationsbylogonid", methods=['POST'])
 def view_all_notifications_by_logon_id():
     req_body = request.get_json()
@@ -431,10 +445,6 @@ def view_all_notifications_by_logon_id():
 def view_notification_count_by_logon_id():
     req_body = request.get_json()
     return view_notifications.get_total_notifications_count(req_body['logon_id'])
-
-
-
-
 
 # @app.route("/viewuserdetailsbyemail", methods=['POST'])
 # def view_user_with_email():
