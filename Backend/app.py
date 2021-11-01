@@ -422,15 +422,15 @@ def send_password_reset_email():
     email_address = req_body['email_address']
     return registration.password_reset_email(email_address)
 
-# -----------------------UNIT TESTING ---------------------------------
-@app.route("/testmajor", methods=["POST"])
-def major():
-    user_id=str(request.args.get('userid'))
-    badge = str(request.args.get('badge'))
-    return str(database.auto_add_major_badge(user_id, badge))
+# # -----------------------UNIT TESTING ---------------------------------
+# @app.route("/testmajor", methods=["POST"])
+# def major():
+#     user_id=str(request.args.get('userid'))
+#     badge = str(request.args.get('badge'))
+#     return str(database.auto_add_major_badge(user_id, badge))
 
-@app.route("/testmaster", methods=["POST"])
-def master():
-    user_id=str(request.args.get('userid'))
-    badge = str(request.args.get('badge'))
-    return str(database.auto_add_master_badge(user_id, badge))
+# @app.route("/testmaster", methods=["POST"])
+# def master():
+#     user_id=str(request.args.get('userid'))
+#     badge = str(request.args.get('badge'))
+#     return str(database.auto_add_master_badge(user_id, badge))
