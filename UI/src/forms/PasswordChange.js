@@ -122,6 +122,7 @@ return (
                     id="Cpassword"
                     label="Current Password"
                     name="Cpassword"
+                    type="password"
                     autoComplete="Cpassword"
                     onChange={handlecurrentpassword}
                     
@@ -135,6 +136,7 @@ return (
                     id="Npassword"
                     label="New Password"
                     name="Npassword"
+                    type="password"
                     autoComplete="Npassword"
                     onChange={handlenewpassword}
                     
