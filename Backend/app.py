@@ -219,9 +219,9 @@ def add_new_badge():
 def password_reset():
     req_body = request.get_json()
     email_address = req_body['email']
-    password = req_body['password']
-    confirm_password = req_body['confirm_password']
-    return registration.password_reset(email_address, password, confirm_password)
+    current_password = req_body['password']
+    new_password = req_body['confirm_password']
+    return registration.password_reset_user(email_address, current_password, new_password)
 
 
 @app.route("/viewallassertions", methods=['POST'])
@@ -420,8 +420,8 @@ def modify_existing_badge():
 @app.route("/sendpasswordresetemail", methods=['POST'])
 def send_password_reset_email():
     req_body = request.get_json()
-    email_address = req_body['email_address']
-    return registration.password_reset_email(email_address)
+    email = req_body['email']
+    return registration.password_reset_email(email)
 
 # # -----------------------UNIT TESTING ---------------------------------
 # @app.route("/testmajor", methods=["POST"])
