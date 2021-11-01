@@ -881,13 +881,13 @@ def update_user_badge_status(assertion_id, issuer_id, badge_status_id, comments)
         }, upsert=True
     )
 
-    print("Call function via Reviewer update")
-    print("user id:", badge_user)
-    print("")
+    # print("Call function via Reviewer update")
+    # print("user id:", badge_user)
+    # print("")
     auto_add_major_badge(badge_user, badge)
-    print("")
+    # print("")
     auto_add_master_badge(badge_user, badge)
-    print("End functions")
+    # print("End functions")
 
     # if assertions_collection.matched_count and len(user_badge__details_collection.matched_count) > 0:
     return get_all_user_badge_details_by_assertion_id(assertion_id)
@@ -924,13 +924,13 @@ def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, p
             }, upsert=True
         )
 
-        print("Call function via Admin update")
-        print("user id:", badge_user)
-        print("")
+        # print("Call function via Admin update")
+        # print("user id:", badge_user)
+        # print("")
         auto_add_major_badge(badge_user, badge)
-        print("")
+        # print("")
         auto_add_master_badge(badge_user, badge)
-        print("End functions")
+        # print("End functions")
     
         # if assertions_collection.matched_count and user_badge__details_collection.matched_count > 0:
         # return get_all_user_badge_details_by_assertion_id(assertion_id)
@@ -956,11 +956,11 @@ def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, p
 ## ------------------------ AUTO ADD BADGE ----------------------------------
 
 def auto_add_major_badge(user_id, badge_updated):
-    print("START AUTO_ADD_MAJOR_BADGE")
+    # print("START AUTO_ADD_MAJOR_BADGE")
     isCompleted = validate_badge_completion(user_id, badge_updated)
-    print("isCompleted:", isCompleted )
+    # print("isCompleted:", isCompleted )
     major_badge_to_earn = get_badge_to_earn(badge_updated)
-    print("Fetch major badge:", major_badge_to_earn)
+    # print("Fetch major badge:", major_badge_to_earn)
     assertion_collection = myDB["Assertions"]
     user_badge_details_collection = myDB["User_Badge_Details"]
     check_badge_to_earn_exists = {"user": ObjectId(user_id), "badge": major_badge_to_earn}
@@ -998,31 +998,31 @@ def auto_add_major_badge(user_id, badge_updated):
                     "issuedOn": datetime.now(timezone.utc)
                 }
             })
-            print("Major Badge Added")
+            # print("Major Badge Added")
             return "Major Badge added"  
         else:
-            print("Major Badge already exists")
+            # print("Major Badge already exists")
             return "Major Badge already exists"
     if (isCompleted == False):
         if (assertion_collection.count_documents(check_approved_badge_to_earn_exists) == 1):
             assertion_id = get_assertion_id(user_id, major_badge_to_earn)
             assertion_collection.delete_one({"_id": assertion_id})
             user_badge_details_collection.delete_one({"assertionID": assertion_id})
-            print("Deleted because minor badge is not approved")
+            # print("Deleted because minor badge is not approved")
             return "Deleted because minor badge is not approved"
         else:
-            print("No major badge added")
+            # print("No major badge added")
             return "No Major Badge added"
     else:
         "Error"
     
 def auto_add_master_badge(user_id, badge_updated):
-    print("START AUTO_ADD_MASTER_BADGE")
+    # print("START AUTO_ADD_MASTER_BADGE")
     major_badge = get_badge_to_earn(badge_updated)
     isCompleted = validate_badge_completion(user_id, major_badge)
-    print("isCompleted:", isCompleted)
+    # print("isCompleted:", isCompleted)
     master_badge_to_earn = get_badge_to_earn(major_badge)
-    print("Fetch master badge:", master_badge_to_earn)
+    # print("Fetch master badge:", master_badge_to_earn)
     assertion_collection = myDB["Assertions"]
     user_badge_details_collection = myDB["User_Badge_Details"]
     check_badge_to_earn_exists = {"user": ObjectId(user_id), "badge": master_badge_to_earn,
@@ -1046,20 +1046,20 @@ def auto_add_master_badge(user_id, badge_updated):
                     "issuedOn": datetime.now(timezone.utc)
                 }
             })
-            print("Master Badge added")
+            # print("Master Badge added")
             return "Master Badge added"
         else:
-            print("Master Badge already exists")
+            # print("Master Badge already exists")
             return "Master Badge already exists"
     if (isCompleted == False):   
         if (assertion_collection.count_documents(check_badge_to_earn_exists) ==  1):
             assertion_id = get_assertion_id(user_id, master_badge_to_earn)
             assertion_collection.delete_one({"_id": assertion_id})
             user_badge_details_collection.delete_one({"assertionID": assertion_id})
-            print("Deleted because major badge is not approve")
+            # print("Deleted because major badge is not approve")
             return "Deleted because major badge is not approved"
         else:
-            print("No Master Badge added")
+            # print("No Master Badge added")
             return "No Master Badge added"
     else:
         "Error"
@@ -1123,7 +1123,7 @@ def validate_badge_completion(user_id, badge_updated):
 
     badge_to_earn = get_badge_to_earn(badge_updated)
     required_badge_list = get_required_badge_list(badge_to_earn)
-    print("Required badge list:", required_badge_list)
+    # print("Required badge list:", required_badge_list)
 
     #Note: To improve dynamic query based on number of badges required
 
@@ -1162,9 +1162,9 @@ def validate_badge_completion(user_id, badge_updated):
         }
 
     count_approved_badges = assertion_collection.count_documents(related_approved_badges)
-    print("Count Approved Badges:", count_approved_badges)
+    # print("Count Approved Badges:", count_approved_badges)
     count_required_badges = len(required_badge_list)
-    print("Count Required Badges:", count_required_badges)
+    # print("Count Required Badges:", count_required_badges)
 
     if (count_approved_badges == count_required_badges):
         return True
