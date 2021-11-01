@@ -4,7 +4,7 @@ const addNewAssertionResponse = async(userID,badgeID,badgeStatus,workLink,review
     return await fetch(url, {
             method: 'POST',
             //body: {"name":badgeName}
-            body: JSON.stringify({userID: userID,badgeID:badgeID,badgeStatus:'5f776f556289f17659874f2e',workLink:workLink,reviewer:'5fa9d9eff897b5482159b6a7',comments:''}),
+            body: JSON.stringify({userID: userID,badgeID:badgeID,badgeStatus:'5f776f556289f17659874f2e',workLink:workLink,reviewer:'614a4946e59455f33d9c3b1a',comments:''}),
 
             headers: {
                 'Accept':'application/json',
@@ -12,19 +12,13 @@ const addNewAssertionResponse = async(userID,badgeID,badgeStatus,workLink,review
             }
             //Request Type
         })
-        .then((response) => {
-            // console.log("response="+ response.text()
-            // 
-        return response.status})
-        //If response is in json then in success
-        // .then((responseText) => {
-        //     //Success
-        //     // alert(JSON.stringify(responseJson));
-        //     //console.log("in here")
-        //     console.log(responseText);
-        //     return responseText;
-        // })
-        //If response is not in json then in error
+        // .then((response) => {
+        //     return response.status})
+        .then((response) => response.text())
+        .then((responseText) => {
+            //console.log(responseText);
+            return responseText;
+        })
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));

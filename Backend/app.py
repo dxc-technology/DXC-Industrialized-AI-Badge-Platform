@@ -9,6 +9,7 @@ import create_badge
 import view_users
 import view_assertions
 import view_user_badge_details
+import view_notifications
 import create_users
 import user_badge_mapping
 import user_badge_deactivation
@@ -27,7 +28,7 @@ app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 
 @app.route("/")
 def home():
-    return "Welcome to Industrialized AI Starter Application!!"
+    return "Welcome to Industrialized AI Starter Application!"
 
 
 @app.route("/login", methods=['GET'])
@@ -87,7 +88,7 @@ def update_user_details():
                                              admin_id, user_type, user_status)
 
 
-@app.route("/createuser", methods=['GET'])
+@app.route("/createuser", methods=['POST'])
 def create_user_admin():
     if str(request.args.get('email')) == "None":
         new_email = ""
@@ -434,3 +435,46 @@ def send_password_reset_email():
 #     user_id=str(request.args.get('userid'))
 #     badge = str(request.args.get('badge'))
 #     return str(database.auto_add_master_badge(user_id, badge))
+
+@app.route("/viewnotificationsbylogonid", methods=['POST'])
+def view_all_notifications_by_logon_id():
+    req_body = request.get_json()
+    return view_notifications.view_all_notifications(req_body['logon_id'])
+
+@app.route("/viewnotificationcountbylogonid", methods=['POST'])
+def view_notification_count_by_logon_id():
+    req_body = request.get_json()
+    return view_notifications.get_total_notifications_count(req_body['logon_id'])
+
+# @app.route("/viewuserdetailsbyemail", methods=['POST'])
+# def view_user_with_email():
+#     req_body = request.get_json()
+#     return view_users.view_user_details_by_name(req_body['email'])
+
+@app.route("/viewusertypeoptions", methods=['GET'])
+def get_user_type_options():
+    return database.get_user_type_options()
+
+@app.route("/viewuserstatusoptions", methods=['GET'])
+def get_user_status_options():
+    return database.get_user_status_options()
+
+@app.route("/viewbadgetypeoptions", methods=['GET'])
+def get_badge_type_options():
+    return database.get_badge_type_options()
+
+@app.route("/createnewaistarterassetions", methods=['POST'])
+def create_new_assertions_from_ai_starter():
+    req_body = request.get_json()
+    user_email = req_body['userEmail']
+    badge_name = req_body['badgeName']
+    badge_status_id = req_body['badgeStatus']
+    evidence_link = req_body['evidenceLink']
+    reviewer_id = req_body['adminID']
+    comments = req_body['comments']
+    conv_user_id=str(database.get_user_Id(user_email))
+    conv_badge_id=str(database.get_badge_Id(badge_name))
+    
+    return user_badge_mapping.add_badge_to_user(conv_user_id, conv_badge_id, badge_status_id, evidence_link, reviewer_id,
+                                                comments)     
+

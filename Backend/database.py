@@ -12,10 +12,9 @@ load_dotenv(dotenv_path=ENV_PATH)
 client = MongoClient(
     # 'mongodb+srv://dbuser:admin123@badger.1phkn.azure.mongodb.net/Badger_dev?retryWrites=true&w=majority'
     # 'mongodb+srv://dbuser:admin123@panoplycluster0.ssmov.mongodb.net/Panoply?retryWrites=true&w=majority'
-    os.getenv("DB_CONNECTION_STRING"), tlsCAFile=certifi.where()
+    os.getenv("DB_CONNECTION_STRING"),tlsCAFile=certifi.where()
 )
 myDB = client[os.getenv("DB_NAME")]
-
 
 def connect():
     if os.getenv("DB_NAME") in client.list_database_names():
@@ -27,7 +26,6 @@ def count_users():
     user_collection = myDB["Users"]
     return user_collection.count()
 
-
 def get_user_details(email):
     user_doc = {}
 
@@ -38,6 +36,22 @@ def get_user_details(email):
         user_doc = x
     return user_doc
 
+def get_user_Id(email):
+    user_doc = {}
+    user_collection = myDB["Users"]
+    data = user_collection.find({"email":email},{"_id":1})
+    #my_doc = list(data)
+    for x in data:
+        user_doc = x["_id"]
+    return user_doc
+
+def get_badge_Id(badge_name):
+    badge_doc = {}
+    badge_collection = myDB["Badges"]
+    data = badge_collection.find({"name":badge_name},{"_id":1})
+    for x in data:
+        badge_doc = x["_id"]
+    return badge_doc
 
 def get_user_type(user_type):
     user_type_doc = {}
@@ -419,6 +433,83 @@ def get_all_assertions():
     json = dumps(o, indent=2)
     return json, {'content-type': 'application/json'}
 
+def view_all_assertions_by_reviewer_id(reviewer_id):
+    assertions_collection = myDB["User_Badge_Details"]
+    # query = {"user": user_id}
+    # data = assertions_collection.find(query)
+
+    data = assertions_collection.aggregate([
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'userID',
+                'foreignField': '_id',
+                'as': 'user_email_address'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Assertions',
+                'localField': 'assertionID',
+                'foreignField': '_id',
+                'as': 'assertion_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'issuer',
+                'foreignField': '_id',
+                'as': 'issuer_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Users',
+                'localField': 'reviewer',
+                'foreignField': '_id',
+                'as': 'reviewer_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badges',
+                'localField': 'badgeID',
+                'foreignField': '_id',
+                'as': 'badge_details'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Badge_Status',
+                'localField': 'badgeStatus',
+                'foreignField': '_id',
+                'as': 'badge_status'
+            }
+        },
+        {
+            '$match': {
+                "$or": [
+                    {'reviewer': ObjectId(reviewer_id)},
+                    {"$and": [{"reviewer": None}, {"badge_details.reviewers": ObjectId(reviewer_id)}]}
+                ]
+            }
+        },
+        {
+
+            '$project': {"assertion_details._id": 1, "user_email_address._id": 1, "user_email_address.email": 1,
+                         "badge_details.name": 1,
+                         "badge_details.link": 1, "badge_details.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
+                         "_id": 0, "reviewer": 1}
+
+        }
+    ])
+
+    o = list(data)
+    json = dumps(o, indent=2)
+    return json, {'content-type': 'application/json'}
+
+
 
 def get_assertions_with_user_id_and_badge_id(user_id, badge_id):
     assertion_collection = myDB["Assertions"]
@@ -509,81 +600,6 @@ def get_assertions_with_user_id(user_id):
     return json, {'content-type': 'application/json'}
 
 
-def view_all_assertions_by_reviewer_id(reviewer_id):
-    assertions_collection = myDB["User_Badge_Details"]
-    # query = {"user": user_id}
-    # data = assertions_collection.find(query)
-
-    data = assertions_collection.aggregate([
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'userID',
-                'foreignField': '_id',
-                'as': 'user_email_address'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Assertions',
-                'localField': 'assertionID',
-                'foreignField': '_id',
-                'as': 'assertion_details'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'issuer',
-                'foreignField': '_id',
-                'as': 'issuer_details'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Users',
-                'localField': 'reviewer',
-                'foreignField': '_id',
-                'as': 'reviewer_details'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badges',
-                'localField': 'badgeID',
-                'foreignField': '_id',
-                'as': 'badge_details'
-            }
-        },
-        {
-            '$lookup': {
-                'from': 'Badge_Status',
-                'localField': 'badgeStatus',
-                'foreignField': '_id',
-                'as': 'badge_status'
-            }
-        },
-        {
-            '$match': {
-                "$or": [
-                    {'reviewer': ObjectId(reviewer_id)},
-                    {"$and": [{"reviewer": None}, {"badge_details.reviewers": ObjectId(reviewer_id)}]}
-                ]
-            }
-        },
-        {
-
-            '$project': {"assertion_details._id": 1, "user_email_address._id": 1, "user_email_address.email": 1,
-                         "badge_details.name": 1,
-                         "badge_details.link": 1, "badge_details.icon": 1, "badge_status.badgeStatus": 1, "issuedOn": 1,
-                         "_id": 0, "reviewer": 1}
-
-        }
-    ])
-
-    o = list(data)
-    json = dumps(o, indent=2)
-    return json, {'content-type': 'application/json'}
 
 
 def get_assertions_with_badge_id(badge_id):
@@ -1245,7 +1261,7 @@ def add_user_badge_mapping(user_id, badge_id, badge_status_id, work_link, assert
                          "badgeID": ObjectId(badge_id), "assertionID": ObjectId(assertion_id),
                          "created": datetime.now(timezone.utc), "modified": datetime.now(timezone.utc),
                          "badgeStatus": ObjectId(badge_status_id), "workLink": work_link,
-                         # "reviewer": ObjectId(admin_reviewer_id),
+                         "reviewer": None,
                          "comments": comments, "issuer": None, "issuedOn": None, "deletedOn": None, "deletedBy": None
                          }
 
@@ -1276,4 +1292,32 @@ def modify_badge_in_db(badge_name, badge_description, link, badge_type, user_req
         }, upsert=True
     )
     return "updated"
+
+def get_user_status_options():
+    user_status_collection = myDB["User_Status"]
+    data = user_status_collection.find({}, {'_id': 0, 'userStatus': 1})
+    # data = user_status_collection.distinct('userStatus')
+    user_status_doc = []
+    for status in data:
+        user_status_doc.append(status)
+    json = dumps(user_status_doc, indent=2)
+    return json
+
+def get_user_type_options():
+    user_type_collection = myDB["User_Type"]
+    data = user_type_collection.find({}, {"_id": 0, "type": 1})
+    user_type_doc = []
+    for type in data:
+        user_type_doc.append(type)
+    json = dumps(user_type_doc, indent=2)
+    return json
+
+
+def get_badge_type_options():
+    badge_type_collection = myDB["Badge_Type"]
+    badge_type_doc = []
+    for badge in badge_type_collection.find({}, {"_id": 0, "badgeType": 1}):
+        badge_type_doc.append(badge)
+    json = dumps(badge_type_doc, indent=2)
+    return json
 
