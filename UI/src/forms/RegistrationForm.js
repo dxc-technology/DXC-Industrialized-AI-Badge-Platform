@@ -33,8 +33,9 @@ const RegistrationForm = () => {
   const [emailClick,setEmailClick] = useState('False');
   const [passClick,setPassClick] = useState('False');
   const [confPassClick,setConfPassClick] = useState('False');
-  const [errorMessage, setErrorMessage] = useState('')
-  
+  const [passErrorMessage, setPassErrorMessage] = useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const [confirmPasswordError,setConfirmPasswordError]= useState('');
   
 
 
@@ -50,11 +51,22 @@ const RegistrationForm = () => {
   const handleOrganizationNameChange = event => {
     SetOrganizationName(event.target.value);
   };
-  const handleEmailChange = event => {
-    setEmail(event.target.value);
-    console.log(event.target.value)
+  // const handleEmailChange = event => {
+  //   setEmail(event.target.value);
+  //   console.log(event.target.value)
+  // };
+  const handleEmailChange = (value) => {
+    // var email = e.target.value
+    console.log(value)
+    setEmail(value);
+  
+    if (validator.isEmail(value)) {
+      setEmailErrorMessage('Valid Email :)')
+    } else {
+      setEmailErrorMessage('Enter valid Email!')
+    }
+
   };
-  // const handlePasswordChange = event => {
     
   const handlePasswordChange=(value) => {
     console.log(value)
@@ -63,19 +75,37 @@ const RegistrationForm = () => {
         minLength: 8, minLowercase: 1,
         minUppercase: 1, minNumbers: 1, minSymbols: 1
       })) {
-        setErrorMessage('Is Strong Password')
+        setPassErrorMessage('Is Strong Password')
         // setPassword(target.value);
         
       } else {
         
-        setErrorMessage("Password should have atlest one special character,number,uppercase and 8 character long")
+        setPassErrorMessage("Password should have atlest one special character,number,uppercase and 8 character long")
       }  
    
   };
+  // const handleConfirmPasswordChange =(value)=>{
+  //   console.log(value)
+  //   console.log(password)
+  //   console.log(confirmPassword)
+    // setConfirmPassword(value);
+    
+    
   const handleConfirmPasswordChange = event => {
-    setConfirmPassword(event.target.value);
+   setConfirmPassword(event.target.value);
+   console.log(confirmPassword)
+  if (password == confirmPassword) {
+    setConfirmPasswordError('Password matched');
+   
+  }
+  else {
+      
+      setConfirmPasswordError("password do not match")
+    }  
 
-  };
+};
+
+  // };
 
   const useStyles = makeStyles((theme) => ({
     paper: {
@@ -117,7 +147,7 @@ const RegistrationForm = () => {
     setConfPassClick('True');
     
     if (password != confirmPassword) {
-      setresponse('Password Mismatch');
+      // setresponse('Password Mismatch');
       setPassword('');
       setConfirmPassword('');
     }
@@ -229,8 +259,9 @@ const RegistrationForm = () => {
                     "data-testid": "emailID",
                   }}
                   value={email}
-                  onChange={handleEmailChange}
-                />
+                  onChange={(e)=>handleEmailChange(e.target.value)   }/>
+                  <span style={{ fontWeight: 'bold',
+                       color: 'red',}}>{emailErrorMessage}</span>
               </Grid>
               <Grid item xs={12}>
                 
@@ -238,11 +269,15 @@ const RegistrationForm = () => {
                   variant="outlined"
                   required
                   fullWidth
-                  name="password"
+                  id="password"
                   label="Password"
+                  name="password"
+                  autoComplete="password"
+                  type="password"
+                  
                   
                   className={((password.length=='')&& (passClick=='True')) ? 'emptyfield' : ''}
-                  id="password"
+                  
                   // autoComplete="current-password"
                   inputProps={{
                     "data-testid": "password",
@@ -252,7 +287,7 @@ const RegistrationForm = () => {
                 /> <span style={{
                   fontWeight: 'bold',
                   color: 'red',
-                }}>{errorMessage}</span>
+                }}>{passErrorMessage}</span>
                 
               </Grid>
               <Grid item xs={12}>
@@ -272,7 +307,10 @@ const RegistrationForm = () => {
 
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
-                />
+                /> <span style={{
+                  fontWeight: 'bold',
+                  color: 'red',
+                }}>{confirmPasswordError}</span>
               </Grid>
               {/* <Grid item xs={12}>
               <FormControlLabel
