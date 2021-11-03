@@ -15,9 +15,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { mergeClasses } from '@material-ui/styles';
-// import { passwordValidator } from './Validators';
+import validator from 'validator';
 
-import validator from 'validator'
 const RegistrationForm = () => {
 
   const [firstName, setFirstName] = useState('');
@@ -80,7 +79,7 @@ const RegistrationForm = () => {
         
       } else {
         
-        setPassErrorMessage("Password should have atlest one special character,number,uppercase and 8 character long")
+        setPassErrorMessage("Password should have atleast one special character,a number,an uppercase and 8 characters long")
       }  
    
   };
@@ -91,23 +90,23 @@ const RegistrationForm = () => {
     // setConfirmPassword(value);
     
     
-  const handleConfirmPasswordChange = event => {
-   setConfirmPassword(event.target.value);
-   console.log(confirmPassword)
-  if (password == confirmPassword) {
+  const handleConfirmPasswordChange = (value) => {
+    console.log(value)
+   setConfirmPassword(value);
+   
+   
+  if (password == value) {
     setConfirmPasswordError('Password matched');
    
   }
   else {
       
-      setConfirmPasswordError("password do not match")
+      setConfirmPasswordError("Password do not match")
     }  
 
 };
 
-  // };
-
-  const useStyles = makeStyles((theme) => ({
+ const useStyles = makeStyles((theme) => ({
     paper: {
       marginTop: theme.spacing(8),
       display: 'flex',
@@ -162,7 +161,6 @@ const RegistrationForm = () => {
 
   const handleReset = () => {
     setPassword('');
-
   }
   if (response == 'login') {
     return (
@@ -261,7 +259,7 @@ const RegistrationForm = () => {
                   value={email}
                   onChange={(e)=>handleEmailChange(e.target.value)   }/>
                   <span style={{ fontWeight: 'bold',
-                       color: 'red',}}>{emailErrorMessage}</span>
+                       color: 'blue',}}>{emailErrorMessage}</span>
               </Grid>
               <Grid item xs={12}>
                 
@@ -286,7 +284,7 @@ const RegistrationForm = () => {
                   onChange={(e)=>handlePasswordChange(e.target.value)}
                 /> <span style={{
                   fontWeight: 'bold',
-                  color: 'red',
+                  color: 'blue',
                 }}>{passErrorMessage}</span>
                 
               </Grid>
@@ -296,20 +294,21 @@ const RegistrationForm = () => {
                   required
                   fullWidth
                   name="confirmpassword"
+                  id="confirmpassword"
                   label="Confirm Password"
                   type="password"
                   className={((confirmPassword.length=='')&& (confPassClick=='True')) ? 'emptyfield' : ''}
-                  id="confirmpassword"
+                  
                   // autoComplete="current-password"
                   inputProps={{
                     "data-testid": "confirmPassword",
                   }}
 
                   value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
+                  onChange={(e)=>handleConfirmPasswordChange(e.target.value)}
                 /> <span style={{
                   fontWeight: 'bold',
-                  color: 'red',
+                  color: 'blue',
                 }}>{confirmPasswordError}</span>
               </Grid>
               {/* <Grid item xs={12}>
