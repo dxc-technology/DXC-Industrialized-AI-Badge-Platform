@@ -227,8 +227,7 @@ const ViewAssertionsForm = (props) => {
                             ))}
                         </TableBody>
                     </Table>
-                    {/* <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
-                    </Button> */}
+                    
                 </React.Fragment>
             </div >
 
