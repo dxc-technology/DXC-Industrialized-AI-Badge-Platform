@@ -48,8 +48,11 @@ const ViewAssertionsForm = (props) => {
             marginTop: theme.spacing(3),
         },
         exportbtnRight: {
-            marginTop: theme.spacing(3),
-            float: "right",
+            marginTop: theme.spacing(2),
+            float:'right',
+            right:8,
+            bottom:10,
+            fontSize:14,
 
         }
     }));
@@ -186,6 +189,10 @@ const ViewAssertionsForm = (props) => {
 
                 <React.Fragment>
                     {/* <Title>Recent Orders</Title> */}
+                    <Button data-testId={'exportAssertion_exportAssertionButton'} variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export
+                    </Button>
+                    <br></br>
+
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -220,8 +227,8 @@ const ViewAssertionsForm = (props) => {
                             ))}
                         </TableBody>
                     </Table>
-                    <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
-                    </Button>
+                    {/* <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
+                    </Button> */}
                 </React.Fragment>
             </div >
 

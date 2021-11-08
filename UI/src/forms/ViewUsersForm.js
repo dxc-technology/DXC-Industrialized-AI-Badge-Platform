@@ -50,10 +50,12 @@ const ViewUsersForm = (props) => {
             marginTop: theme.spacing(3),
         },
         exportbtnRight: {
-            marginTop: theme.spacing(3),
-            float: "right",
-
-        }
+            marginTop: theme.spacing(2),
+            float:'right',
+            right:8,
+            bottom:50,
+            fontSize:14,
+            }
     }));
 
 
@@ -155,7 +157,8 @@ const ViewUsersForm = (props) => {
                                 Add New User
                 </Button>
                         </Box>
-
+                        <Button data-testId={'exportUser_exportUserButton'} variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export
+                    </Button>
 
                         <br></br>
                         <Table size="small">
@@ -199,8 +202,7 @@ const ViewUsersForm = (props) => {
                                 ))}
                             </TableBody>
                         </Table>
-                        <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
-          </Button>
+            
                     </React.Fragment>
                 </div >
 
