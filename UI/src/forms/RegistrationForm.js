@@ -121,7 +121,7 @@ const RegistrationForm = () => {
     if (response == 'registered') {
       return (
         <div>
-          <LoginForm result={'Registration Successful! Kindly Login!'} />
+          <LoginForm result={'Registration Successful. Please check your email.'} />
 
         </div>
       );

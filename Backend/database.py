@@ -119,7 +119,7 @@ def add_new_user(email, password, user_type, created_time_utc, modified_time_utc
                  organization_name):
     user_collection = myDB["Users"]
     user_type_doc = get_user_type(user_type)
-    user_status_doc = get_user_status("active")
+    user_status_doc = get_user_status("registered")
     new_user = {"email": email, "password": password,
                 "userType": user_type_doc["_id"], "userStatus": user_status_doc["_id"], "created": created_time_utc,
                 "modified": modified_time_utc, "firstName": first_name, "secondName": second_name,
