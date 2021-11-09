@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from dotenv import load_dotenv
 from argon2 import PasswordHasher
 from argon2.exceptions import HashingError, VerificationError, VerifyMismatchError, InvalidHash
+from pymongo import message
 import database
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -187,11 +188,13 @@ def email_content(email_address, body):
     msg['Subject'] = 'Industrial Badger - Password Reset'
     msg['From'] = sender_email
     msg['To'] = receiver_email
-    msg_text = MIMEText('<b>%s</b>' % body, 'html')
-    text = 'Go ahead and reset the password using the given link: http://localhost:3000/passwordchange'
-    msg_text1 = MIMEText(text, "plain")
+
+    message = """\
+    <p> \n </p>
+    <a href="https://industrialized-ai-starter.azurewebsites.net/passwordchange">Click here to reset password</a>
+    """
+    msg_text = MIMEText('<b>%s</b>' % (body + message), 'html')
     msg.attach(msg_text)
-    msg.attach(msg_text1)
 
     try:
         with smtplib.SMTP('smtp.office365.com', 587) as smtpObj:
@@ -211,7 +214,7 @@ def password_reset_email(email):
     user_doc = database.get_user_details(email)
     if len(user_doc) > 0:
         password = generate_strong_password()
-        email_content(email, "This is your new password: " + password)
+        email_content(email, "This is your new temporary password: " + password)
         password_reset(email, password)
         return "Email sent successfully"
     return "user does not exist"
