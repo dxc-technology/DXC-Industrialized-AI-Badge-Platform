@@ -57,10 +57,10 @@ container ="iconimages"
 
 #Blob image strage function
 def upload_file_to_blob(file,badge_name):
-    
-    blob = BlobClient.from_connection_string(conn_str="DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net", container_name="iconimages", blob_name= badge_name)
+    badge_name_result= badge_name + '.png'
+    blob = BlobClient.from_connection_string(conn_str="DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net", container_name="iconimages", blob_name= badge_name_result)
     blob.upload_blob(file)
-    ref =  'https://'+ account + '.blob.core.windows.net/' + container + '/' + badge_name
+    ref =  'https://'+ account + '.blob.core.windows.net/' + container + '/' + badge_name_result
     return ref
 
 

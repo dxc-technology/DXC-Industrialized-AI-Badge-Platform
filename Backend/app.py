@@ -21,7 +21,7 @@ from os import path
 app = Flask(__name__)
 cors = CORS(app)
 
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif','.jpeg']
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif','.jpeg', '.PNG', '.JPEG', '.JPG']
 
 
 @app.route("/")
@@ -171,11 +171,18 @@ def add_new_badge():
     badge_type = request.form.get("badgetype")
     owner = request.form.get("owner")
     reviewer = request.form.get("reviewer")
-    icon = request.files.get('icon')
     evidence = request.form.get("evidence")
-
-    return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
+    icon = request.files.get('icon')
+    
+    if icon != None or '':
+        file_ext = os.path.splitext(icon.filename.replace(' ', ''))[1]
+        if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+            return "Not a valid File Format"    
+        else:
+            return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
                                   badge_type, owner, reviewer, icon, evidence)
+    else:
+        return "Upload the Badge Icon"
     # image_bytes = Image.open(io.BytesIO(icon.read()))
     # image_bytes = Image.open(icon.stream)
     # icon = request.form["icon"]
