@@ -14,44 +14,44 @@ import string, random, requests
 from werkzeug.utils import secure_filename
 from azure.storage.blob import BlobClient
 
-# blob_service = BlockBlobService(account_name="aibadgeplatform",
-# account_key="wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==")
-AZURE_CONTAINER_BASE_URL = 'https://aibadgeplatform.blob.core.windows.net/iconimages/'
-# connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
-connect_str = "DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net"
+# # blob_service = BlockBlobService(account_name="aibadgeplatform",
+# # account_key="wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==")
+# AZURE_CONTAINER_BASE_URL = 'https://aibadgeplatform.blob.core.windows.net/iconimages/'
+# # connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+# connect_str = "DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net"
 
 
-# blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-# my_connection_string = os.getenv("DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net")
+# # blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+# # my_connection_string = os.getenv("DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net")
 
-def upload_file_to_azure(filename):
-    if os.path.isfile(filename):
-        blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-        blob_client = blob_service_client.get_blob_client(container="iconimages", blob=filename)
-        image_content_setting = ContentSettings(content_type='image/jpeg')
-        with open(filename, "rb") as data:
-            blob_client.upload_blob(data, overwrite=True,content_settings=image_content_setting)
-        ref = AZURE_CONTAINER_BASE_URL + filename
-        return ref
-    return "Please enter a valid file name"
+# def upload_file_to_azure(filename):
+#     if os.path.isfile(filename):
+#         blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+#         blob_client = blob_service_client.get_blob_client(container="iconimages", blob=filename)
+#         image_content_setting = ContentSettings(content_type='image/jpeg')
+#         with open(filename, "rb") as data:
+#             blob_client.upload_blob(data, overwrite=True,content_settings=image_content_setting)
+#         ref = AZURE_CONTAINER_BASE_URL + filename
+#         return ref
+#     return "Please enter a valid file name"
 
-    download_file_path = os.path.join("./", str.replace(badge_name ,'.png', badge_name))
+#     download_file_path = os.path.join("./", str.replace(badge_name ,'.png', badge_name))
 
-    with open(download_file_path, "wb") as download_file:
-        download_file.write(blob_client.download_blob().readall())
+#     with open(download_file_path, "wb") as download_file:
+#         download_file.write(blob_client.download_blob().readall())
 
-    return "Please enter a valid file name"
+#     return "Please enter a valid file name"
 
    
 
 
 #Random file name generator fr Blob image storage
-def id_generator(size=32, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
+# def id_generator(size=32, chars=string.ascii_uppercase + string.digits):
+#     return ''.join(random.choice(chars) for _ in range(size))
 
 #Blob storage connection details 
 account = "aibadgeplatform"
-key = "wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ=="
+#key = "wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ=="
 container ="iconimages"
 # blob_service = BlobClient(account_name="aibadgeplatform", account_key="wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==")
 
@@ -60,7 +60,7 @@ def upload_file_to_blob(file,badge_name):
     
     blob = BlobClient.from_connection_string(conn_str="DefaultEndpointsProtocol=https;AccountName=aibadgeplatform;AccountKey=wC7c492Ibzz0iLVkcC2etvnjT+fror52n4mB8t+BQEJWA/61ATSKuFyj5OKA/2XtI7Eone2hEFQylcsLFsMyGQ==;EndpointSuffix=core.windows.net", container_name="iconimages", blob_name= badge_name)
     blob.upload_blob(file)
-    ref =  'http://'+ account + '.blob.core.windows.net/' + container + '/' + badge_name
+    ref =  'https://'+ account + '.blob.core.windows.net/' + container + '/' + badge_name
     return ref
 
 
@@ -176,6 +176,7 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
     badge_type_status = badge_type_validation(badge_type)
     owner_email_result = split_owner_emails(owner)
     reviewer_email_result = split_reviewer_emails(reviewer)
+    #badge_name_result = badge_name.strip()
     
     if badge_input_status == "Valid":
         if user_requestable_status == user_requestable:
@@ -183,7 +184,7 @@ def add_badge(badge_name, badge_description, link, user_requestable, badge_type,
                 if owner_email_result == "valid owner":
                     if reviewer_email_result == "valid reviewer":
                         if user_evidence_status == evidence:
-                            icon_url = upload_file_to_blob(icon,badge_name)
+                            icon_url = upload_file_to_blob(icon,badge_name.replace(' ', ''))
                         
                             if icon_url != None:
                                 # if icon_url != "Please enter a valid file name":
