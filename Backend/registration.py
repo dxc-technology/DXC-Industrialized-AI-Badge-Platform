@@ -100,6 +100,33 @@ def generate_strong_password():
         password = password + x
     return password
 
+def email_confirmation(email_address):
+    env_path = 'backend_variable.env'
+    load_dotenv(dotenv_path=env_path)
+    sender_email = "No-replyBadge@cscportal.onmicrosoft.com"
+    receiver_email = email_address
+
+    msg = MIMEMultipart()
+    msg['Subject'] = 'Industrial Badger - Confirm and  activate email'
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+
+    message = """\
+    <p> Please click on the link below  to activate your email </p>
+    <a href="https://industrialized-ai-starter.azurewebsites.net/">Click here to activate your email</a>
+    """
+    msg_text = MIMEText('<b>%s</b>'  % message, 'html')
+    msg.attach(msg_text)
+
+    try:
+        with smtplib.SMTP('smtp.office365.com', 587) as smtpObj:
+            smtpObj.ehlo()
+            smtpObj.starttls()
+            smtpObj.login(os.getenv("MAIL_USERNAME"), os.getenv("MAIL_PASSWORD"))
+            smtpObj.sendmail(sender_email, receiver_email, msg.as_string())
+    except Exception as e:
+        print(e)
+
 
 def register(email, password, user_type, first_name, second_name, middle_name, organization_name):
     if validate_email_exist(email.lower()) == "email already exists":
@@ -124,7 +151,8 @@ def register(email, password, user_type, first_name, second_name, middle_name, o
         email, hashed_password, new_user_type, created_time_utc, modified_time_utc, first_name, second_name,
         middle_name, organization_name)
     if len(new_user_id) > 0:
-        return "registered"
+        email_confirmation(email)
+        return "registered"   
     return None
 
 
@@ -218,3 +246,7 @@ def password_reset_email(email):
         password_reset(email, password)
         return "Email sent successfully"
     return "user does not exist"
+
+
+
+

@@ -16,12 +16,16 @@ def login(email, password):
         return "email is not correct"
     user_doc = database.get_user_details(email.lower())
     if len(user_doc) > 0:
-        try:
-            if password_hash.verify(user_doc['password'], password):
-                return str(ObjectId(user_doc['userType']))
+        if (user_doc['userStatus'] == "active"):    
+            try:
+                if password_hash.verify(user_doc['password'], password):
+                    return str(ObjectId(user_doc['userType']))
 
-        except (InvalidHash, HashingError, VerificationError, VerifyMismatchError):
-            return "password is wrong"
+            except (InvalidHash, HashingError, VerificationError, VerifyMismatchError):
+                return "password is wrong"
+        else:
+            return "please confirm and activate your account"
+
     return "user does not exist"
 
 
