@@ -16,6 +16,13 @@ client = MongoClient(
 )
 myDB = client[os.getenv("DB_NAME")]
 
+#BADGES
+APPROVED_BADGE_STATUS = "5f776f416289f17659874f2c"
+DELETED_BADGE_STATUS = "60416608ab8f4c15c115e6eb"
+
+#USERS
+ADMIN_USER = "614a4946e59455f33d9c3b1a"
+
 def connect():
     if os.getenv("DB_NAME") in client.list_database_names():
         return "successfully connected"
@@ -519,7 +526,7 @@ def get_assertions_with_user_id_and_badge_id(user_id, badge_id):
                 "$and": [
                     {'user': ObjectId(user_id)},
                     {"badge": ObjectId(badge_id)},
-                    {"badgeStatus": ObjectId("5f776f416289f17659874f2c")}
+                    {"badgeStatus": ObjectId(APPROVED_BADGE_STATUS)}
                 ]
             }
         },
@@ -830,6 +837,7 @@ def get_badge_and_user_details(user_id, badge_id):
     return json, {'content-type': 'application/json'}
 
 
+
 def delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_by_user_id):
     user_badge_details_collection = myDB["User_Badge_Details"]
     user_badge_details_collection.find_one_and_update(
@@ -837,7 +845,7 @@ def delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_
         {
             "$set": {
                 "deletedOn": datetime.now(timezone.utc), "deletedBy": ObjectId(deleted_by_user_id),
-                "modified": datetime.now(timezone.utc), "badgeStatus": ObjectId("60416608ab8f4c15c115e6eb")
+                "modified": datetime.now(timezone.utc), "badgeStatus": ObjectId(DELETED_BADGE_STATUS)
             }
         }, upsert=True
     )
@@ -848,7 +856,7 @@ def delete_user_badge_collection_details_for_assertion_id(assertion_id, deleted_
 
 
 # def update_user_badge_status_for_assertion_id(assertion_id, issuer_id):
-APPROVED_BADGE_STATUS = "5f776f416289f17659874f2c"
+
 
 
 def update_user_badge_status(assertion_id, issuer_id, badge_status_id, comments):
@@ -981,7 +989,7 @@ def auto_add_major_badge(user_id, badge_updated):
     user_badge_details_collection = myDB["User_Badge_Details"]
     check_badge_to_earn_exists = {"user": ObjectId(user_id), "badge": major_badge_to_earn}
     check_approved_badge_to_earn_exists = {"user": ObjectId(user_id), "badge": major_badge_to_earn,
-                                "badgeStatus": ObjectId("5f776f416289f17659874f2c")}
+                                "badgeStatus": ObjectId(APPROVED_BADGE_STATUS)}
     work_link = ''
     public_link = ''
     comments = "You have earned this major badge as you have completed the required minor badges."
@@ -991,7 +999,7 @@ def auto_add_major_badge(user_id, badge_updated):
     #                     {'badge': major_badge_to_earn}
     #     }, 
     #     {"$set": {
-    #             "badgeStatus": ObjectId("5f776f416289f17659874f2c"),
+    #             "badgeStatus": ObjectId(APPROVED_BADGE_STATUS),
     #             "issuedOn": datetime.now(timezone.utc)
     #     }
     
@@ -1011,7 +1019,9 @@ def auto_add_major_badge(user_id, badge_updated):
             },
             {
                 "$set": {
-                    "issuedOn": datetime.now(timezone.utc)
+                    "issuedOn": datetime.now(timezone.utc),
+                    "issuer": ObjectId(ADMIN_USER),
+                    "reviewer": ObjectId(ADMIN_USER)
                 }
             })
             # print("Major Badge Added")
@@ -1059,7 +1069,9 @@ def auto_add_master_badge(user_id, badge_updated):
             },
             {
                 "$set": {
-                    "issuedOn": datetime.now(timezone.utc)
+                    "issuedOn": datetime.now(timezone.utc), 
+                    "issuer": ObjectId(ADMIN_USER),
+                    "reviewer": ObjectId(ADMIN_USER)
                 }
             })
             # print("Master Badge added")
