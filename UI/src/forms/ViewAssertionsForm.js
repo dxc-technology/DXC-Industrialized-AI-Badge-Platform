@@ -17,37 +17,40 @@ import Button from "@material-ui/core/Button";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 
 const ViewAssertionsForm = (props) => {
-  const [response, setresponse] = useState("0");
-  const [assertionDetailClick, setAssertionDetailClick] = useState("false");
-  const [clickedAssertion, setClickedAssertion] = useState("0");
-  const [email, setEmail] = useState(props.email);
-  const [userType, setUserType] = useState(props.userType);
-  const [userID, setUserID] = useState(props.userID);
+    const [response, setresponse] = useState('0');
+    const [assertionDetailClick, setAssertionDetailClick] = useState('false');
+    const [clickedAssertion, setClickedAssertion] = useState('0');
+    const [email, setEmail] = useState(props.email);
+    const [userType, setUserType] = useState(props.userType);
+    const [userID, setUserID] = useState(props.userID);
 
-  function createData(id, mongoId, user, badgeName, issuedOn, status) {
-    return { id, mongoId, user, badgeName, issuedOn, status };
-  }
-  function exportData(id, user, badgeName, issuedOn, status) {
-    return { id, user, badgeName, issuedOn, status };
-  }
+    function createData(id, mongoId, user, badgeName, issuedOn, status) {
+        return { id, mongoId, user, badgeName, issuedOn, status };
+    }
+    function exportData(id,user, badgeName, issuedOn, status) {
+        return {id, user, badgeName, issuedOn, status };
+    }
 
-  const [rows, setrows] = useState([]);
-  // //   const [passwordClick,setPasswordClick] = useState('False');
+    const [rows, setrows] = useState([]);
+    // //   const [passwordClick,setPasswordClick] = useState('False');
 
-  const handleAssertionDetails = (event) => {
-    setAssertionDetailClick("true");
-    setClickedAssertion(event.currentTarget.value);
+    const handleAssertionDetails = event => {
+        setAssertionDetailClick('true');
+        setClickedAssertion(event.currentTarget.value);
 
-    //
-  };
+        //
+    }
 
-  const useStyles = makeStyles((theme) => ({
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    exportbtnRight: {
-      marginTop: theme.spacing(3),
-      float: "right",
+    const useStyles = makeStyles((theme) => ({
+        seeMore: {
+            marginTop: theme.spacing(3),
+        },
+        exportbtnRight: {
+            marginTop: theme.spacing(2),
+            float:'right',
+            right:8,
+            bottom:10,
+            fontSize:14,
     },
   }));
 
@@ -220,7 +223,9 @@ const ViewAssertionsForm = (props) => {
         <input data-testid="viewAssertions_RowCount" hidden value={response} />
 
         <React.Fragment>
-          {/* <Title>Recent Orders</Title> */}
+         <Button data-testId={'exportAssertion_exportAssertionButton'} variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export
+                    </Button>
+                    <br></br>
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -265,17 +270,6 @@ const ViewAssertionsForm = (props) => {
               ))}
             </TableBody>
           </Table>
-          <Button
-            variant="contained"
-            size="small"
-            color="primary"
-            className={classes.exportbtnRight}
-            onClick={handleexportData}
-            startIcon={<ArrowDownwardIcon />}
-          >
-            {" "}
-            Export to Excel
-          </Button>
         </React.Fragment>
       </div>
     );
