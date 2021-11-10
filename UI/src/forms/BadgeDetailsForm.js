@@ -29,7 +29,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import addNewAssertionResponse from '../API/AddNewAssertionAPI';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
-import getViewBadgeTypeOptionsResponse from '../API/ViewBadgeTypeOptionsAPI';
 
 
 
@@ -60,7 +59,7 @@ const BadgeDetailsForm = (props) => {
   const [workLink, setWorkLink]=useState('');
   const [assigneeEmail, setAssigneeEmail] = useState('');
   const [assigneeID, setAssigneeID] = useState('');
-  const [BadgeTypeOptions,setBadgeTypeOptions] = useState([]);
+  const [BadgeLevel, setBadgeLevel] = useState('');
 
   const useStyles = makeStyles((theme) => ({
     paper: {
@@ -163,53 +162,34 @@ const BadgeDetailsForm = (props) => {
     var response3 = new Promise((resolve, reject) => {
       resolve(addNewAssertionResponse(userID,badgeId,'',workLink,'',''));
     }).then(value => {   
-      // if (value == 200) {
-      //   setrequestBadgeResult('Request for Badge is successfully submitted');
-      // }
-      setrequestBadgeResult(value);
+      if (value == 200) {
+        setrequestBadgeResult('Request for Badge is successfully submitted');
+      }
+
 
     });
     setRequestBadgeButtonClicked(false);
   };
 
-  // const handleAssignBadge =async() => {
-  //   var response4 = new Promise((resolve, reject) => {
-  //     resolve(UserDetailByEmailResponse(assigneeEmail));
-  //     }).then(value => {
-  //     if (value != undefined) {
-  //         setAssigneeID(value[0]._id.$oid);
-  //     }
-  //   });
-  //   var response5 = new Promise((resolve, reject) => {
-  //     resolve(addNewAssertionResponse(assigneeID,badgeId,'','','',''));
-  //   }).then(value => {   
-  //     if (value == 200) {
-  //       setAssignBadgeResult('Badge Assigned successfully');
-  //     }
-  //   });
-  //   setAssignBadgeButtonClicked(false);
-  // }
-
-  const handleAssignBadge = async () => {
+  const handleAssignBadge =async() => {
     var response4 = new Promise((resolve, reject) => {
       resolve(UserDetailByEmailResponse(assigneeEmail));
-    }).then((value) => {
-      if (value != undefined && value != "") {
-        var response5 = new Promise((resolve, reject) => {
-          resolve(
-            addNewAssertionResponse(value[0]._id.$oid, badgeId, "", "", "", "")
-          );
-        }).then((value) => {
-          setAssignBadgeResult(value);
-        });
-      } else {
-        setAssignBadgeResult("Cannot find the user email");
+      }).then(value => {
+      if (value != undefined) {
+          setAssigneeID(value[0]._id.$oid);
       }
     });
-    setAssignBadgeButtonClicked(false);
-  };
-  
+    var response5 = new Promise((resolve, reject) => {
+      resolve(addNewAssertionResponse(assigneeID,badgeId,'','','',''));
+    }).then(value => {   
+      if (value == 200) {
+        setAssignBadgeResult('Badge Assigned successfully');
+      }
 
+
+    });
+    setAssignBadgeButtonClicked(false);
+  }
   const handleviewBadgeByName = async () => {
 
     var response1 = new Promise((resolve, reject) => {
@@ -227,6 +207,7 @@ const BadgeDetailsForm = (props) => {
         setCreatedDate(formatDate(value[0].created.$date));
         setModifiedDate(formatDate(value[0].modified.$date));
         setIcon(value[0].icon);
+        setBadgeLevel(value[0].badgeLevel);
       }
 
 
@@ -234,31 +215,14 @@ const BadgeDetailsForm = (props) => {
 
   }
 
-  const handleviewBadgeTypeOptions= async() => {
-    var response1 = new Promise((resolve, reject) => {
-        resolve(getViewBadgeTypeOptionsResponse());
-    }).then(value => {
-        if (value != undefined) {
-            //console.log('value' + value);
-            setBadgeTypeOptions(value);
-            //alert('value' + value);
-            // //{value.map(UserTypeOptions => {UserTypeOptions})}
-            // //alert(BadgeTypeOptions);
-            // console.log(BadgeTypeOptions);
-        }
-        
-    });
-}
-
   useEffect(() => {
-    handleviewBadgeByName();
-    handleviewBadgeTypeOptions();
+    handleviewBadgeByName()
   }, []);
 
   
 if (backbuttonClicked=='True'){
 return (
-  <div><ViewBadgeForm userType={userType} userID={userID}/> </div>
+  <div><ViewBadgeForm userType={userType} /> </div>
 );
 }
 else{
@@ -362,13 +326,10 @@ return (
                                 "data-testid": "badgeDetails_badgeType",
                             }}
                             value={badgeType}
-                            onChange={handleBadgeTypeChange}                          
-                            >                          
-
-                            {BadgeTypeOptions.map((data) => (                             
-                            <MenuItem value={data.badgeType}>{data.badgeType}</MenuItem>
-                            //<MenuItem value={'Community Badge'}>Community Badge</MenuItem>
-                             ))}
+                            onChange={handleBadgeTypeChange}
+                            >
+                            <MenuItem value={'Open Badge'}>Open Badge</MenuItem>
+                            <MenuItem value={'Community Badge'}>Community Badge</MenuItem>
                         </Select>
             {/* <TextField
               variant="outlined"
@@ -401,7 +362,6 @@ return (
                             value={evidenceRequired}
                             onChange={handleEvidenceRequiredChange}
                             >
-                              
                             <MenuItem value={'True'}>True</MenuItem>
                             <MenuItem value={'False'}>False</MenuItem>
                         </Select>
@@ -890,6 +850,7 @@ else {
               fullWidth
               variant="contained"
               color="primary"
+              disabled={BadgeLevel=='major'?true:(BadgeLevel=='master'?true:false)}
               className={classes.submit}
               data-testid="badgeDetails_requestButton" 
               onClick={handleRequestBadgeButtonClick}>

@@ -174,7 +174,7 @@ def get_badge_with_badge_name(badge_name):
             }
         },
         {
-            '$project': {"name": 1, "description": 1, "created": 1, "modified": 1, "link": 1,
+            '$project': {"name": 1, "description": 1, "created": 1, "modified": 1, "link": 1, "badgeLevel": 1,
                          "badge_type_details.badgeType": 1, "userRequestable": 1, "owner_details.email": 1,
                          "reviewer_details.email": 1, "icon": 1, "evidence": 1}
         }
