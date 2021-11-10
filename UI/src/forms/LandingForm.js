@@ -135,34 +135,37 @@ const LandingForm = (props)=>
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItem>
+
           <ListItem button data-testid="LandingForm_viewMyBackpackButton" onClick={handleMyBackpackButtonClick}>
             <ListItemIcon>
             <BootstrapTooltip title ="My Backpack"><LocalMallIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="My Backpack" />
           </ListItem>
-          <ListItem button data-testid="LandingForm_viewBadgeButton" onClick={handleViewbadgeButtonClick}>
+
+          <ListItem button data-testid="LandingForm_viewBadgeButton" onClick={handleViewbadgeButtonClick}>           
             <ListItemIcon>
             <BootstrapTooltip title ="Badges"><PeopleIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Badges" />
           </ListItem>
-          {/* <ListItem button component="a" href="mailto:panoply@dxc.com"> */}
-          <ListItem button id="LandingForm_feedbackButton" onClick={handleSupportButtonClick}>
-          
+
+          <ListItem button component="a" href="mailto:panoply@dxc.com">
+          {/* <ListItem button id="LandingForm_feedbackButton" onClick={handleSupportButtonClick}>*/}
             <ListItemIcon>
             <BootstrapTooltip title ="Support"><BarChartIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Support"/>
           </ListItem>
+
           <ListItem button>
             <ListItemIcon>
             <BootstrapTooltip title ="FAQ"><LayersIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="FAQ" />
           </ListItem>
-          <ListItem button id="LandingForm_updateProfile" onClick={handleUpdateProfileButtonClick}>
-          
+
+          <ListItem button id="LandingForm_updateProfile" onClick={handleUpdateProfileButtonClick}>          
             <ListItemIcon>
             <BootstrapTooltip title ="Profile"><PersonIcon /></BootstrapTooltip>
             </ListItemIcon>
