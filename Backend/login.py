@@ -16,7 +16,7 @@ def login(email, password):
         return "email is not correct"
     user_doc = database.get_user_details(email.lower())
     if len(user_doc) > 0:
-        if (user_doc['userStatus'] == "active"):    
+        if (user_doc['userStatus'] == ObjectId('5f776e5d6289f17659874f27')):    
             try:
                 if password_hash.verify(user_doc['password'], password):
                     return str(ObjectId(user_doc['userType']))
