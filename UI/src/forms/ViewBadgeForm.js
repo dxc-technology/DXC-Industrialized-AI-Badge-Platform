@@ -62,9 +62,12 @@ const ViewBadgeForm = (props) => {
             marginTop: theme.spacing(3),
 
         },
-        titleItemRight: {
-            marginTop: theme.spacing(3),
-            float: "right",
+        exportbtnRight: {
+            marginTop: theme.spacing(2),
+            float:'right',
+            right:8,           
+            bottom:10,
+            fontSize:14,
 
         }
     }));
@@ -160,6 +163,9 @@ const ViewBadgeForm = (props) => {
 
                 <React.Fragment>
                     {/* <Title>Recent Orders</Title> */}
+                    <Button data-testId={'exportBadge_exportBadgeButton'} variant="contained" onClick={handleexportData} size="small" color="primary" className={classes.exportbtnRight} startIcon={<ArrowDownwardIcon />}> Export
+                    </Button>
+                    <br></br>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -202,8 +208,7 @@ const ViewBadgeForm = (props) => {
                         </TableBody>
                     </Table>
 
-                    <Button data-testId={'exportBadge_exportBadgeButton'} variant="contained" onClick={handleexportData} size="small" color="primary" className={classes.titleItemRight} startIcon={<ArrowDownwardIcon />}> Export to Excel
-      </Button>
+                   
 
 
                     {/* <div className={classes.seeMore}>
