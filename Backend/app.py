@@ -16,6 +16,8 @@ import user_badge_deactivation
 import database
 import os
 import io
+import reviewer_dashboard
+import my_backpack
 from io import StringIO
 import os.path
 from os import path
@@ -474,3 +476,78 @@ def create_new_assertions_from_ai_starter():
     return user_badge_mapping.add_badge_to_user(conv_user_id, conv_badge_id, badge_status_id, evidence_link, reviewer_id,
                                                 comments)     
 
+
+# ------------------ My Backpack ------------------------------
+
+## Count
+
+
+## List
+@app.route("/viewongoingassertionsbyuserid", methods=['POST'])
+def view_ongoing_assertions_by_user_id():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_ongoing_assertions_by_user_id(user_id)
+
+@app.route("/viewminorbadgesearnedbyuserid", methods=['POST'])
+def view_minor_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_minor_badges_earned_by_userid(user_id)
+    
+@app.route("/viewmajorbadgesearnedbyuserid", methods=['POST'])
+def view_major_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_major_badges_earned_by_userid(user_id)
+    
+@app.route("/viewmasterbadgesearnedbyuserid", methods=['POST'])
+def view_master_badges_earned_by_userid():
+    user_id = str(request.args.get('user'))
+    return my_backpack.view_master_badges_earned_by_userid(user_id)
+
+## Button
+@app.route("/resubmitapplication", methods=['POST'])
+def resubmit_application():
+    assertion_id = str(request.args.get('assertion'))
+    return my_backpack.resubmit_application(assertion_id)
+
+
+
+
+# ------------------ Reviewer Dashboard ------------------------------
+## Count
+
+
+## List
+@app.route("/viewauthorizedbadgestoreview", methods=['POST'])
+def view_authorized_badges_to_review():
+    # req_body = request.get_json()
+    # user_id = req_body['reviewer']
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_authorized_badges_to_review(user_id)
+
+@app.route("/viewassignedassertionsbyreviewer", methods=['POST'])
+def view_assigned_assertions_by_reviewer():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_assigned_assertions_by_reviewer(user_id)
+
+@app.route("/viewunassignedassertionsbyeligiblereviewer", methods=['POST'])
+def view_unassigned_assertions_by_eligible_reviewer():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_unassigned_assertions_by_eligible_reviewer(user_id)
+
+@app.route("/viewissuedbadgesbyreviewer", methods=['POST'])
+def view_issued_badges_by_reviewer():
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.view_issued_badges_by_reviewer(user_id)
+
+## Button
+@app.route("/assigntoselfforreview", methods=['POST'])
+def assign_to_self_for_review():
+    assertion_id = str(request.args.get('assertion'))
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.assign_to_self_for_review(assertion_id, user_id)
+
+@app.route("/unassignselfforreview", methods=['POST'])
+def unassign_self_for_review():   
+    assertion_id = str(request.args.get('assertion'))
+    user_id = str(request.args.get('reviewer'))
+    return reviewer_dashboard.unassign_self_for_review(assertion_id, user_id)
