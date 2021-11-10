@@ -106,8 +106,6 @@ const ViewUsersForm = (props) => {
 
     }
 
-
-
     const handleviewUsers = async () => {
 
         var response1 = new Promise((resolve, reject) => {
@@ -132,15 +130,13 @@ const ViewUsersForm = (props) => {
         handleviewUsers()
     }, []);
 
-    if (addUserButtonClick == 'true') { return (<div><AddUserForm /></div>); }
-    else {
-        if (userDetailClick == 'true') { return (<div><UserDetailsForm email={clickedUser} userID={userID} /></div>); }
-        else {
+    if (addUserButtonClick =='true') { return (<div><AddUserForm userID={userID}/></div>);}
+    else{
+      if (userDetailClick == 'true') { return (<div><UserDetailsForm email={clickedUser} userID={userID}/></div>); }
+      else {
 
-            return (
-                <div>
-
-
+        return (
+          <div>
                     <input data-testid='viewUsers_RowCount' hidden value={response} />
 
                     <React.Fragment>

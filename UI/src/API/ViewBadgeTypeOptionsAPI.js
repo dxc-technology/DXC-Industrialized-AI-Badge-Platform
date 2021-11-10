@@ -1,29 +1,33 @@
-const getForgotPasswordResponse = async(email) => {
+const getViewBadgeTypeOptionsResponse = async() => {
     //GET request
-    var url = process.env.REACT_APP_APILINK+'/sendpasswordresetemail';
+    var url = process.env.REACT_APP_APILINK+'/viewbadgetypeoptions';
     return await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify({email:email}),
+            method: 'GET',
             headers: {
-            'Accept':'application/json',
-            'Content-Type':'application/json'
-        }
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            }
+            //Request Type
         })
-        .then((response) => response.text())
+        .then((response) => response.json())
         //If response is in json then in success
         .then((responseText) => {
             //Success
             // alert(JSON.stringify(responseJson));
-            console.log(responseText);
+            //console.log("in here")
+            //console.log(responseText);
             return responseText;
         })
         //If response is not in json then in error
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
+            console.log("error")
             console.error(error);
             return error;
         });
 }
 
-export default getForgotPasswordResponse;
+
+
+export default getViewBadgeTypeOptionsResponse;

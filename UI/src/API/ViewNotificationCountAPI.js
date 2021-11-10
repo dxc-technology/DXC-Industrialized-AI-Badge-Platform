@@ -1,19 +1,20 @@
-const getForgotPasswordResponse = async(email) => {
-    //GET request
-    var url = process.env.REACT_APP_APILINK+'/sendpasswordresetemail';
+const getViewNotificationsCountResponse = async(logonID) => {
+    var url = process.env.REACT_APP_APILINK+'/viewnotificationcountbylogonid';
     return await fetch(url, {
             method: 'POST',
-            body: JSON.stringify({email:email}),
             headers: {
-            'Accept':'application/json',
-            'Content-Type':'application/json'
-        }
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({logonID: logonID}),
+            //Request Type
         })
-        .then((response) => response.text())
+        .then((response) => response.json())
         //If response is in json then in success
         .then((responseText) => {
             //Success
             // alert(JSON.stringify(responseJson));
+            //console.log("in here")
             console.log(responseText);
             return responseText;
         })
@@ -21,9 +22,10 @@ const getForgotPasswordResponse = async(email) => {
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
+            console.log("error")
             console.error(error);
             return error;
         });
 }
 
-export default getForgotPasswordResponse;
+export default getViewNotificationsResponse;

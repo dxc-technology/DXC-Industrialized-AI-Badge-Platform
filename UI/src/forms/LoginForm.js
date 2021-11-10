@@ -1,5 +1,6 @@
 // import React from 'react';
 import React, { useState } from 'react';
+import {Redirect} from "react-router-dom";
 import getLoginResponse from '../API/LoginAPI'
 import RegistrationForm from './RegistrationForm';
 import Avatar from '@material-ui/core/Avatar';
@@ -82,9 +83,12 @@ const LoginForm = (props) => {
     
     if(result == '5f760d3425c1036d4d46655f' || result == '5f760d4325c1036d4d466560' || result == '5fc5567fcd831cc0c83774b8')
     {
+      sessionStorage.setItem('Token',result)
+      sessionStorage.setItem('Email',email)
         return (
             <div>
-                <LandingForm userType={result} email={email}/>
+                {/* <LandingForm userType={result} email={email}/> */}
+                return <Redirect to="/Dashboard" />
 
             </div>
         );

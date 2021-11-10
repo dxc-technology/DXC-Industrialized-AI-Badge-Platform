@@ -44,14 +44,21 @@ import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 import ReactPlayer from 'react-player';
 // import $ from 'jquery'; 
 import getJIRAResponse from '../API/AddJIRARequestAPI';
+import Button from '@material-ui/core/Button';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Redirect } from 'react-router';
  
 const LandingForm = (props)=>
 {
     const [clickedItem,setClickedItem] = useState('');
     const windowWidth = window.screen.width;
     const drawerWidth = 220;
-    const [userType,setUserType] = useState(props.userType);
-    const [email,setEmail] = useState(props.email);
+    // const [userType,setUserType] = useState(props.userType);
+    // const [email,setEmail] = useState(props.email);
+    const token = sessionStorage.getItem("Token");
+    const em = sessionStorage.getItem("Email");
+    const [userType,setUserType] = useState(token);
+    const [email,setEmail] = useState(em);
     const [userID,setuserID] = useState('');
 
     const handleCreateBadgeButtonClick =()=>{
@@ -81,6 +88,14 @@ const LandingForm = (props)=>
 
     const handleUpdateProfileButtonClick =()=> {
       setClickedItem('ViewProfileForm');
+    }
+
+    const handleLogout =()=>{      
+      sessionStorage.removeItem("Token");
+      sessionStorage.removeItem("Email");
+      localStorage.removeItem("Id");
+      localStorage.removeItem("token");
+      setClickedItem('BacktoLoginForm');    
     }
 
 
@@ -306,8 +321,6 @@ const classes = useStyles();
 
 }
 
-
-
   useEffect(() => {
     handleviewUserByEmail();
   
@@ -315,6 +328,14 @@ const classes = useStyles();
 
 
 
+if (clickedItem=='BacktoLoginForm'){
+  return(
+  <div>
+       <Redirect to="/" />
+  </div>
+  );
+  }
+  else{
 
     return (
 
@@ -341,6 +362,9 @@ const classes = useStyles();
               <NotificationsIcon />
             </Badge>
           </IconButton>
+          <Button onClick={handleLogout} size="large" color="inherit" endIcon={<ExitToAppIcon />}  >
+           Logout
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -372,7 +396,7 @@ const classes = useStyles();
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType} userID={userID}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
-               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):
+               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):              
                (<div>
                  <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
@@ -394,6 +418,7 @@ const classes = useStyles();
             </input>
         </div>
     );
+                  }
 };
 
 export default LandingForm;
