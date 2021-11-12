@@ -17,6 +17,8 @@ def activateuser(email , confirmationCode):
         return "email is not correct"
     user_doc = database.get_user_details(email)
     if len(user_doc) > 0:
+        if(user_doc['userStatus'] == ObjectId('5f776e5d6289f17659874f27')):
+            return "User is already active. Please proceed to login."
         try:
             isMatch = confirmation_code_hash.verify(user_doc['confirmationCode'], confirmationCode)
             if(isMatch):
