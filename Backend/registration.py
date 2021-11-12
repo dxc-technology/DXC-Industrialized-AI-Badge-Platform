@@ -100,7 +100,7 @@ def generate_strong_password():
         password = password + x
     return password
 
-def email_confirmation(email_address):
+def email_confirmation(email_address,body):
     env_path = 'backend_variable.env'
     load_dotenv(dotenv_path=env_path)
     sender_email = "No-replyBadge@cscportal.onmicrosoft.com"
@@ -115,7 +115,7 @@ def email_confirmation(email_address):
     <p> Please click on the link below  to activate your email </p>
     <a href="https://industrialized-ai-starter.azurewebsites.net/">Click here to activate your email</a>
     """
-    msg_text = MIMEText('<b>%s</b>'  % message, 'html')
+    msg_text = MIMEText('<b>%s</b>'  % (body+ message), 'html')
     msg.attach(msg_text)
 
     try:
@@ -145,13 +145,17 @@ def register(email, password, user_type, first_name, second_name, middle_name, o
     new_user_type = user_type_validation(user_type)
     if new_user_type == INVALID_USER_TYPE_MESSAGE:
         return INVALID_USER_TYPE_MESSAGE
+    
+    confirmation_code = generate_strong_password()
     hashed_password = hash_password(password)
+    #confirmation_code_hash = PasswordHasher()
+    hashed_code = hash_password(confirmation_code)
 
     new_user_id = database.add_new_user(
         email, hashed_password, new_user_type, created_time_utc, modified_time_utc, first_name, second_name,
-        middle_name, organization_name)
+        middle_name, organization_name, hashed_code)
     if len(new_user_id) > 0:
-        email_confirmation(email)
+        email_confirmation(email, "This is your activation code: " + confirmation_code)
         return "registered"   
     return None
 
