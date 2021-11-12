@@ -18,7 +18,7 @@ const getpasswordchangeResponse = async (useremail,currentpassword,newpassword) 
         
         //If response is not in json then in error
         .catch((error) => {
-            console.log("error")
+            //console.log("error")
             console.error(error);
             return error;
         });

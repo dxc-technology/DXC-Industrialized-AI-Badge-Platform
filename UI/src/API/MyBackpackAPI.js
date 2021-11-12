@@ -12,7 +12,7 @@ const getMyBackpackResponse = async(userID) => {
             //Success
             // alert(JSON.stringify(responseJson));
             //console.log("in here")
-            console.log(responseText);
+            //console.log(responseText);
             return responseText;
         })
         //If response is not in json then in error

@@ -22,7 +22,7 @@ const getViewUserStatusOptionsResponse = async() => {
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
-            console.log("error")
+            //console.log("error")
             console.error(error);
             return error;
         });

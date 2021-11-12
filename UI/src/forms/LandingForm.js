@@ -28,6 +28,7 @@ import FaceIcon from '@material-ui/icons/Face';
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import LocalMallIcon from '@material-ui/icons/LocalMall'
 import PeopleIcon from '@material-ui/icons/People';
+import LockIcon from '@mui/icons-material/Lock';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
@@ -47,6 +48,7 @@ import getJIRAResponse from '../API/AddJIRARequestAPI';
 import Button from '@material-ui/core/Button';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Redirect } from 'react-router';
+import ChangePasswordForm from './ChangePasswordForm';
  
 const LandingForm = (props)=>
 {
@@ -88,6 +90,10 @@ const LandingForm = (props)=>
 
     const handleUpdateProfileButtonClick =()=> {
       setClickedItem('ViewProfileForm');
+    }
+
+    const handleChangePasswordButtonClick =() =>{
+      setClickedItem('ChangePasswordForm');
     }
 
     const handleLogout =()=>{      
@@ -170,6 +176,13 @@ const LandingForm = (props)=>
             <BootstrapTooltip title ="Profile"><PersonIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Profile"/>
+          </ListItem>
+
+          <ListItem button id="LandingForm_chnagePassword" onClick={handleChangePasswordButtonClick}>          
+            <ListItemIcon>
+            <BootstrapTooltip title ="Password"><LockIcon /></BootstrapTooltip>
+            </ListItemIcon>
+            <ListItemText primary="Password"/>
           </ListItem>
         </div>
       );
@@ -399,13 +412,14 @@ if (clickedItem=='BacktoLoginForm'){
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType} userID={userID}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
-               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):              
+               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):  
+               (clickedItem=='ChangePasswordForm'? (<ChangePasswordForm email={email} userID={userID} />):              
                (<div>
                  <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
                    <source src={logo} type="video/mp4"></source>
                    </video> */}
-                 </div>))))))}
+                 </div>)))))))}
               </Paper>
             </Grid>
           

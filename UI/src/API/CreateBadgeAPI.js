@@ -23,7 +23,7 @@ const getCreateBadgeResponse = async (badge_name, badge_description, link, user_
             //Success
             // alert(JSON.stringify(responseJson));
             // console.log("in here")
-            console.log(responseText);
+            //console.log(responseText);
             return responseText;
         })
         //If response is not in json then in error

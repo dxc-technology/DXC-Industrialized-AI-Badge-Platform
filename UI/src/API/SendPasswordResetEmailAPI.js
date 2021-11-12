@@ -14,7 +14,7 @@ const getForgotPasswordResponse = async(email) => {
         .then((responseText) => {
             //Success
             // alert(JSON.stringify(responseJson));
-            console.log(responseText);
+            //console.log(responseText);
             return responseText;
         })
         //If response is not in json then in error

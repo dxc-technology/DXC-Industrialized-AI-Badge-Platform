@@ -15,14 +15,14 @@ const getViewNotificationsCountResponse = async(logonID) => {
             //Success
             // alert(JSON.stringify(responseJson));
             //console.log("in here")
-            console.log(responseText);
+            //console.log(responseText);
             return responseText;
         })
         //If response is not in json then in error
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
-            console.log("error")
+            //console.log("error")
             console.error(error);
             return error;
         });
