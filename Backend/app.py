@@ -4,6 +4,7 @@ from flask_cors import CORS
 from pymongo import database
 import login
 import registration
+import activate
 import view_badge
 import create_badge
 import view_users
@@ -70,6 +71,22 @@ def register_user():
         organization_name = str(request.args.get('organizationName'))
     return registration.register(new_email, new_password, new_user_type, first_name, second_name, middle_name,
                                  organization_name)
+
+
+@app.route("/activate", methods=['POST'])
+def activate_user():
+    req_body = request.get_json()
+    if req_body['email'] == "None":
+        email_id_list = ""
+    else:
+        email_id_list = req_body['email']
+    if req_body['confirmationCode'] == "None":
+        confirmationCode_list = ""
+    else:
+        confirmationCode_list = req_body['confirmationCode']
+    #email = req_body['email']
+    #confirmationCode = req_body['confirmationCode']
+    return activate.activateuser(email_id_list,confirmationCode_list)
 
 
 @app.route("/updateuser", methods=['POST'])

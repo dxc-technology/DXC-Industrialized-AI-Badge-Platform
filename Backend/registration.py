@@ -148,7 +148,6 @@ def register(email, password, user_type, first_name, second_name, middle_name, o
     
     confirmation_code = generate_strong_password()
     hashed_password = hash_password(password)
-    #confirmation_code_hash = PasswordHasher()
     hashed_code = hash_password(confirmation_code)
 
     new_user_id = database.add_new_user(

@@ -1321,3 +1321,17 @@ def get_badge_type_options():
     json = dumps(badge_type_doc, indent=2)
     return json
 
+
+def modify_user_status(email):
+    user_collection = myDB["Users"]
+    user_collection.find_one_and_update(
+        {"email": email},
+        {
+            "$set": {"userStatus": ObjectId('5f776e5d6289f17659874f27') , "modified": datetime.now(timezone.utc)
+        }
+        }, upsert=True
+    )
+    return "updated"
+
+
+
