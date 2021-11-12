@@ -1,15 +1,22 @@
 const getactivateResponse = async(email, confirmationCode) => {
 
-    var url = process.env.REACT_APP_APILINK+'/activate?email=' + email + '&confirmationCode=' + confirmationCode;
+    var url = process.env.REACT_APP_APILINK+'/activate';
     return await fetch(url, {
-            method: 'POST'
-            //Request Type
+            method: 'POST',
+            body: JSON.stringify({email: email,
+                confirmationCode:confirmationCode,
+            }),
+            headers: {
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            }
         })
-        .then((response) => response.text())
-        //If response is in json then in success
+        .then((response) => response.text()) 
+        // If response is in json then in success
         .then((responseText) => {
             //Success
             // alert(JSON.stringify(responseJson));
+            //console.log("in here")
             console.log(responseText);
             return responseText;
         })
@@ -17,6 +24,7 @@ const getactivateResponse = async(email, confirmationCode) => {
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
+            console.log("error")
             console.error(error);
             return error;
         });

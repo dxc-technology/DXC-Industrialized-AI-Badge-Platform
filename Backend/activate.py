@@ -15,7 +15,7 @@ def activateuser(email , confirmationCode):
         return "email is empty"
     if validate_email_address(email) == INVALID:
         return "email is not correct"
-    user_doc = database.get_user_details(email.lower())
+    user_doc = database.get_user_details(email)
     if len(user_doc) > 0:
         try:
             isMatch = confirmation_code_hash.verify(user_doc['confirmationCode'], confirmationCode)
