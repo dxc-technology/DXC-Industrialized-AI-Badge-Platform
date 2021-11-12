@@ -107,8 +107,14 @@ const MyBackpackDetailsForm = (props) => {
                 setAssertionId(value[0].assertionID.$oid);
                 setBadgeName(value[0].badge_details[0].name);
                 setBadgeRecipient(value[0].user_details[0].email);
-                setBadgeIssuedOn(formatDateTime(value[0].issuedOn.$date));
-                setBadgeIssuedBy(value[0].issuer_details[0].email);
+                if(value[0].issuedOn!=null)
+                    setBadgeIssuedOn(formatDateTime(value[0].issuedOn.$date) + ' EST');
+                else
+                    setBadgeIssuedOn("");
+                if(value[0].issuer_details!='')
+                    setBadgeIssuedBy(value[0].issuer_details[0].email);
+                else
+                    setBadgeIssuedBy('');
                 setBadgeComments(value[0].comments);
                 setBadgeReviewer(value[0].reviewer_details[0].email);
                 setEvidencelink(value[0].workLink);
@@ -237,7 +243,7 @@ return(
                             inputProps={{
                                 "data-testid": "backpackDetails_badgeIssuedOn",
                             }}
-                            value={badgeIssuedOn + ' EST'}
+                            value={badgeIssuedOn}
                         />
                     </Grid>
 
