@@ -909,8 +909,9 @@ def update_user_badge_status(assertion_id, issuer_id, badge_status_id, comments)
     return get_all_user_badge_details_by_assertion_id(assertion_id)
     # return None
 
+
 def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, public_link, user_id,
-                              is_badge_status_changed):
+                              is_badge_status_changed, issuer_id):
     user_badge__details_collection = myDB["User_Badge_Details"]
     assertions_collection = myDB["Assertions"]
 
@@ -919,26 +920,49 @@ def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, p
 
 
     if is_badge_status_changed:
-        user_badge__details_collection.find_one_and_update(
-            {
-                "assertionID": ObjectId(assertion_id)
-            },
-            {
-                "$set": {
-                    "modified": datetime.now(timezone.utc), "badgeStatus": ObjectId(badge_status),
-                    "workLink": work_link, "comments": comments, "publicLink": public_link,
-                    "reviewer": ObjectId(user_id)
-                }
-            }, upsert=True
-        )
-        assertions_collection.find_one_and_update(
-            {"_id": ObjectId(assertion_id)},
-            {
-                "$set": {
-                    "badgeStatus": ObjectId(badge_status)
-                }
-            }, upsert=True
-        )
+        if badge_status == APPROVED_BADGE_STATUS:
+            user_badge__details_collection.find_one_and_update(
+                {
+                    "assertionID": ObjectId(assertion_id)
+                },
+                {
+                    "$set": {
+                        "modified": datetime.now(timezone.utc), "badgeStatus": ObjectId(badge_status),
+                        "workLink": work_link, "comments": comments, "publicLink": public_link,
+                        "reviewer": ObjectId(user_id), "issuer": ObjectId(user_id), "issuedOn": datetime.now(timezone.utc)
+                    }
+                }, upsert=True
+            )
+            assertions_collection.find_one_and_update(
+                {"_id": ObjectId(assertion_id)},
+                {
+                    "$set": {
+                        "badgeStatus": ObjectId(badge_status),
+                        "issuedOn": datetime.now(timezone.utc)
+                    }
+                }, upsert=True
+            )
+        else:
+            user_badge__details_collection.find_one_and_update(
+                {
+                    "assertionID": ObjectId(assertion_id)
+                },
+                {
+                    "$set": {
+                        "modified": datetime.now(timezone.utc), "badgeStatus": ObjectId(badge_status),
+                        "workLink": work_link, "comments": comments, "publicLink": public_link,
+                        "reviewer": ObjectId(user_id)
+                    }
+                }, upsert=True
+            )
+            assertions_collection.find_one_and_update(
+                {"_id": ObjectId(assertion_id)},
+                {
+                    "$set": {
+                        "badgeStatus": ObjectId(badge_status)
+                    }
+                }, upsert=True
+            )
 
         # print("Call function via Admin update")
         # print("user id:", badge_user)
