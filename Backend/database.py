@@ -911,7 +911,7 @@ def update_user_badge_status(assertion_id, issuer_id, badge_status_id, comments)
 
 
 def update_user_badge_mapping(assertion_id, badge_status, work_link, comments, public_link, user_id,
-                              is_badge_status_changed, issuer_id):
+                              is_badge_status_changed):
     user_badge__details_collection = myDB["User_Badge_Details"]
     assertions_collection = myDB["Assertions"]
 
