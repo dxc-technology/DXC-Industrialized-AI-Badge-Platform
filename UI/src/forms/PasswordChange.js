@@ -9,53 +9,87 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import validator from 'validator';
 
 const PasswordChange = (props) => {
 
   const [passwordResetResponse, setpasswordResetResponse] = useState('');
-  const [useremail, setuseremail] = useState('');
-  const [currentpassword, setcurrentpassword] = useState('');
-  const [newpassword, setnewpassword] = useState('');
-  const [confirmpassword, setconfirmpassword] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const[ emailError,setEmailError]= useState('');
+  const[ currentPassError,setCurrentPassError]= useState('');
+  const[ newPassError,setNewPassError]= useState('');
+  const[ confirmPasswordError,setConfirmPasswordError]= useState('');
+  const[ userEmailClick,setUserEmailClick]= useState('');
+  const[ newPassClick,setNewPassClick]= useState('');
+  const[ confPassClick,setConfPassClick]= useState('');
+  const[ currentPassClick,setcurrentPassClick]= useState('');
 
 
-const handlecurrentpassword = event => {
-  setcurrentpassword(event.target.value);
+
+
+const handleCurrentPasswordChange = event => {
+  setCurrentPassword(event.target.value);
 
 };
 
-const handlenewpassword = event => {
-  setnewpassword(event.target.value);
+const handleNewPasswordChange = (value) => {
+  setNewPassword(value);
+  if (validator.isStrongPassword(value, {
+    minLength: 8, minLowercase: 1,
+    minUppercase: 1, minNumbers: 1, minSymbols: 1
+  })) {
+    setNewPassError('Is Strong Password')
+    // setPassword(target.value);
+    
+  } else {
+    
+    setNewPassError("Password should have atleast one special character,a number,an uppercase and 8 characters long")
+  }  
+
 
 };
 
-const handleconfirmpassword = event => {
-  setconfirmpassword(event.target.value);
+const handleConfirmPassword = (value) => {
+  setConfirmPassword(value);
+  if (newPassword == value) {
+    setConfirmPasswordError('Password matched');
+ 
+  }
+  else {
+    
+    setConfirmPasswordError("Password do not match")
+  }  
 
 };
 
-const handleemail = event => {
-  setuseremail(event.target.value);
+const handleEmailChange = (value) => { 
+  setUserEmail(value);
+
+if (validator.isEmail(value)) {
+  setEmailError('Valid Email :)')
+} else {
+  setEmailError('Enter valid Email!')
+}
 
 };
 
 
 const handleForgotPassword = async () => {
+  setUserEmailClick('True');
+  setcurrentPassClick('True')
+  setNewPassClick('True');
+  setConfPassClick('True');
 
-  if(useremail==''||currentpassword==''||newpassword==''||confirmpassword=='')
+  if(userEmail==''||currentPassword==''||newPassword==''||confirmPassword=='')
   {
     setpasswordResetResponse('Please fill all mandatory fields');
   }
-  else if((newpassword.length)<8 || (confirmpassword.length)<8 ){
-    setpasswordResetResponse('Password length must be 8 characters long');
-  }
-  else if(newpassword != confirmpassword ){
-    setpasswordResetResponse('New password and confirm password not matching');
-  }
   else{
     var response = new Promise((resolve, reject) => {
-      resolve(getpasswordchangeResponse(useremail,currentpassword,newpassword));
+      resolve(getpasswordchangeResponse(userEmail,currentPassword,newPassword));
   }).then(value => {
       // setPassword('');
       setpasswordResetResponse(value);
@@ -84,6 +118,12 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  formError:{
+     
+    fontSize:"medium",
+    // display: block;
+    color:"blue",
+  }
 }));
 
 
@@ -110,9 +150,17 @@ return (
                     label="Email address"
                     name="email"
                     autoComplete="email"
-                    onChange={handleemail}
-                    
-                  />
+                    className={((userEmail.length=='')&& (userEmailClick=='True')) ? 'emptyfield' : ''}
+                  
+                  // autoComplete="current-password"
+                  inputProps={{
+                    "data-testid": "email",
+                  }}
+
+                  value={userEmail}
+                  onChange={(e)=>handleEmailChange(e.target.value)}
+                /> <span className={classes.formError}>{emailError}</span>
+                
               </Grid>
               <Grid item xs={12}>
                   <TextField
@@ -123,8 +171,9 @@ return (
                     label="Current Password"
                     name="Cpassword"
                     type="password"
+                    className={((currentPassword.length=='')&& (currentPassClick=='True')) ? 'emptyfield' : ''}
                     autoComplete="Cpassword"
-                    onChange={handlecurrentpassword}
+                    onChange={handleCurrentPasswordChange}
                     
                   />
               </Grid>
@@ -137,10 +186,15 @@ return (
                     label="New Password"
                     name="Npassword"
                     type="password"
-                    autoComplete="Npassword"
-                    onChange={handlenewpassword}
-                    
-                  />
+                    className={((newPassword.length=='')&& (newPassClick=='True')) ? 'emptyfield' : ''}
+                  
+                  // autoComplete="current-password"
+                  inputProps={{
+                    "data-testid": "newPassword",
+                  }}
+                  onChange={(e)=>handleNewPasswordChange(e.target.value)}
+                  /> <span className={classes.formError}>{newPassError}</span>
+                
               </Grid>
               <Grid item xs={12}>
                   <TextField
@@ -152,9 +206,17 @@ return (
                     name="COpassword"
                     type="password"
                     autoComplete="COpassword"
-                    onChange={handleconfirmpassword}
+                    className={((confirmPassword.length=='')&& (confPassClick=='True')) ? 'emptyfield' : ''}
+                  
+                    // autoComplete="current-password"
+                    inputProps={{
+                      "data-testid": "newPassword",
+                    }}
+                    onChange={(e)=>handleConfirmPassword(e.target.value)}
+                    /> <span className={classes.formError}>{confirmPasswordError}</span>
+                  
                     
-                  />
+                
               </Grid>
           </Grid>
           <Button

@@ -14,7 +14,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import { mergeClasses } from '@material-ui/styles';
+import validator from 'validator';
 
 const RegistrationForm = () => {
 
@@ -31,8 +32,12 @@ const RegistrationForm = () => {
   const [emailClick,setEmailClick] = useState('False');
   const [passClick,setPassClick] = useState('False');
   const [confPassClick,setConfPassClick] = useState('False');
-
-
+  const [passErrorMessage, setPassErrorMessage] = useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const [confirmPasswordError,setConfirmPasswordError]= useState('');
+  const [firstNameError,setFirstNameError]= useState('');
+  const [lastNameError,setLastNameError]=useState('');
+  
 
 
   const handleFirstNameChange = event => {
@@ -44,21 +49,57 @@ const RegistrationForm = () => {
   const handleLastNameChange = event => {
     setLastName(event.target.value);
   };
+  
   const handleOrganizationNameChange = event => {
     SetOrganizationName(event.target.value);
   };
-  const handleEmailChange = event => {
-    setEmail(event.target.value);
-  };
-  const handlePasswordChange = event => {
-    setPassword(event.target.value);
-  };
-  const handleConfirmPasswordChange = event => {
-    setConfirmPassword(event.target.value);
+  // const handleEmailChange = event => {
+  //   setEmail(event.target.value);
+  //   console.log(event.target.value)
+  // };
+  const handleEmailChange = (value) => { 
+      setEmail(value);
+  
+    if (validator.isEmail(value)) {
+      setEmailErrorMessage('Valid Email :)')
+    } else {
+      setEmailErrorMessage('Enter valid Email!')
+    }
 
   };
+    
+  const handlePasswordChange=(value) => {
+    console.log(value)
+      setPassword(value);
+      if (validator.isStrongPassword(value, {
+        minLength: 8, minLowercase: 1,
+        minUppercase: 1, minNumbers: 1, minSymbols: 1
+      })) {
+        setPassErrorMessage('Is Strong Password')
+        // setPassword(target.value);
+        
+      } else {
+        
+        setPassErrorMessage("Password should have atleast one special character,a number,an uppercase and 8 characters long")
+      }  
+   
+  };
+   
+    
+  const handleConfirmPasswordChange = (value) => {
+    console.log(value)
+   setConfirmPassword(value);   
+    if (password == value) {
+      setConfirmPasswordError('Password matched');
+   
+    }
+    else {
+      
+      setConfirmPasswordError("Password do not match")
+    }  
+};
 
-  const useStyles = makeStyles((theme) => ({
+ const useStyles = makeStyles((theme) => ({
     paper: {
       marginTop: theme.spacing(8),
       display: 'flex',
@@ -75,7 +116,19 @@ const RegistrationForm = () => {
     },
     submit: {
       margin: theme.spacing(3, 0, 2),
+      
     },
+    formError:{
+     
+      fontSize:"medium",
+      // display: block;
+      color:"blue",
+    },
+    responseValue:{
+      fontSize:"medium",
+      // display: block;
+      color:"blue",
+    }
   }));
 
   const classes = useStyles();
@@ -92,7 +145,7 @@ const RegistrationForm = () => {
     setConfPassClick('True');
     
     if (password != confirmPassword) {
-      setresponse('Password Mismatch');
+      // setresponse('Password Mismatch');
       setPassword('');
       setConfirmPassword('');
     }
@@ -100,6 +153,7 @@ const RegistrationForm = () => {
       var response = new Promise((resolve, reject) => {
         resolve(getRegistrationResponse(email, password,firstName,lastName,organizationName));
       }).then(value => {
+        
         setresponse(value);
       });
     }
@@ -107,7 +161,6 @@ const RegistrationForm = () => {
 
   const handleReset = () => {
     setPassword('');
-
   }
   if (response == 'login') {
     return (
@@ -144,18 +197,20 @@ const RegistrationForm = () => {
                   autoComplete="fname"
                   name="firstName"
                   variant="outlined"
-                  required
+              
                   fullWidth
                   id="firstName"
                   label="First Name"
-                  className={((firstName.length=='')&& (firstNameClick=='True')) ? 'emptyfield' : ''}
+                  className={((firstName.length=='')&& (firstNameClick=='True')) ? 'emptyfield': ''}
                   inputProps={{
                     "data-testid": "firstName",
                   }}
                   value={firstName}
-                  onChange={handleFirstNameChange}
                   autoFocus
-                />
+                  onChange={handleFirstNameChange}/>
+                  
+                  
+              
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -171,8 +226,9 @@ const RegistrationForm = () => {
                     "data-testid": "lastName",
                   }}
                   value={lastName}
-                  onChange={handleLastNameChange}
-                />
+                  onChange={handleLastNameChange}/>
+                  
+                
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -204,26 +260,32 @@ const RegistrationForm = () => {
                     "data-testid": "emailID",
                   }}
                   value={email}
-                  onChange={handleEmailChange}
-                />
+                  onChange={(e)=>handleEmailChange(e.target.value)   }/>
+                  <span className={classes.formError}>{emailErrorMessage}</span>
               </Grid>
               <Grid item xs={12}>
+                
                 <TextField
                   variant="outlined"
                   required
                   fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  className={((password.length=='')&& (passClick=='True')) ? 'emptyfield' : ''}
                   id="password"
+                  label="Password"
+                  name="password"
+                  autoComplete="password"
+                  type="password"
+                  
+                  
+                  className={((password.length=='')&& (passClick=='True')) ? 'emptyfield' : ''}
+                  
                   // autoComplete="current-password"
                   inputProps={{
                     "data-testid": "password",
                   }}
                   value={password}
-                  onChange={handlePasswordChange}
-                />
+                  onChange={(e)=>handlePasswordChange(e.target.value)}
+                /> <span className={classes.formError}>{passErrorMessage}</span>
+                
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -231,18 +293,19 @@ const RegistrationForm = () => {
                   required
                   fullWidth
                   name="confirmpassword"
+                  id="confirmpassword"
                   label="Confirm Password"
                   type="password"
                   className={((confirmPassword.length=='')&& (confPassClick=='True')) ? 'emptyfield' : ''}
-                  id="confirmpassword"
+                  
                   // autoComplete="current-password"
                   inputProps={{
                     "data-testid": "confirmPassword",
                   }}
 
                   value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
-                />
+                  onChange={(e)=>handleConfirmPasswordChange(e.target.value)}
+                /> <span className={classes.formError}>{confirmPasswordError}</span>
               </Grid>
               {/* <Grid item xs={12}>
               <FormControlLabel
@@ -271,10 +334,11 @@ const RegistrationForm = () => {
             </Grid>
             <input type="text"
               data-testid="response"
+              
               hidden
               readOnly
               value={response} />
-            <label>{response}</label>
+            <label className={classes.responseValue}>{response}</label>
             {/* </form> */}
           </div>
         </Container>
