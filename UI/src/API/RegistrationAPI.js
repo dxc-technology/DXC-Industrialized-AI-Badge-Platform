@@ -10,7 +10,7 @@ const getRegistrationResponse = async(username, password,firstName,lastName,orga
         .then((responseText) => {
             //Success
             // alert(JSON.stringify(responseJson));
-            console.log(responseText);
+            //console.log(responseText);
             return responseText;
         })
         //If response is not in json then in error

@@ -1,17 +1,20 @@
-const getLoginResponse = async(username, password) => {
+const getViewUserTypeOptionsResponse = async() => {
     //GET request
-    // var url = 'http://127.0.0.1:5000/login?email=' + username + '&password=' + password;
-  
-    var url = process.env.REACT_APP_APILINK+'/login?email=' + username + '&password=' + password;
+    var url = process.env.REACT_APP_APILINK+'/viewusertypeoptions';
     return await fetch(url, {
             method: 'GET',
+            headers: {
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            }
             //Request Type
         })
-        .then((response) => response.text())
+        .then((response) => response.json())
         //If response is in json then in success
         .then((responseText) => {
             //Success
             // alert(JSON.stringify(responseJson));
+            //console.log("in here")
             //console.log(responseText);
             return responseText;
         })
@@ -19,6 +22,7 @@ const getLoginResponse = async(username, password) => {
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
+            //console.log("error")
             console.error(error);
             return error;
         });
@@ -26,4 +30,4 @@ const getLoginResponse = async(username, password) => {
 
 
 
-export default getLoginResponse;
+export default getViewUserTypeOptionsResponse;

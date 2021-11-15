@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
+from pymongo import database
 import login
 import registration
 import view_badge
@@ -8,9 +9,11 @@ import create_badge
 import view_users
 import view_assertions
 import view_user_badge_details
+import view_notifications
 import create_users
 import user_badge_mapping
 import user_badge_deactivation
+import database
 import os
 import io
 from io import StringIO
@@ -20,7 +23,7 @@ from os import path
 app = Flask(__name__)
 cors = CORS(app)
 
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif','.jpeg', '.PNG', '.JPEG', '.JPG']
 
 
 @app.route("/")
@@ -159,33 +162,29 @@ def view_user_with_email():
     return view_users.view_user_details_by_name(req_body['email'])
 
 
-@app.route("/addbadge", methods=['GET', 'POST'])
+@app.route("/addbadge", methods=['POST'])
 def add_new_badge():
-    #Comemnted by muthu for image upload request by Tina
-    # badge_name = request.form.get("name")
-    # badge_description = request.form.get("description")
-    # link = request.form.get("link")
-    # user_requestable = request.form.get("requestable")
-    # badge_type = request.form.get("badgetype")
-    # owner = request.form.get("owner")
-    # reviewer = request.form.get("reviewer")
-    # #icon = request.files['icon']
-    # evidence = request.form.get("evidence")
-    # #icon.save(icon.filename)
-    # icon = request.form.get("icon")
+    
 
-    badge_name = str(request.args.get('name'))
-    badge_description = str(request.args.get('description'))
-    link = str(request.args.get('link'))
-    user_requestable = str(request.args.get('requestable'))
-    badge_type = str(request.args.get('badgetype'))
-    owner = str(request.args.get('owner'))
-    reviewer = str(request.args.get('reviewer'))
-    icon = str(request.args.get('icon'))
-    evidence = str(request.args.get('evidence'))
-
-    return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
+    badge_name = request.form.get("name")
+    badge_description = request.form.get("description")
+    link = request.form.get("link")
+    user_requestable = request.form.get("requestable")
+    badge_type = request.form.get("badgetype")
+    owner = request.form.get("owner")
+    reviewer = request.form.get("reviewer")
+    evidence = request.form.get("evidence")
+    icon = request.files.get('icon')
+    
+    if icon != None or '':
+        file_ext = os.path.splitext(icon.filename.replace(' ', ''))[1]
+        if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+            return "Not a valid File Format"    
+        else:
+            return create_badge.add_badge(badge_name, badge_description, link, user_requestable,
                                   badge_type, owner, reviewer, icon, evidence)
+    else:
+        return "Upload the Badge Icon"
     # image_bytes = Image.open(io.BytesIO(icon.read()))
     # image_bytes = Image.open(icon.stream)
     # icon = request.form["icon"]
@@ -216,9 +215,9 @@ def add_new_badge():
 def password_reset():
     req_body = request.get_json()
     email_address = req_body['email']
-    password = req_body['password']
-    confirm_password = req_body['confirm_password']
-    return registration.password_reset(email_address, password, confirm_password)
+    current_password = req_body['password']
+    new_password = req_body['confirm_password']
+    return registration.password_reset_user(email_address, current_password, new_password)
 
 
 @app.route("/viewallassertions", methods=['POST'])
@@ -417,5 +416,61 @@ def modify_existing_badge():
 @app.route("/sendpasswordresetemail", methods=['POST'])
 def send_password_reset_email():
     req_body = request.get_json()
-    email_address = req_body['email_address']
-    return registration.password_reset_email(email_address)
+    email = req_body['email']
+    return registration.password_reset_email(email)
+
+# # -----------------------UNIT TESTING ---------------------------------
+# @app.route("/testmajor", methods=["POST"])
+# def major():
+#     user_id=str(request.args.get('userid'))
+#     badge = str(request.args.get('badge'))
+#     return str(database.auto_add_major_badge(user_id, badge))
+
+# @app.route("/testmaster", methods=["POST"])
+# def master():
+#     user_id=str(request.args.get('userid'))
+#     badge = str(request.args.get('badge'))
+#     return str(database.auto_add_master_badge(user_id, badge))
+
+@app.route("/viewnotificationsbylogonid", methods=['POST'])
+def view_all_notifications_by_logon_id():
+    req_body = request.get_json()
+    return view_notifications.view_all_notifications(req_body['logon_id'])
+
+@app.route("/viewnotificationcountbylogonid", methods=['POST'])
+def view_notification_count_by_logon_id():
+    req_body = request.get_json()
+    return view_notifications.get_total_notifications_count(req_body['logon_id'])
+
+# @app.route("/viewuserdetailsbyemail", methods=['POST'])
+# def view_user_with_email():
+#     req_body = request.get_json()
+#     return view_users.view_user_details_by_name(req_body['email'])
+
+@app.route("/viewusertypeoptions", methods=['GET'])
+def get_user_type_options():
+    return database.get_user_type_options()
+
+@app.route("/viewuserstatusoptions", methods=['GET'])
+def get_user_status_options():
+    return database.get_user_status_options()
+
+@app.route("/viewbadgetypeoptions", methods=['GET'])
+def get_badge_type_options():
+    return database.get_badge_type_options()
+
+@app.route("/createnewaistarterassetions", methods=['POST'])
+def create_new_assertions_from_ai_starter():
+    req_body = request.get_json()
+    user_email = req_body['userEmail']
+    badge_name = req_body['badgeName']
+    badge_status_id = req_body['badgeStatus']
+    evidence_link = req_body['evidenceLink']
+    reviewer_id = req_body['adminID']
+    comments = req_body['comments']
+    conv_user_id=str(database.get_user_Id(user_email))
+    conv_badge_id=str(database.get_badge_Id(badge_name))
+    
+    return user_badge_mapping.add_badge_to_user(conv_user_id, conv_badge_id, badge_status_id, evidence_link, reviewer_id,
+                                                comments)     
+

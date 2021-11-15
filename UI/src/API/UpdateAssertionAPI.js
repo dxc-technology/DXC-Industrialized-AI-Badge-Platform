@@ -23,7 +23,7 @@ const updateAssertionResponse = async (assertionID,badgeStatus, workLink, commen
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
-            console.log("error")
+            //console.log("error")
             console.error(error);
             return error;
         });

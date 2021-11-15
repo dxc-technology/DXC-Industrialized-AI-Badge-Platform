@@ -3,7 +3,7 @@ const getForgotPasswordResponse = async(email) => {
     var url = process.env.REACT_APP_APILINK+'/sendpasswordresetemail';
     return await fetch(url, {
             method: 'POST',
-            body: JSON.stringify({email_address:email}),
+            body: JSON.stringify({email:email}),
             headers: {
             'Accept':'application/json',
             'Content-Type':'application/json'
@@ -14,7 +14,7 @@ const getForgotPasswordResponse = async(email) => {
         .then((responseText) => {
             //Success
             // alert(JSON.stringify(responseJson));
-            console.log(responseText);
+            //console.log(responseText);
             return responseText;
         })
         //If response is not in json then in error

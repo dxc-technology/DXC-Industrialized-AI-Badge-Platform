@@ -50,10 +50,12 @@ const ViewUsersForm = (props) => {
             marginTop: theme.spacing(3),
         },
         exportbtnRight: {
-            marginTop: theme.spacing(3),
-            float: "right",
-
-        }
+            marginTop: theme.spacing(2),
+            float:'right',
+            right:8,
+            bottom:50,
+            fontSize:14,
+            }
     }));
 
 
@@ -104,8 +106,6 @@ const ViewUsersForm = (props) => {
 
     }
 
-
-
     const handleviewUsers = async () => {
 
         var response1 = new Promise((resolve, reject) => {
@@ -130,15 +130,13 @@ const ViewUsersForm = (props) => {
         handleviewUsers()
     }, []);
 
-    if (addUserButtonClick == 'true') { return (<div><AddUserForm /></div>); }
-    else {
-        if (userDetailClick == 'true') { return (<div><UserDetailsForm email={clickedUser} userID={userID} /></div>); }
-        else {
+    if (addUserButtonClick =='true') { return (<div><AddUserForm userID={userID}/></div>);}
+    else{
+      if (userDetailClick == 'true') { return (<div><UserDetailsForm email={clickedUser} userID={userID}/></div>); }
+      else {
 
-            return (
-                <div>
-
-
+        return (
+          <div>
                     <input data-testid='viewUsers_RowCount' hidden value={response} />
 
                     <React.Fragment>
@@ -155,7 +153,8 @@ const ViewUsersForm = (props) => {
                                 Add New User
                 </Button>
                         </Box>
-
+                        <Button data-testId={'exportUser_exportUserButton'} variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export
+                    </Button>
 
                         <br></br>
                         <Table size="small">
@@ -199,8 +198,7 @@ const ViewUsersForm = (props) => {
                                 ))}
                             </TableBody>
                         </Table>
-                        <Button variant="contained" size="small" color="primary" className={classes.exportbtnRight} onClick={handleexportData} startIcon={<ArrowDownwardIcon />}> Export to Excel
-          </Button>
+            
                     </React.Fragment>
                 </div >
 

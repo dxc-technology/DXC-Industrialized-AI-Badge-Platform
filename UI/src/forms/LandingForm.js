@@ -28,6 +28,7 @@ import FaceIcon from '@material-ui/icons/Face';
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import LocalMallIcon from '@material-ui/icons/LocalMall'
 import PeopleIcon from '@material-ui/icons/People';
+import LockIcon from '@mui/icons-material/Lock';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
@@ -44,14 +45,22 @@ import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
 import ReactPlayer from 'react-player';
 // import $ from 'jquery'; 
 import getJIRAResponse from '../API/AddJIRARequestAPI';
+import Button from '@material-ui/core/Button';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Redirect } from 'react-router';
+import ChangePasswordForm from './ChangePasswordForm';
  
 const LandingForm = (props)=>
 {
     const [clickedItem,setClickedItem] = useState('');
     const windowWidth = window.screen.width;
     const drawerWidth = 220;
-    const [userType,setUserType] = useState(props.userType);
-    const [email,setEmail] = useState(props.email);
+    // const [userType,setUserType] = useState(props.userType);
+    // const [email,setEmail] = useState(props.email);
+    const token = sessionStorage.getItem("Token");
+    const em = sessionStorage.getItem("Email");
+    const [userType,setUserType] = useState(token);
+    const [email,setEmail] = useState(em);
     const [userID,setuserID] = useState('');
 
     const handleCreateBadgeButtonClick =()=>{
@@ -81,6 +90,18 @@ const LandingForm = (props)=>
 
     const handleUpdateProfileButtonClick =()=> {
       setClickedItem('ViewProfileForm');
+    }
+
+    const handleChangePasswordButtonClick =() =>{
+      setClickedItem('ChangePasswordForm');
+    }
+
+    const handleLogout =()=>{      
+      sessionStorage.removeItem("Token");
+      sessionStorage.removeItem("Email");
+      localStorage.removeItem("Id");
+      localStorage.removeItem("token");
+      setClickedItem('BacktoLoginForm');    
     }
 
 
@@ -120,38 +141,48 @@ const LandingForm = (props)=>
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItem>
+
           <ListItem button data-testid="LandingForm_viewMyBackpackButton" onClick={handleMyBackpackButtonClick}>
             <ListItemIcon>
             <BootstrapTooltip title ="My Backpack"><LocalMallIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="My Backpack" />
           </ListItem>
-          <ListItem button data-testid="LandingForm_viewBadgeButton" onClick={handleViewbadgeButtonClick}>
+
+          <ListItem button data-testid="LandingForm_viewBadgeButton" onClick={handleViewbadgeButtonClick}>           
             <ListItemIcon>
             <BootstrapTooltip title ="Badges"><PeopleIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Badges" />
           </ListItem>
-          {/* <ListItem button component="a" href="mailto:panoply@dxc.com"> */}
-          <ListItem button id="LandingForm_feedbackButton" onClick={handleSupportButtonClick}>
-          
+
+          <ListItem button component="a" href="mailto:panoply@dxc.com">
+          {/* <ListItem button id="LandingForm_feedbackButton" onClick={handleSupportButtonClick}>*/}
             <ListItemIcon>
             <BootstrapTooltip title ="Support"><BarChartIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Support"/>
           </ListItem>
+
           <ListItem button>
             <ListItemIcon>
             <BootstrapTooltip title ="FAQ"><LayersIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="FAQ" />
           </ListItem>
-          <ListItem button id="LandingForm_updateProfile" onClick={handleUpdateProfileButtonClick}>
-          
+
+          <ListItem button id="LandingForm_updateProfile" onClick={handleUpdateProfileButtonClick}>          
             <ListItemIcon>
             <BootstrapTooltip title ="Profile"><PersonIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Profile"/>
+          </ListItem>
+
+          <ListItem button id="LandingForm_chnagePassword" onClick={handleChangePasswordButtonClick}>          
+            <ListItemIcon>
+            <BootstrapTooltip title ="Password"><LockIcon /></BootstrapTooltip>
+            </ListItemIcon>
+            <ListItemText primary="Password"/>
           </ListItem>
         </div>
       );
@@ -306,8 +337,6 @@ const classes = useStyles();
 
 }
 
-
-
   useEffect(() => {
     handleviewUserByEmail();
   
@@ -315,6 +344,14 @@ const classes = useStyles();
 
 
 
+if (clickedItem=='BacktoLoginForm'){
+  return(
+  <div>
+       <Redirect to="/" />
+  </div>
+  );
+  }
+  else{
 
     return (
 
@@ -341,6 +378,9 @@ const classes = useStyles();
               <NotificationsIcon />
             </Badge>
           </IconButton>
+          <Button onClick={handleLogout} size="large" color="inherit" endIcon={<ExitToAppIcon />}  >
+           Logout
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -372,13 +412,14 @@ const classes = useStyles();
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType} userID={userID}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
-               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):
+               (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):  
+               (clickedItem=='ChangePasswordForm'? (<ChangePasswordForm email={email} userID={userID} />):              
                (<div>
                  <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
                    <source src={logo} type="video/mp4"></source>
                    </video> */}
-                 </div>))))))}
+                 </div>)))))))}
               </Paper>
             </Grid>
           
@@ -394,6 +435,7 @@ const classes = useStyles();
             </input>
         </div>
     );
+                  }
 };
 
 export default LandingForm;

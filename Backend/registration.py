@@ -1,14 +1,17 @@
+from email.mime import text
 import re
 import os
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 from argon2 import PasswordHasher
+from argon2.exceptions import HashingError, VerificationError, VerifyMismatchError, InvalidHash
 import database
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import random
 import array
+from bson.objectid import ObjectId
 
 VALID = r"valid"
 INVALID = r"invalid"
@@ -151,18 +154,44 @@ def password_reset(email_address, password):
     return "user does not exist"
 
 
+def password_reset_user(email, password, new_password):
+    password_hash = PasswordHasher()
+    if email == "":
+        return "email is empty"
+    if password is None or password.strip() == "":
+        return "password is empty"     
+    if validate_email_address(email) == INVALID:
+        return "email is not correct"
+    if new_password is None or new_password.strip() == "":
+        return "Confirm password is empty"
+    user_doc = database.get_user_details(email)
+    if len(user_doc) > 0:
+        try:
+            isMatch = password_hash.verify(user_doc['password'], password)
+            if(isMatch):
+                hashed_password = hash_password(new_password)
+                database.update_user_password(email, hashed_password)
+                return "Password reset is complete"
+        except (InvalidHash, HashingError, VerificationError, VerifyMismatchError):
+            return "Current passwords do not match"
+    return "user does not exist"
+
+
 def email_content(email_address, body):
     env_path = 'backend_variable.env'
     load_dotenv(dotenv_path=env_path)
-    sender_email = "panoply.dxc@outlook.com"
+    sender_email = "No-replyBadge@cscportal.onmicrosoft.com"
     receiver_email = email_address
 
     msg = MIMEMultipart()
-    msg['Subject'] = 'AI Industrial Badger - Password Reset'
+    msg['Subject'] = 'Industrial Badger - Password Reset'
     msg['From'] = sender_email
     msg['To'] = receiver_email
     msg_text = MIMEText('<b>%s</b>' % body, 'html')
+    text = 'Go ahead and reset the password using the given link: http://localhost:3000/passwordchange'
+    msg_text1 = MIMEText(text, "plain")
     msg.attach(msg_text)
+    msg.attach(msg_text1)
 
     try:
         with smtplib.SMTP('smtp.office365.com', 587) as smtpObj:
@@ -174,15 +203,15 @@ def email_content(email_address, body):
         print(e)
 
 
-def password_reset_email(email_address):
-    if email_address == "":
+def password_reset_email(email):
+    if email == "":
         return "email is empty"
-    if validate_email_address(email_address) == INVALID:
+    if validate_email_address(email) == INVALID:
         return "email is not correct"
-    user_doc = database.get_user_details(email_address)
+    user_doc = database.get_user_details(email)
     if len(user_doc) > 0:
         password = generate_strong_password()
-        email_content(email_address, "This is your new password: " + password)
-        password_reset(email_address, password)
+        email_content(email, "This is your new password: " + password)
+        password_reset(email, password)
         return "Email sent successfully"
     return "user does not exist"

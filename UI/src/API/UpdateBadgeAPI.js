@@ -11,7 +11,7 @@ const updateBadgeResponseAPI = async(badgeName, badgeDescription, badgeLink, use
             //Request Type
         })
         .then((response) => {
-            console.log("response="+ typeof(response.status));
+            //console.log("response="+ typeof(response.status));
             return response.status
         })
         //If response is in json then in success
@@ -26,7 +26,7 @@ const updateBadgeResponseAPI = async(badgeName, badgeDescription, badgeLink, use
         .catch((error) => {
             //Error
             // alert(JSON.stringify(error));
-            console.log("error")
+            //console.log("error")
             console.error(error);
             return error;
         });

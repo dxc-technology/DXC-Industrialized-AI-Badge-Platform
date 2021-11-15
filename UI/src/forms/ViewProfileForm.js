@@ -149,9 +149,9 @@ return(
         <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={classes.paper} data-testid="viewProfile_ID">
-                <Avatar className={classes.avatar}>
+                {/* <Avatar className={classes.avatar}>
                     <CardMembershipOutlinedIcon />
-                </Avatar>
+                </Avatar> */}
                 <Typography component="h1" variant="h5">
                     Edit Profile Details
       </Typography>

@@ -23,6 +23,7 @@ import Select from '@material-ui/core/Select';
 import addNewUserResponse from '../API/AddNewUserAPI';
 import { InputLabel } from '@material-ui/core';
 import userEvent from '@testing-library/user-event';
+import getViewUserTypeOptionsResponse from '../API/ViewUserTypeOptionsAPI';
 
 
 const AddUserForm = (props) => {
@@ -49,6 +50,7 @@ const AddUserForm = (props) => {
     const [saveFlag, setSaveFlag] = useState('False');
     const [result, setResult] = useState('');
     const [backButtonClicked,setBackButtonClicked] = useState('False');
+    const [userTypeOptions, setUserTypeOptions] = useState([]);
 
 
     const useStyles = makeStyles((theme) => ({
@@ -155,6 +157,20 @@ const AddUserForm = (props) => {
         setSaveFlag('True');
         setResult('');
     }
+
+    const handleviewUserTypeOptions= async() => {
+        var response1 = new Promise((resolve, reject) => {
+            resolve(getViewUserTypeOptionsResponse());
+        }).then(value => {
+            if (value != undefined) {              
+                setUserTypeOptions(value);                
+            }            
+        });
+    }
+
+    useEffect(() => {
+        handleviewUserTypeOptions();
+      }, []);
   
 
     if (backButtonClicked=='True'){
@@ -207,7 +223,8 @@ const AddUserForm = (props) => {
                                 "data-testid": "addUser_middleName",
                             }}
                             value={middleName}
-                            className={((middleName.length=='')&& (middleNameClick=='True')) ? 'emptyfield' : ''}
+                            //Commented the below line as part of the change - Middle name not required for creating user
+                            //className={((middleName.length=='')&& (middleNameClick=='True')) ? 'emptyfield' : ''}
                             onChange={handleMiddleNameChange}
                         />
                     </Grid>
@@ -264,9 +281,13 @@ const AddUserForm = (props) => {
                             onChange={handleUserTypeChange}
                             className={((userType.length=='')&& (userTypeClick=='True')) ? 'emptyfield' : ''}
                             >
-                            <MenuItem value={'regular'}>Regular</MenuItem>
+                            {/* <MenuItem value={'regular'}>Regular</MenuItem>
                             <MenuItem value={'admin'}>Admin</MenuItem>
-                            <MenuItem value={'reviewer'}>Reviewer</MenuItem>
+                            <MenuItem value={'reviewer'}>Reviewer</MenuItem> */}
+
+                            {userTypeOptions.map((data) => (                             
+                            <MenuItem value={data.type}>{data.type}</MenuItem>                            
+                             ))}
                             
                         </Select> 
 

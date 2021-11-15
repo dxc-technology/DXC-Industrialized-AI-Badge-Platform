@@ -29,11 +29,9 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import addNewAssertionResponse from '../API/AddNewAssertionAPI';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
-
-
-
+import getViewBadgeTypeOptionsResponse from '../API/ViewBadgeTypeOptionsAPI';
+    
 const BadgeDetailsForm = (props) => {
-
   const [badgeId,setbadgeID]=useState('');
   const [badgeName, setbadgeName] = useState(props.badgeName);
   const [userType, setUserType]=useState(props.userType);
@@ -59,7 +57,8 @@ const BadgeDetailsForm = (props) => {
   const [workLink, setWorkLink]=useState('');
   const [assigneeEmail, setAssigneeEmail] = useState('');
   const [assigneeID, setAssigneeID] = useState('');
-
+  const [BadgeTypeOptions,setBadgeTypeOptions] = useState([]);
+  const [BadgeLevel, setBadgeLevel] = useState('');
   const useStyles = makeStyles((theme) => ({
     paper: {
       marginTop: theme.spacing(8),
@@ -79,15 +78,11 @@ const BadgeDetailsForm = (props) => {
       margin: theme.spacing(3, 0, 2),
     },
   }));
-
-
   const classes = useStyles();
-
   const handleBadgeNameChange =event =>{
     setbadgeName(event.target.value);
     setSaveFlag('True');
   }
-
   const handleBadgeDescriptionChange =event =>{
     setBadgeDescription(event.target.value);
     setSaveFlag('True');
@@ -116,16 +111,12 @@ const BadgeDetailsForm = (props) => {
     setReviewers(event.target.value);
     setSaveFlag('True');
   }
-
   const handleWorkLinkChange =event =>{
     setWorkLink(event.target.value);
-
   }
-
   const handleAssigneeEmailChange =event =>{
     setAssigneeEmail(event.target.value);
   }
-
   const handleSaveButtonClick = () =>{
     var response2 = new Promise((resolve, reject) => {
       resolve(updateBadgeResponseAPI(badgeName, badgeDescriptoion, link, userRequestable, badgeType, owners, reviewers, 'icon link',evidenceRequired));
@@ -136,59 +127,72 @@ const BadgeDetailsForm = (props) => {
       }
     });
   }
-
   const handleBackButtonClick = () =>{
     setBackButtonClicked('True');
   }
-
   const handleRequestBadgeButtonClick =() =>{
     setRequestBadgeButtonClicked(true);
   }
-
   const handleAssignBadgeButtonClick =() =>{
     setAssignBadgeButtonClicked(true);
   }
-
   const handleRequestBadgeButtonClose = () => {
     setRequestBadgeButtonClicked(false);
   };
-
   const handleAssignBadgeButtonClose = () => {
     setAssignBadgeButtonClicked(false);
   };
-
   const handlerequestBadge = async() => {
     var response3 = new Promise((resolve, reject) => {
       resolve(addNewAssertionResponse(userID,badgeId,'',workLink,'',''));
     }).then(value => {   
-      if (value == 200) {
-        setrequestBadgeResult('Request for Badge is successfully submitted');
-      }
-
+      // if (value == 200) {
+      //   setrequestBadgeResult('Request for Badge is successfully submitted');
+      // }
+      setrequestBadgeResult(value);
 
     });
     setRequestBadgeButtonClicked(false);
   };
 
-  const handleAssignBadge =async() => {
+  // const handleAssignBadge =async() => {
+  //   var response4 = new Promise((resolve, reject) => {
+  //     resolve(UserDetailByEmailResponse(assigneeEmail));
+  //     }).then(value => {
+  //     if (value != undefined) {
+  //         setAssigneeID(value[0]._id.$oid);
+  //     }
+  //   });
+  //   var response5 = new Promise((resolve, reject) => {
+  //     resolve(addNewAssertionResponse(assigneeID,badgeId,'','','',''));
+  //   }).then(value => {   
+  //     if (value == 200) {
+  //       setAssignBadgeResult('Badge Assigned successfully');
+  //     }
+  //   });
+  //   setAssignBadgeButtonClicked(false);
+  // }
+
+  const handleAssignBadge = async () => {
     var response4 = new Promise((resolve, reject) => {
       resolve(UserDetailByEmailResponse(assigneeEmail));
-      }).then(value => {
-      if (value != undefined) {
-          setAssigneeID(value[0]._id.$oid);
+    }).then((value) => {
+      if (value != undefined && value != "") {
+        var response5 = new Promise((resolve, reject) => {
+          resolve(
+            addNewAssertionResponse(value[0]._id.$oid, badgeId, "", "", "", "")
+          );
+        }).then((value) => {
+          setAssignBadgeResult(value);
+        });
+      } else {
+        setAssignBadgeResult("Cannot find the user email");
       }
-    });
-    var response5 = new Promise((resolve, reject) => {
-      resolve(addNewAssertionResponse(assigneeID,badgeId,'','','',''));
-    }).then(value => {   
-      if (value == 200) {
-        setAssignBadgeResult('Badge Assigned successfully');
-      }
-
-
     });
     setAssignBadgeButtonClicked(false);
-  }
+  };
+
+
   const handleviewBadgeByName = async () => {
 
     var response1 = new Promise((resolve, reject) => {
@@ -206,6 +210,7 @@ const BadgeDetailsForm = (props) => {
         setCreatedDate(formatDate(value[0].created.$date));
         setModifiedDate(formatDate(value[0].modified.$date));
         setIcon(value[0].icon);
+        setBadgeLevel(value[0].badgeLevel);
       }
 
 
@@ -213,17 +218,34 @@ const BadgeDetailsForm = (props) => {
 
   }
 
+  const handleviewBadgeTypeOptions= async() => {
+    var response1 = new Promise((resolve, reject) => {
+        resolve(getViewBadgeTypeOptionsResponse());
+    }).then(value => {
+        if (value != undefined) {
+            //console.log('value' + value);
+            setBadgeTypeOptions(value);
+            //alert('value' + value);
+            // //{value.map(UserTypeOptions => {UserTypeOptions})}
+            // //alert(BadgeTypeOptions);
+            // console.log(BadgeTypeOptions);
+        }
+
+    });
+}
+
   useEffect(() => {
-    handleviewBadgeByName()
+    handleviewBadgeByName();
+    handleviewBadgeTypeOptions();
   }, []);
 
-  
+
 if (backbuttonClicked=='True'){
 return (
-  <div><ViewBadgeForm userType={userType} /> </div>
+  <div><ViewBadgeForm userType={userType} userID={userID}/> </div>
 );
 }
-else{
+else{  
 if(clickType=='AdminEdit'){
 return (
 <Container component="main" maxWidth="xs">
@@ -279,7 +301,6 @@ return (
                 "data-testid": "badgedetails_createdDate",
               }}
               value={createdDate}
-
             />
           </Grid>
           <Grid item xs={12}>
@@ -324,13 +345,16 @@ return (
                                 "data-testid": "badgeDetails_badgeType",
                             }}
                             value={badgeType}
-                            onChange={handleBadgeTypeChange}
-                            >
-                            <MenuItem value={'Open Badge'}>Open Badge</MenuItem>
-                            <MenuItem value={'Community Badge'}>Community Badge</MenuItem>
+                            onChange={handleBadgeTypeChange}                          
+                            >                          
+
+                            {BadgeTypeOptions.map((data) => (                             
+                            <MenuItem value={data.badgeType}>{data.badgeType}</MenuItem>
+                            //<MenuItem value={'Community Badge'}>Community Badge</MenuItem>
+                             ))}
                         </Select>
             {/* <TextField
-              variant="outlined"
+              variant="outlined"  
               fullWidth
               name="badgeType"
               label="Badge Type"
@@ -342,7 +366,6 @@ return (
               onChange={handleBadgeTypeChange}
             /> */}
           </Grid>
-
           <Grid item xs={12}>
           <InputLabel shrink id="badgeDetails_evidenceRequired">
                         Evidence Required
@@ -360,6 +383,7 @@ return (
                             value={evidenceRequired}
                             onChange={handleEvidenceRequiredChange}
                             >
+
                             <MenuItem value={'True'}>True</MenuItem>
                             <MenuItem value={'False'}>False</MenuItem>
                         </Select>
@@ -438,7 +462,6 @@ return (
               onChange={handleReviewerChange}
             />
           </Grid>
-
         </Grid>
         <Grid container spacing={1}>
           <Grid item xs={12} sm={6}>
@@ -493,7 +516,6 @@ else if(clickType=='AdminView'){
               name="badgeName"
               variant="outlined"
               fullWidth
-
               id="badgeName"
               label="Badge Name"
               inputProps={{
@@ -568,7 +590,6 @@ else if(clickType=='AdminView'){
               value={badgeType}
             />
           </Grid>
-
           <Grid item xs={12}>
             <TextField
               variant="outlined"
@@ -622,7 +643,6 @@ else if(clickType=='AdminView'){
               value={reviewers}
             />
           </Grid>
-
         </Grid>
         <Grid container spacing={1}>
           <Grid item xs={12} sm={6}>
@@ -686,7 +706,6 @@ else if(clickType=='AdminView'){
     </Container>
   );
       }
-
 else {
   return (
     <Container component="main" maxWidth="xs">
@@ -710,7 +729,6 @@ else {
               name="badgeName"
               variant="outlined"
               fullWidth
-
               id="badgeName"
               label="Badge Name"
               inputProps={{
@@ -785,7 +803,6 @@ else {
               value={badgeType}
             />
           </Grid>
-
           <Grid item xs={12}>
             <TextField
               variant="outlined"
@@ -839,7 +856,6 @@ else {
               value={reviewers}
             />
           </Grid>
-
         </Grid>
         <Grid container spacing={1}>
           <Grid item xs={12} sm={6}>
@@ -848,9 +864,10 @@ else {
               fullWidth
               variant="contained"
               color="primary"
+              disabled={BadgeLevel=='major'?true:(BadgeLevel=='master'?true:false)}
               className={classes.submit}
               data-testid="badgeDetails_requestButton" 
-              onClick={handleRequestBadgeButtonClick}>
+              onClick={handleRequestBadgeButtonClick}>          
               Request Badge
         </Button>
         <Dialog open={requestBadgeButtonClicked} onClose={handleRequestBadgeButtonClose} aria-labelledby="form-dialog-title">
@@ -903,10 +920,8 @@ else {
     </Container>
   );
       } 
-
 }
   //   }
   // }
 };
-
 export default BadgeDetailsForm;
