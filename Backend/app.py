@@ -84,8 +84,6 @@ def activate_user():
         confirmationCode_list = ""
     else:
         confirmationCode_list = req_body['confirmationCode']
-    #email = req_body['email']
-    #confirmationCode = req_body['confirmationCode']
     return activate.activateuser(email_id_list,confirmationCode_list)
 
 

@@ -12,6 +12,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import random
 import array
+import math
 from bson.objectid import ObjectId
 
 VALID = r"valid"
@@ -100,6 +101,7 @@ def generate_strong_password():
         password = password + x
     return password
 
+
 def email_confirmation(email_address,body):
     env_path = 'backend_variable.env'
     load_dotenv(dotenv_path=env_path)
@@ -148,11 +150,10 @@ def register(email, password, user_type, first_name, second_name, middle_name, o
     
     confirmation_code = generate_strong_password()
     hashed_password = hash_password(password)
-    hashed_code = hash_password(confirmation_code)
-
+    
     new_user_id = database.add_new_user(
         email, hashed_password, new_user_type, created_time_utc, modified_time_utc, first_name, second_name,
-        middle_name, organization_name, hashed_code)
+        middle_name, organization_name, confirmation_code)
     if len(new_user_id) > 0:
         email_confirmation(email, "This is your activation code: " + confirmation_code)
         return "registered"   

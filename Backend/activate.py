@@ -10,7 +10,6 @@ INVALID = r"invalid"
 EMAIL_NOT_EXIST = r'email does not exist'
 
 def activateuser(email , confirmationCode):
-    confirmation_code_hash = PasswordHasher()
     if email == "":
         return "email is empty"
     if validate_email_address(email) == INVALID:
@@ -19,13 +18,12 @@ def activateuser(email , confirmationCode):
     if len(user_doc) > 0:
         if(user_doc['userStatus'] == ObjectId('5f776e5d6289f17659874f27')):
             return "User is already active. Please proceed to login."
-        try:
-            isMatch = confirmation_code_hash.verify(user_doc['confirmationCode'], confirmationCode)
-            if(isMatch):
+        else:
+            if(user_doc['confirmation_code'] == confirmationCode):
                 database.modify_user_status(email)
                 return "You have now been activated. Please go ahead and login"
-        except (InvalidHash, HashingError, VerificationError, VerifyMismatchError):
-            return "Confirmation code do not match. Please check your email."
+            else:
+                return "Confirmation code do not match. Please check your email."
     return "user does not exist"
 
 

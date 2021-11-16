@@ -116,15 +116,21 @@ def update_user_password(email, hashed_password):
 
 
 def add_new_user(email, password, user_type, created_time_utc, modified_time_utc, first_name, second_name, middle_name,
-                 organization_name,hashed_code):
+                 organization_name,confirmation_code):
     user_collection = myDB["Users"]
     user_type_doc = get_user_type(user_type)
     user_status_doc = get_user_status("registered")
     new_user = {"email": email, "password": password,
                 "userType": user_type_doc["_id"], "userStatus": user_status_doc["_id"], "created": created_time_utc,
                 "modified": modified_time_utc, "firstName": first_name, "secondName": second_name,
-                "middleName": middle_name, "organizationName": organization_name, "confirmationCode": hashed_code}
+                "middleName": middle_name, "organizationName": organization_name}
     new_user_doc = user_collection.insert_one(new_user)
+    user_collection.update(
+        {"email": email},
+        {
+            "$set": {"confirmation_code": confirmation_code}
+        }, upsert=False
+    )
     return str(new_user_doc.inserted_id)
 
 def modify_existing_user(userid, first_name, second_name, middle_name, organization_name):
@@ -1331,7 +1337,10 @@ def modify_user_status(email):
         }
         }, upsert=True
     )
+    user_collection.update(
+        {"email": email},
+        {
+            "$unset": {"confirmation_code": ""}
+        }, upsert=False
+    )
     return "updated"
-
-
-
