@@ -22,6 +22,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
+import ListItemButton from '@mui/material/ListItemButton';
+import Collapse from '@mui/material/Collapse';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 //import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import FaceIcon from '@material-ui/icons/Face';
@@ -47,6 +49,11 @@ import getJIRAResponse from '../API/AddJIRARequestAPI';
 import Button from '@material-ui/core/Button';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Redirect } from 'react-router';
+import BadgeIcon from '@mui/icons-material/Badge';
+import BackpackIcon from '@mui/icons-material/Backpack';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+import ApprovalIcon from '@mui/icons-material/Approval';
+
  
 const LandingForm = (props)=>
 {
@@ -90,6 +97,14 @@ const LandingForm = (props)=>
       setClickedItem('ViewProfileForm');
     }
 
+    const [open1, setOpen1] = React.useState(true);
+
+    const handleClick = () => {
+      setOpen1(!open);
+    };
+
+    
+
     const handleLogout =()=>{      
       sessionStorage.removeItem("Token");
       sessionStorage.removeItem("Email");
@@ -129,23 +144,32 @@ const LandingForm = (props)=>
 
     const mainListItems = (
         <div>
-          <ListItem button data-testid="LandingForm_DashboardButton" onClick={handleDashboardButtonClick}>
+          {/* <ListItem button data-testid="LandingForm_DashboardButton" onClick={handleDashboardButtonClick}>
             <ListItemIcon>
             <BootstrapTooltip title ="Dashboard"><DashboardIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
-          </ListItem>
+          </ListItem> */}
 
-          <ListItem button data-testid="LandingForm_viewMyBackpackButton" onClick={handleMyBackpackButtonClick}>
+          <ListItemButton data-testid="LandingForm_viewMyBackpackButton" onClick={handleMyBackpackButtonClick}>
             <ListItemIcon>
-            <BootstrapTooltip title ="My Backpack"><LocalMallIcon /></BootstrapTooltip>
+            <BootstrapTooltip title ="My Backpack"><BackpackIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="My Backpack" />
-          </ListItem>
+          </ListItemButton>
+
+          
+          <ListItemButton >
+            <ListItemIcon>
+              <ApprovalIcon />
+            </ListItemIcon>
+              <ListItemText primary="Ongoing Badges" />
+          </ListItemButton>
+          
 
           <ListItem button data-testid="LandingForm_viewBadgeButton" onClick={handleViewbadgeButtonClick}>           
             <ListItemIcon>
-            <BootstrapTooltip title ="Badges"><PeopleIcon /></BootstrapTooltip>
+            <BootstrapTooltip title ="Badges"><BadgeIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Badges" />
           </ListItem>
@@ -153,7 +177,7 @@ const LandingForm = (props)=>
           <ListItem button component="a" href="mailto:panoply@dxc.com">
           {/* <ListItem button id="LandingForm_feedbackButton" onClick={handleSupportButtonClick}>*/}
             <ListItemIcon>
-            <BootstrapTooltip title ="Support"><BarChartIcon /></BootstrapTooltip>
+            <BootstrapTooltip title ="Support"><ContactSupportIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="Support"/>
           </ListItem>
