@@ -47,6 +47,7 @@ import getJIRAResponse from '../API/AddJIRARequestAPI';
 import Button from '@material-ui/core/Button';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Redirect } from 'react-router';
+import FAQForm from './FAQForm'
  
 const LandingForm = (props)=>
 {
@@ -89,6 +90,11 @@ const LandingForm = (props)=>
     const handleUpdateProfileButtonClick =()=> {
       setClickedItem('ViewProfileForm');
     }
+
+    const handleFAQButtonClick =()=> {
+      setClickedItem('FAQForm');
+    }
+    
 
     const handleLogout =()=>{      
       sessionStorage.removeItem("Token");
@@ -155,14 +161,15 @@ const LandingForm = (props)=>
             </ListItemIcon>
             <ListItemText primary="Support"/>
           </ListItem>
-          <ListItem button>
+
+          <ListItem button id="FAQ_button" onClick={handleFAQButtonClick}>
             <ListItemIcon>
             <BootstrapTooltip title ="FAQ"><LayersIcon /></BootstrapTooltip>
             </ListItemIcon>
             <ListItemText primary="FAQ" />
           </ListItem>
+
           <ListItem button id="LandingForm_updateProfile" onClick={handleUpdateProfileButtonClick}>
-          
             <ListItemIcon>
             <BootstrapTooltip title ="Profile"><PersonIcon /></BootstrapTooltip>
             </ListItemIcon>
@@ -395,6 +402,7 @@ if (clickedItem=='BacktoLoginForm'){
                (clickedItem=='ViewAssertionsForm'?(<ViewAssertionsForm email={email} userType={userType} userID={userID}/>):
                (clickedItem=='ViewBadgeForm'?(<ViewBadgeForm userType={userType} userID={userID}/>):
                (clickedItem=='CreateBadgeForm'? (<CreateBadgeForm />):
+               (clickedItem=='FAQForm'? (<FAQForm />):
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
                (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):              
                (<div>
@@ -402,7 +410,7 @@ if (clickedItem=='BacktoLoginForm'){
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
                    <source src={logo} type="video/mp4"></source>
                    </video> */}
-                 </div>))))))}
+                 </div>)))))))}
               </Paper>
             </Grid>
           
