@@ -1,5 +1,0 @@
-# STRONG HTACCESS PROTECTION
-<Files backend_variable.env>
-    Order allow,deny
-    Deny from all
-</Files>
