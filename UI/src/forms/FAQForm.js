@@ -10,8 +10,8 @@ const data = {
       {
         title: "How do I apply for a minor badge?",
         content: 
-            "Under <b> Badges </b> tab, select the minor badge then click the search icon on the right side. " 
-            + "At the bottom, the <b> Request badge </b> button appears."
+            "Under <b> Badges </b> tab, select the minor badge then click the <b>Search </b> icon on the right side. " 
+            + "At the bottom, the <b> Request Badge </b> button appears."
       },
       {
         title: "How do I earn a major badge?",
@@ -23,7 +23,7 @@ const data = {
         title: "How do I earn a master badge?",
         content: "You must complete the prerequisite major badges to earn the master badge. "
         + "It is no longer required to manually request for a master badge. "
-        + "Master badges will be automatically added to your My Backpack once the validation for major badges is done. "
+        + "Master badges will be automatically added to your <b> My Backpack </b> once the validation for major badges is done. "
       },
       {
         title: "How do I become an AI Mentor?",
@@ -52,7 +52,12 @@ const data = {
       {
         title: "How do I know if my badge has been approved?",
         content: "You will be notified via email once the reviewer has approved your badge application."
-      }]
+      },
+      {
+        title: "I have other questions not listed here. How do I reach technical support?",
+        content: "Click the <b> Support </b> tab at the right navigation bar to send us an email at <b>panoply@dxc.com</b>" 
+      }
+    ]
   }
 
 
