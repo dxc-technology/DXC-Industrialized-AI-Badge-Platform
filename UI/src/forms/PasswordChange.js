@@ -9,6 +9,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import LoginForm from './LoginForm';
 
 
 const PasswordChange = (props) => {
@@ -91,91 +92,102 @@ const useStyles = makeStyles((theme) => ({
 
 const classes = useStyles();
 
-return (
-  <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="div" variant="h5">  Reset Password  </Typography>
-          <br></br>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email address"
-                    name="email"
-                    autoComplete="email"
-                    onChange={handleemail}
-                    
-                  />
-              </Grid>
+if (passwordResetResponse == 'Password reset is complete') {
+  return (
+    <div>
+      <LoginForm result={'Password reset is complete. Please go ahead and login with new password'} />
+
+    </div>
+  );
+}
+else {
+  return (
+    <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+                <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="div" variant="h5">  Reset Password  </Typography>
+            <br></br>
+            <Grid container spacing={2}>
               <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="Cpassword"
-                    label="Current Password"
-                    name="Cpassword"
-                    type="password"
-                    autoComplete="Cpassword"
-                    onChange={handlecurrentpassword}
-                    
-                  />
-              </Grid>
-              <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="Npassword"
-                    label="New Password"
-                    name="Npassword"
-                    type="password"
-                    autoComplete="Npassword"
-                    onChange={handlenewpassword}
-                    
-                  />
-              </Grid>
-              <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="COpassword"
-                    label="Confirm Password"
-                    name="COpassword"
-                    type="password"
-                    autoComplete="COpassword"
-                    onChange={handleconfirmpassword}
-                    
-                  />
-              </Grid>
-          </Grid>
-          <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                data-testid="forgotPasswordButton" onClick={handleForgotPassword}>
-                Change my password
-          </Button>
-  
-              <input type="text"
-                data-testid="response"
-                hidden
-                readOnly
-                value={passwordResetResponse} />
-              <label>{passwordResetResponse}</label>
-            </div>
-          </Container>
-        );
+                    <TextField
+                      variant="outlined"
+                      required
+                      fullWidth
+                      id="email"
+                      label="Email address"
+                      name="email"
+                      autoComplete="email"
+                      onChange={handleemail}
+                      
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      required
+                      fullWidth
+                      id="Cpassword"
+                      label="Current Password"
+                      name="Cpassword"
+                      type="password"
+                      autoComplete="Cpassword"
+                      onChange={handlecurrentpassword}
+                      
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      required
+                      fullWidth
+                      id="Npassword"
+                      label="New Password"
+                      name="Npassword"
+                      type="password"
+                      autoComplete="Npassword"
+                      onChange={handlenewpassword}
+                      
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                      variant="outlined"
+                      required
+                      fullWidth
+                      id="COpassword"
+                      label="Confirm Password"
+                      name="COpassword"
+                      type="password"
+                      autoComplete="COpassword"
+                      onChange={handleconfirmpassword}
+                      
+                    />
+                </Grid>
+            </Grid>
+            <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  data-testid="forgotPasswordButton" onClick={handleForgotPassword}>
+                  Change my password
+            </Button>
+    
+                <input type="text"
+                  data-testid="response"
+                  hidden
+                  readOnly
+                  value={passwordResetResponse} />
+                <label>{passwordResetResponse}</label>
+              </div>
+            </Container>
+          );
+
+}
 
 
 
