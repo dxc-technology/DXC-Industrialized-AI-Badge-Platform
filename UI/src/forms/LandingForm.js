@@ -373,11 +373,11 @@ if (clickedItem=='BacktoLoginForm'){
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
           DXC Industrialized AI Badge Platform
           </Typography>
-          <IconButton color="inherit">
+          {/* <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
-          </IconButton>
+          </IconButton> */}
           <Button onClick={handleLogout} size="large" color="inherit" endIcon={<ExitToAppIcon />}  >
            Logout
           </Button>
