@@ -115,7 +115,7 @@ def email_confirmation(email_address,body):
 
     message = """\
     <p> Please click on the link below  to activate your email </p>
-    <a href="https://industrialized-ai-starter.azurewebsites.net/">Click here to activate your email</a>
+    <a href="https://industrialized-ai-starter.azurewebsites.net/Activate">Click here to activate your email</a>
     """
     msg_text = MIMEText('<b>%s</b>'  % (body+ message), 'html')
     msg.attach(msg_text)
