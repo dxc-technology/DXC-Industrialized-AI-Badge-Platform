@@ -59,7 +59,7 @@ def validate_password(password):
 
 
 def validate_user_type(user_type):
-    valid_user_type = ["regular", "admin", "reviewer"]
+    valid_user_type = database.get_user_type_options()
     if user_type.strip() == "" or user_type is None:
         return INVALID
     if user_type in valid_user_type:
@@ -68,7 +68,7 @@ def validate_user_type(user_type):
 
 
 def validate_user_status(user_status):
-    valid_user_status = ["active", "inactive", "blocked"]
+    valid_user_status = database.get_user_status_options()
     if user_status.strip() == "" or user_status is None:
         return INVALID
     if user_status.strip() in valid_user_status:

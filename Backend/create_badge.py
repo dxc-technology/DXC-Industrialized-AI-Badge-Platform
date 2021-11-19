@@ -104,7 +104,7 @@ def user_evidence_validation(evidence):
 
 
 def badge_type_validation(badge_type):
-    valid_badge_type = ["Open Badge", "Community Badge"]
+    valid_badge_type = database.get_badge_type_options()
     if badge_type == "":
         return "Please choose the Badge Type"
     if badge_type in valid_badge_type:
