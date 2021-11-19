@@ -27,7 +27,7 @@ const data = {
       },
       {
         title: "How do I become an AI Mentor?",
-        content: "[REVISIT]You must be an AI Master and must have reviewed at least 10"
+        content: "There are three main criteria. (1) You achieved the the master badge. (2) Mentored a minimum of 2 Guilds, and (3) Reviewed a minimum of 25 applied badge evidence"
       }
     ]
   }
