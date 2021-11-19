@@ -46,7 +46,7 @@ def validate_email_address(email_address):
 
 
 def user_type_validation(user_type):
-    valid_user_type = ["regular", "admin"]
+    valid_user_type = database.get_user_type_options()
     if user_type == "":
         return "regular"
     if user_type in valid_user_type:
