@@ -36,15 +36,16 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import CreateBadgeForm from './CreateBadgeForm';
 import logo from '../assets/Tables-charts-graphs.mp4';
 import PersonIcon from '@material-ui/icons/Person';
+// pages
 import ViewBadgeForm from './ViewBadgeForm';
 import ViewAssertionsForm from './ViewAssertionsForm';
 import ViewProfileForm from './ViewProfileForm';
 import ViewUsersForm from './ViewUsersForm';
-import Tooltip from '@material-ui/core/Tooltip';
 import MyBackpackForm from './MyBackpackForm';
 import UserDetailByEmailResponse from '../API/UserDetailsByEmailAPI';
-import ReactPlayer from 'react-player';
+
 // import $ from 'jquery'; 
+import ReactPlayer from 'react-player';
 import getJIRAResponse from '../API/AddJIRARequestAPI';
 import Button from '@material-ui/core/Button';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -53,13 +54,14 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import BackpackIcon from '@mui/icons-material/Backpack';
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import ApprovalIcon from '@mui/icons-material/Approval';
+import Tooltip from '@material-ui/core/Tooltip';
 
  
 const LandingForm = (props)=>
 {
     const [clickedItem,setClickedItem] = useState('');
     const windowWidth = window.screen.width;
-    const drawerWidth = 220;
+    const drawerWidth = 210;
     // const [userType,setUserType] = useState(props.userType);
     // const [email,setEmail] = useState(props.email);
     const token = sessionStorage.getItem("Token");
@@ -73,7 +75,7 @@ const LandingForm = (props)=>
     }
 
     const handleDashboardButtonClick =()=>{
-        setClickedItem('');
+        setClickedItem('MyBackpackForm');
     }
 
     const handleMyBackpackButtonClick =() =>
@@ -351,7 +353,7 @@ const classes = useStyles();
   useEffect(() => {
     handleviewUserByEmail();
   
-}, []);
+}, [email]);
 
 
 
@@ -425,7 +427,8 @@ if (clickedItem=='BacktoLoginForm'){
                (clickedItem=='MyBackpackForm'? (<MyBackpackForm userID={userID}/>):
                (clickedItem=='ViewProfileForm'? (<ViewProfileForm email={email} userID={userID} />):              
                (<div>
-                 <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop />
+                 {/* <ReactPlayer url={logo} data-testid="DashboardForm_Logo" playing loop /> */}
+                 
                  {/* <video preload='auto' autoplay muted data-testid='DashboardForm_Logo' className={classes.images}>
                    <source src={logo} type="video/mp4"></source>
                    </video> */}
