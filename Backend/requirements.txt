@@ -95,7 +95,7 @@ chardet==4.0.0
 click==7.1.2
 colorama==0.4.3
 cryptography==3.4.4
-Django==3.2.7
+Django==3.2.23
 dnspython==2.0.0
 flake8==3.8.4
 Flask==1.1.2
