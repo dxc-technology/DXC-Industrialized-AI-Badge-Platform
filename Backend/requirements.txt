@@ -115,7 +115,7 @@ msrest==0.6.21
 msrestazure==0.6.4
 oauthlib==3.1.0
 packaging==20.4
-Pillow==8.3.2
+Pillow==10.0.1
 pluggy==0.13.1
 py==1.9.0
 pycodestyle==2.6.0
